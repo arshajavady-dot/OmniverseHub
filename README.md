@@ -25,10 +25,3 @@
 
 ---
 
-## 🚀 Quick Start
-
-No installations or build steps required! Simply clone and launch:
-
-```bash
-git clone https://github.com/your-username/omniverse-hub.git
-cd omniverse-hub
