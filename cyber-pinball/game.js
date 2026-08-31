@@ -117,6 +117,23 @@ class PinballAudioEngine {
     } catch(e) {}
   }
 
+  playBeep(freq = 600) {
+    const actx = this.ensureCtx();
+    if (!actx || actx.state === 'suspended') return;
+    try {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, actx.currentTime);
+      gain.gain.setValueAtTime(0.15, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start();
+      osc.stop(actx.currentTime + 0.14);
+    } catch(e) {}
+  }
+
   playFlipper() {
     const actx = this.ensureCtx();
     if (!actx || actx.state === 'suspended') return;
@@ -161,13 +178,13 @@ class PinballAudioEngine {
       const gain = actx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(300, actx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(600, actx.currentTime + 0.18);
-      gain.gain.setValueAtTime(0.18, actx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.2);
+      osc.frequency.exponentialRampToValueAtTime(750, actx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.2, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
       osc.connect(gain);
       gain.connect(actx.destination);
       osc.start();
-      osc.stop(actx.currentTime + 0.22);
+      osc.stop(actx.currentTime + 0.25);
     } catch(e) {}
   }
 }
@@ -179,7 +196,8 @@ let score = 0;
 let highScore = parseInt(localStorage.getItem('cyber_pinball_high') || '0', 10);
 let ballsLeft = 3;
 let gameState = 'START'; // START, PLAYING, GAMEOVER
-let autoLaunchTimer = 0;
+let countdownTimer = 0; // Countdown in frames (180 = 3s)
+let countdownText = '';
 
 hudHighscore.textContent = String(highScore).padStart(6, '0');
 
@@ -193,14 +211,20 @@ let balls = [];
 function spawnBall() {
   balls.push({
     x: 430,
-    y: 520,
+    y: 515,
     vx: 0,
     vy: 0,
     radius: 7.5,
     inPlungerLane: true,
     color: '#06b6d4'
   });
-  autoLaunchTimer = 0;
+  startCountdown();
+}
+
+function startCountdown() {
+  countdownTimer = 180; // 3 seconds @ 60fps
+  countdownText = '3';
+  audio.playBeep(600);
 }
 
 // Flippers
@@ -245,12 +269,17 @@ const dropTargets = [
   { x: 340, y: 190, w: 12, h: 28, hit: false, score: 300 }
 ];
 
-// Static boundary walls & sloped guides
+// Static boundary walls & sloped guides (NO PHASE THROUGH ROOF)
 const walls = [
+  // Outer side walls
   { x1: 20, y1: 560, x2: 20, y2: 120 },
-  { x1: 20, y1: 120, x2: 120, y2: 20 },
-  { x1: 120, y1: 20, x2: 300, y2: 20 },
-  { x1: 300, y1: 20, x2: 445, y2: 100 },
+  
+  // Solid Roof Roof Line Segments (Curved Arch Top Ceiling)
+  { x1: 20, y1: 120, x2: 100, y2: 30 },
+  { x1: 100, y1: 30, x2: 230, y2: 20 },
+  { x1: 230, y1: 20, x2: 360, y2: 30 },
+  { x1: 360, y1: 30, x2: 445, y2: 100 },
+  
   { x1: 445, y1: 100, x2: 445, y2: 560 },
   
   // Plunger lane separator
@@ -343,21 +372,16 @@ canvas.addEventListener('click', () => {
 });
 
 function triggerLaunch() {
-  let launchedAny = false;
+  countdownTimer = 0; // Clear countdown if manually launched
   balls.forEach(ball => {
     if (ball.x > 400 || ball.y > 480) {
-      ball.vy = -24;
-      ball.vx = -2.2;
+      ball.vy = -18.5; // Controlled smooth launch velocity
+      ball.vx = -1.8;
       ball.inPlungerLane = false;
       audio.playPlunger();
       addSparks(ball.x, ball.y, '#eab308', 25);
-      launchedAny = true;
     }
   });
-  if (!launchedAny && balls.length === 0) {
-    spawnBall();
-    triggerLaunch();
-  }
 }
 
 btnStart.addEventListener('click', startGame);
@@ -411,18 +435,21 @@ function gameOver() {
 function update() {
   if (gameState !== 'PLAYING') return;
 
-  // Auto-launch safety check (if ball is resting in plunger lane for 2.5 seconds)
-  autoLaunchTimer++;
-  if (autoLaunchTimer > 150) {
-    balls.forEach(b => {
-      if (b.x > 400 && Math.abs(b.vy) < 0.5) {
-        b.vy = -22;
-        b.vx = -2;
-        b.inPlungerLane = false;
-        audio.playPlunger();
-      }
-    });
-    autoLaunchTimer = 0;
+  // Countdown Auto-Launch
+  if (countdownTimer > 0) {
+    countdownTimer--;
+    if (countdownTimer === 120) {
+      countdownText = '2';
+      audio.playBeep(700);
+    } else if (countdownTimer === 60) {
+      countdownText = '1';
+      audio.playBeep(850);
+    } else if (countdownTimer === 0) {
+      countdownText = 'LAUNCH!';
+      audio.playBeep(1200);
+      triggerLaunch();
+      setTimeout(() => { countdownText = ''; }, 600);
+    }
   }
 
   // Update flipper angles
@@ -461,96 +488,121 @@ function update() {
     if (pop.life <= 0) popups.splice(i, 1);
   }
 
-  // Update Balls
+  // Update Balls with 4 CCD Sub-Steps (Eliminates Ceiling Phase-Through)
+  const SUB_STEPS = 4;
   for (let bIdx = balls.length - 1; bIdx >= 0; bIdx--) {
     const b = balls[bIdx];
 
     // Gravity & damping
-    b.vy += GRAVITY;
-    b.vx *= DAMPING;
-    b.vy *= DAMPING;
+    b.vy += GRAVITY / SUB_STEPS;
+    b.vx *= Math.pow(DAMPING, 1 / SUB_STEPS);
+    b.vy *= Math.pow(DAMPING, 1 / SUB_STEPS);
 
-    b.x += b.vx;
-    b.y += b.vy;
+    for (let step = 0; step < SUB_STEPS; step++) {
+      b.x += b.vx / SUB_STEPS;
+      b.y += b.vy / SUB_STEPS;
 
-    // Plunger lane check
-    if (b.x > 410) {
-      b.inPlungerLane = true;
-    } else {
-      b.inPlungerLane = false;
-    }
-
-    // 1. Wall Collisions
-    walls.forEach(w => {
-      collideBallSegment(b, w.x1, w.y1, w.x2, w.y2);
-    });
-
-    // 2. Flipper Collisions
-    const leftTipX = leftFlipper.x + Math.cos(leftFlipper.angle) * leftFlipper.length;
-    const leftTipY = leftFlipper.y + Math.sin(leftFlipper.angle) * leftFlipper.length;
-    const hitLeft = collideBallSegment(b, leftFlipper.x, leftFlipper.y, leftTipX, leftTipY, true);
-    if (hitLeft && leftFlipper.isPressed) {
-      b.vy -= 10;
-      b.vx += (leftTipX - leftFlipper.x) * 0.1;
-      addSparks(b.x, b.y, '#ec4899', 15);
-    }
-
-    const rightTipX = rightFlipper.x + Math.cos(rightFlipper.angle) * rightFlipper.length;
-    const rightTipY = rightFlipper.y + Math.sin(rightFlipper.angle) * rightFlipper.length;
-    const hitRight = collideBallSegment(b, rightFlipper.x, rightFlipper.y, rightTipX, rightTipY, true);
-    if (hitRight && rightFlipper.isPressed) {
-      b.vy -= 10;
-      b.vx += (rightTipX - rightFlipper.x) * 0.1;
-      addSparks(b.x, b.y, '#06b6d4', 15);
-    }
-
-    // 3. Bumper Collisions
-    bumpers.forEach(bump => {
-      const dx = b.x - bump.x;
-      const dy = b.y - bump.y;
-      const dist = Math.hypot(dx, dy);
-      if (dist < b.radius + bump.radius) {
-        const nx = dx / dist;
-        const ny = dy / dist;
-        b.x = bump.x + nx * (b.radius + bump.radius);
-        b.y = bump.y + ny * (b.radius + bump.radius);
-        
-        const speed = Math.max(10, Math.hypot(b.vx, b.vy) * 1.35);
-        b.vx = nx * speed;
-        b.vy = ny * speed;
-
-        bump.lit = 1;
-        score += bump.score;
-        hudScore.textContent = String(score).padStart(6, '0');
-        addScorePopup(bump.x, bump.y - 15, bump.score, bump.color);
-        addSparks(bump.x, bump.y, bump.color, 16);
-        audio.playBumper();
+      // Plunger lane check
+      if (b.x > 410) {
+        b.inPlungerLane = true;
+      } else {
+        b.inPlungerLane = false;
       }
-    });
 
-    // 4. Drop Target Collisions
-    dropTargets.forEach(dt => {
-      if (!dt.hit) {
-        if (b.x + b.radius > dt.x && b.x - b.radius < dt.x + dt.w &&
-            b.y + b.radius > dt.y && b.y - b.radius < dt.y + dt.h) {
-          dt.hit = true;
-          b.vx = -b.vx * 1.1;
-          score += dt.score;
+      // 1. HARD CEILING & ROOF ARCH BOUNDARY CHECKS (ROOF NO PHASE THROUGH)
+      if (b.y - b.radius < 22) {
+        b.y = 22 + b.radius;
+        b.vy = Math.abs(b.vy) * 0.6; // Bounce down
+        b.vx *= 0.8;
+        addSparks(b.x, b.y, '#06b6d4', 6);
+      }
+      if (b.x + b.radius > 444) {
+        b.x = 444 - b.radius;
+        b.vx = -Math.abs(b.vx) * 0.65;
+      }
+      if (b.x - b.radius < 20) {
+        b.x = 20 + b.radius;
+        b.vx = Math.abs(b.vx) * 0.65;
+      }
+
+      // Smooth Top-Right Arch Curve Redirect (Guides ball out of plunger lane into board)
+      if (b.x > 360 && b.y < 80) {
+        b.vx = -6; // Smoothly redirect left
+        if (b.vy < -4) b.vy = -4; // Cap upward velocity
+      }
+
+      // 2. Wall Collisions
+      walls.forEach(w => {
+        collideBallSegment(b, w.x1, w.y1, w.x2, w.y2);
+      });
+
+      // 3. Flipper Collisions
+      const leftTipX = leftFlipper.x + Math.cos(leftFlipper.angle) * leftFlipper.length;
+      const leftTipY = leftFlipper.y + Math.sin(leftFlipper.angle) * leftFlipper.length;
+      const hitLeft = collideBallSegment(b, leftFlipper.x, leftFlipper.y, leftTipX, leftTipY, true);
+      if (hitLeft && leftFlipper.isPressed) {
+        b.vy -= 9;
+        b.vx += (leftTipX - leftFlipper.x) * 0.1;
+        addSparks(b.x, b.y, '#ec4899', 15);
+      }
+
+      const rightTipX = rightFlipper.x + Math.cos(rightFlipper.angle) * rightFlipper.length;
+      const rightTipY = rightFlipper.y + Math.sin(rightFlipper.angle) * rightFlipper.length;
+      const hitRight = collideBallSegment(b, rightFlipper.x, rightFlipper.y, rightTipX, rightTipY, true);
+      if (hitRight && rightFlipper.isPressed) {
+        b.vy -= 9;
+        b.vx += (rightTipX - rightFlipper.x) * 0.1;
+        addSparks(b.x, b.y, '#06b6d4', 15);
+      }
+
+      // 4. Bumper Collisions
+      bumpers.forEach(bump => {
+        const dx = b.x - bump.x;
+        const dy = b.y - bump.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < b.radius + bump.radius) {
+          const nx = dx / dist;
+          const ny = dy / dist;
+          b.x = bump.x + nx * (b.radius + bump.radius);
+          b.y = bump.y + ny * (b.radius + bump.radius);
+          
+          const speed = Math.max(9, Math.hypot(b.vx, b.vy) * 1.3);
+          b.vx = nx * speed;
+          b.vy = ny * speed;
+
+          bump.lit = 1;
+          score += bump.score;
           hudScore.textContent = String(score).padStart(6, '0');
-          addScorePopup(dt.x, dt.y, dt.score, '#eab308');
-          addSparks(dt.x + dt.w / 2, dt.y + dt.h / 2, '#eab308', 14);
+          addScorePopup(bump.x, bump.y - 15, bump.score, bump.color);
+          addSparks(bump.x, bump.y, bump.color, 16);
           audio.playBumper();
+        }
+      });
 
-          if (dropTargets.every(t => t.hit)) {
-            score += 2500;
-            addScorePopup(200, 280, 2500, '#a855f7');
-            setTimeout(() => dropTargets.forEach(t => t.hit = false), 600);
+      // 5. Drop Target Collisions
+      dropTargets.forEach(dt => {
+        if (!dt.hit) {
+          if (b.x + b.radius > dt.x && b.x - b.radius < dt.x + dt.w &&
+              b.y + b.radius > dt.y && b.y - b.radius < dt.y + dt.h) {
+            dt.hit = true;
+            b.vx = -b.vx * 1.1;
+            score += dt.score;
+            hudScore.textContent = String(score).padStart(6, '0');
+            addScorePopup(dt.x, dt.y, dt.score, '#eab308');
+            addSparks(dt.x + dt.w / 2, dt.y + dt.h / 2, '#eab308', 14);
+            audio.playBumper();
+
+            if (dropTargets.every(t => t.hit)) {
+              score += 2500;
+              addScorePopup(200, 280, 2500, '#a855f7');
+              setTimeout(() => dropTargets.forEach(t => t.hit = false), 600);
+            }
           }
         }
-      }
-    });
+      });
+    }
 
-    // 5. Drain Out of Bottom
+    // Drain Out of Bottom
     if (b.y > canvas.height + 20) {
       balls.splice(bIdx, 1);
       if (balls.length === 0) {
@@ -620,7 +672,7 @@ function draw() {
     ctx.stroke();
   }
 
-  // Draw Walls
+  // Draw Walls & Top Roof Arch
   ctx.strokeStyle = '#06b6d4';
   ctx.lineWidth = 4;
   ctx.shadowColor = '#06b6d4';
@@ -660,7 +712,6 @@ function draw() {
     ctx.strokeStyle = '#ffffff';
     ctx.stroke();
 
-    // Inner core
     ctx.beginPath();
     ctx.arc(b.x, b.y, b.radius * 0.45, 0, Math.PI * 2);
     ctx.fillStyle = '#060813';
@@ -739,6 +790,23 @@ function draw() {
     ctx.stroke();
     ctx.restore();
   });
+
+  // Draw Visual Auto-Launch Countdown Banner
+  if (countdownText) {
+    ctx.save();
+    ctx.font = 'black 36px Orbitron';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#eab308';
+    ctx.shadowColor = '#eab308';
+    ctx.shadowBlur = 20;
+    ctx.fillText(countdownText, canvas.width / 2, 290);
+    ctx.font = 'bold 12px Orbitron';
+    ctx.fillStyle = '#38bdf8';
+    ctx.shadowColor = '#38bdf8';
+    ctx.shadowBlur = 10;
+    ctx.fillText('AUTO-LAUNCH IN PROGRESS', canvas.width / 2, 320);
+    ctx.restore();
+  }
 }
 
 function gameLoop() {
