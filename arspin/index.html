@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARSpin - Interactive Spinwheel</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(147, 51, 234, 0.4), 0 0 30px rgba(79, 70, 229, 0.2); }
+      50% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.7), 0 0 45px rgba(79, 70, 229, 0.4); }
+    }
+    .glow-effect {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+    .speech-bubble {
+      position: relative;
+    }
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 20px;
+      border-width: 10px 10px 10px 0;
+      border-style: solid;
+      border-color: transparent rgba(51, 65, 85, 0.8) transparent transparent;
+      display: block;
+      width: 0;
+    }
+    @media (max-width: 768px) {
+      .speech-bubble::after {
+        left: 20px;
+        top: -10px;
+        border-width: 0 10px 10px 10px;
+        border-color: transparent transparent rgba(51, 65, 85, 0.8) transparent;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased p-4 md:p-8">
+
+  <div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header -->
+    <header class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-800/80 backdrop-blur border border-slate-700/60 rounded-2xl p-4 md:px-8 shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 via-indigo-500 to-pink-500 flex items-center justify-center shadow-lg text-2xl font-black text-white">
+          🎰
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-purple-400 via-pink-400 to-amber-300 bg-clip-text text-transparent">
+            ARSpin
+          </h1>
+          <p class="text-xs md:text-sm text-slate-400 font-medium">Ultimate Custom Spinwheel & Decision Maker</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="soundToggleBtn" class="flex items-center gap-2 bg-slate-700/60 hover:bg-slate-700 text-slate-200 text-xs md:text-sm px-3.5 py-2 rounded-xl border border-slate-600/50 transition">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel">Sound On</span>
+        </button>
+        <button id="resetWheelBtn" class="flex items-center gap-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 text-xs md:text-sm px-3.5 py-2 rounded-xl border border-purple-500/30 transition">
+          <span>🔄</span> Reset
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- Left Column: Host / Avatar & Speech Reaction (lg:span-4) -->
+      <div class="lg:col-span-4 flex flex-col items-center gap-5">
+        <!-- Host Card -->
+        <div class="w-full bg-slate-800/90 border border-purple-500/30 rounded-2xl p-5 shadow-2xl glow-effect flex flex-col items-center text-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-gradient-to-l from-purple-600 to-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl tracking-wider uppercase shadow">
+            Host: Arsha
+          </div>
+
+          <!-- Mascot Image with glowing border -->
+          <div class="relative mt-2 mb-4 group">
+            <div class="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-500"></div>
+            <img id="hostAvatar" src="avatar.png" alt="Host Arsha" class="relative w-44 h-44 object-cover rounded-full border-4 border-slate-800 shadow-2xl">
+            <div class="absolute bottom-1 right-2 bg-green-500 border-2 border-slate-800 w-4 h-4 rounded-full shadow" title="Host Arsha Active"></div>
+          </div>
+
+          <!-- Live Speech Bubble -->
+          <div id="speechBubble" class="speech-bubble w-full bg-slate-700/80 border border-slate-600/60 rounded-xl p-4 text-left shadow-inner">
+            <p id="speechText" class="text-sm text-purple-200 font-medium leading-relaxed">
+              "Hey there! Ready to let fortune decide? Add your custom options or pick a preset, then hit <span class="text-amber-300 font-bold">SPIN</span>!"
+            </p>
+          </div>
+        </div>
+
+        <!-- Spin Stats / Status Card -->
+        <div class="w-full bg-slate-800/60 border border-slate-700/50 rounded-2xl p-4 shadow-lg text-xs space-y-3">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-700/50">
+            <span class="text-slate-400 font-medium">Total Spins</span>
+            <span id="spinCountBadge" class="bg-purple-500/20 text-purple-300 font-bold px-2.5 py-0.5 rounded-full border border-purple-500/30">0</span>
+          </div>
+          <div class="flex justify-between items-center pb-2 border-b border-slate-700/50">
+            <span class="text-slate-400 font-medium">Last Winner</span>
+            <span id="lastWinnerBadge" class="text-amber-400 font-semibold truncate max-w-[150px]">None yet</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-400 font-medium">Active Items</span>
+            <span id="activeItemsBadge" class="text-indigo-300 font-bold">6</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center / Right Column: Spin Wheel & Interactive Canvas (lg:span-8) -->
+      <div class="lg:col-span-8 space-y-6">
+        
+        <!-- Spin Wheel Canvas Container -->
+        <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-6 shadow-2xl flex flex-col items-center relative overflow-hidden">
+          
+          <!-- Wheel Pointer Indicator -->
+          <div class="z-20 -mb-5 flex flex-col items-center">
+            <div class="w-0 h-0 border-l-[18px] border-l-transparent border-r-[18px] border-r-transparent border-t-[32px] border-t-amber-400 filter drop-shadow-[0_4px_8px_rgba(245,158,11,0.6)]"></div>
+          </div>
+
+          <!-- Canvas Frame -->
+          <div class="relative p-3 bg-gradient-to-b from-slate-700 to-slate-900 rounded-full border-4 border-slate-700 shadow-2xl">
+            <canvas id="wheelCanvas" width="460" height="460" class="max-w-full h-auto cursor-pointer rounded-full"></canvas>
+            
+            <!-- Center Spin Cap Button -->
+            <button id="centerSpinBtn" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 border-4 border-slate-900 text-white font-black text-lg shadow-2xl hover:scale-105 active:scale-95 transition transform flex items-center justify-center tracking-wider">
+              SPIN!
+            </button>
+          </div>
+
+          <!-- Action Buttons Bar -->
+          <div class="mt-6 flex flex-wrap items-center justify-center gap-4 w-full max-w-md">
+            <button id="spinBtn" class="flex-1 min-w-[140px] bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-extrabold py-3.5 px-6 rounded-xl shadow-lg hover:shadow-purple-500/25 active:scale-95 transition text-base tracking-wide flex items-center justify-center gap-2">
+              <span>🎰</span> SPIN WHEEL
+            </button>
+            <button id="shuffleBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 font-semibold py-3.5 px-4 rounded-xl border border-slate-600 shadow transition text-sm flex items-center justify-center gap-1.5" title="Shuffle items order">
+              🔀 Shuffle
+            </button>
+          </div>
+
+          <!-- Options Toggles -->
+          <div class="mt-4 flex items-center gap-6 text-xs text-slate-300">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="removeOnWinToggle" class="w-4 h-4 rounded text-purple-600 bg-slate-700 border-slate-600 focus:ring-purple-500">
+              <span>Remove winning slice automatically</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Slices & Presets Manager Card -->
+        <div class="bg-slate-800/80 border border-slate-700/70 rounded-2xl p-6 shadow-xl space-y-5">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-700/60 pb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                <span>🎨</span> Wheel Slices & Presets
+              </h2>
+              <p class="text-xs text-slate-400">Edit entries below (one per line) or choose a quick preset.</p>
+            </div>
+            <!-- Preset Buttons -->
+            <div class="flex flex-wrap gap-1.5">
+              <button class="preset-btn bg-slate-700/80 hover:bg-purple-600/40 border border-slate-600/60 text-slate-200 text-xs px-2.5 py-1 rounded-lg transition" data-preset="food">🍔 Food</button>
+              <button class="preset-btn bg-slate-700/80 hover:bg-purple-600/40 border border-slate-600/60 text-slate-200 text-xs px-2.5 py-1 rounded-lg transition" data-preset="yesno">🎯 Yes/No</button>
+              <button class="preset-btn bg-slate-700/80 hover:bg-purple-600/40 border border-slate-600/60 text-slate-200 text-xs px-2.5 py-1 rounded-lg transition" data-preset="numbers">🔢 Numbers</button>
+              <button class="preset-btn bg-slate-700/80 hover:bg-purple-600/40 border border-slate-600/60 text-slate-200 text-xs px-2.5 py-1 rounded-lg transition" data-preset="prizes">🎁 Prizes</button>
+            </div>
+          </div>
+
+          <!-- Items Text Area -->
+          <div class="space-y-3">
+            <textarea id="itemsInput" rows="5" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl p-3 text-sm text-slate-200 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition font-mono leading-relaxed" placeholder="Enter wheel entries, one per line..."></textarea>
+            
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs text-slate-400">Tip: Each non-empty line becomes a slice on the wheel!</span>
+              <button id="updateItemsBtn" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs px-4 py-2 rounded-lg transition shadow">
+                Update Wheel Slices
+              </button>
+            </div>
+          </div>
+
+          <!-- Spin History Drawer -->
+          <div class="border-t border-slate-700/60 pt-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Spin History Log</h3>
+              <button id="clearHistoryBtn" class="text-[11px] text-slate-400 hover:text-red-400 transition">Clear Log</button>
+            </div>
+            <div id="historyContainer" class="flex flex-wrap gap-2 max-h-24 overflow-y-auto p-1">
+              <span class="text-xs text-slate-500 italic">No spins recorded yet.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Winner Modal Popup -->
+  <div id="winnerModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-purple-500/40 rounded-3xl p-6 md:p-8 max-w-lg w-full text-center shadow-2xl space-y-6 relative transform transition-all scale-95" id="winnerCard">
+      
+      <!-- Announcement Comic Display -->
+      <div class="relative flex flex-col sm:flex-row items-center justify-center gap-4 py-2">
+        <!-- Host Arsha Pointing Cutout -->
+        <div class="relative flex-shrink-0">
+          <img id="modalHostAvatar" src="avatar_winner.png" alt="Host Arsha Pointing" class="w-36 h-44 object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)] transform -rotate-3 hover:rotate-0 transition duration-300">
+        </div>
+
+        <!-- Comic Speech Bubble pointing to Arsha -->
+        <div class="relative flex-1 bg-white border-4 border-slate-900 rounded-[35px] p-6 shadow-2xl text-slate-900">
+          <div class="text-2xl md:text-3xl font-black tracking-tight break-words font-sans text-slate-900 leading-tight">
+            <span id="winnerText">raman is chosen</span>
+          </div>
+          <!-- Tail pointing left to finger -->
+          <div class="hidden sm:block absolute -left-4 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent border-r-[18px] border-r-slate-900"></div>
+          <div class="hidden sm:block absolute -left-[10px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[9px] border-t-transparent border-b-[9px] border-b-transparent border-r-[14px] border-r-white"></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 pt-2">
+        <button id="spinAgainModalBtn" class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold py-3.5 px-5 rounded-xl shadow-lg transition text-sm">
+          🎰 Spin Again
+        </button>
+        <button id="closeModalBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3.5 px-5 rounded-xl border border-slate-700 transition text-sm">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

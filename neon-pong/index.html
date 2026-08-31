@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Pong Breakout — Hyper Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">SCORE</span>
+        <span id="score" class="hud-value">0000</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">LIVES</span>
+        <span id="lives" class="hud-value">❤️❤️❤️</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">COMBO</span>
+        <span id="combo" class="hud-value">x1</span>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+      <div class="card">
+        <h1 class="title">NEON <span class="neon-cyan">PONG</span></h1>
+        <p class="subtitle">HYPER BRICK BREAKOUT</p>
+
+        <div id="game-over-info" class="hidden">
+          <p id="game-over-title" class="game-over-text">GAME OVER</p>
+          <p class="final-score">Final Score: <span id="final-score-val">0</span></p>
+        </div>
+
+        <div class="controls-guide">
+          <p>🏓 <b>Mouse</b> or <b>← / →</b> : Move Paddle</p>
+          <p>⚡ <b>Space / Click</b> : Launch Ball / Shoot Lasers</p>
+          <p>🎁 Collect Multi-Ball, Lasers & Expand Power-ups!</p>
+        </div>
+
+        <button id="start-btn" class="btn">START GAME</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

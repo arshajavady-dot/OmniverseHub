@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Core: Singularity Clicker — Sci-Fi Idle Tycoon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="stars-bg"></div>
+  <div class="nebula-glow"></div>
+
+  <div id="game-app">
+    <!-- TOP HEADER / STATS HUD -->
+    <header id="stats-header">
+      <div class="brand">
+        <span class="icon">⚛️</span>
+        <div>
+          <h1>QUANTUM CORE</h1>
+          <p class="tagline">SINGULARITY ENERGY INCUBATOR</p>
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric-card main-energy">
+          <span class="m-label">QUANTUM ENERGY (QUBITS)</span>
+          <span id="energy-counter" class="m-value glow-cyan">0</span>
+        </div>
+        <div class="metric-card">
+          <span class="m-label">GENERATION RATE</span>
+          <span id="eps-counter" class="m-value glow-purple">0.0 /sec</span>
+        </div>
+        <div class="metric-card">
+          <span class="m-label">DARK MATTER PRESTIGE</span>
+          <span id="prestige-counter" class="m-value glow-gold">0 (1.0x)</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN BODY: 3-COLUMN LAYOUT -->
+    <main id="main-layout">
+      <!-- 1. LEFT COLUMN: QUANTUM GENERATORS / PRODUCTION TIERS -->
+      <section class="panel-column" id="generators-panel">
+        <div class="panel-header">
+          <h2>⚡ Energy Generators</h2>
+          <span class="badge" id="total-buildings-count">0 Built</span>
+        </div>
+        <div class="scroll-list" id="generators-list">
+          <!-- Dynamically populated generator cards -->
+        </div>
+      </section>
+
+      <!-- 2. CENTER COLUMN: SINGULARITY CORE CLICKER -->
+      <section id="core-panel">
+        <div id="singularity-container">
+          <div class="singularity-rings ring-1"></div>
+          <div class="singularity-rings ring-2"></div>
+          <div class="singularity-rings ring-3"></div>
+          
+          <button id="btn-singularity-core" title="Click to Extract Quantum Energy!">
+            <div class="core-orb">
+              <span class="core-symbol">⚛️</span>
+            </div>
+          </button>
+        </div>
+
+        <div id="click-stats">
+          <p class="click-power-text">⚡ Click Harvest: <span id="click-power-val" class="glow-cyan">+1 Qubit</span></p>
+          <p class="combo-text" id="combo-display">Combo: 0x</p>
+        </div>
+
+        <!-- BIG BANG PRESTIGE COLLAPSE -->
+        <div class="prestige-box">
+          <button id="btn-prestige" class="prestige-btn">
+            <span>💥 BIG BANG SINGULARITY COLLAPSE</span>
+            <small id="prestige-gain-text">+0 Dark Matter (+0% Boost)</small>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. RIGHT COLUMN: TECH LAB & UPGRADES -->
+      <section class="panel-column" id="upgrades-panel">
+        <div class="panel-header">
+          <h2>🔬 Quantum Research Lab</h2>
+          <span class="badge" id="upgrades-count">0 / 8 Researched</span>
+        </div>
+        <div class="scroll-list" id="upgrades-list">
+          <!-- Dynamically populated research cards -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="click-particles-layer"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>

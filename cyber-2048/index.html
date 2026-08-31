@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber 2048: Quantum Fusion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- TOP HEADER -->
+    <header class="game-header">
+      <div class="title-block">
+        <h1 class="game-title">CYBER <span class="neon-cyan">2048</span></h1>
+        <p class="game-subtitle">QUANTUM FUSION MATRIX</p>
+      </div>
+
+      <div class="scores-block">
+        <div class="score-card">
+          <span class="score-label">SCORE</span>
+          <span id="current-score" class="score-val">0</span>
+        </div>
+        <div class="score-card best-card">
+          <span class="score-label">BEST</span>
+          <span id="best-score" class="score-val">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ACTION CONTROLS BAR -->
+    <div class="controls-bar">
+      <button id="btn-restart" class="action-btn">
+        <span>🔄</span> NEW MATRIX
+      </button>
+      <button id="btn-undo" class="action-btn undo-btn" disabled>
+        <span>↩️</span> UNDO (<span id="undo-count">3</span>)
+      </button>
+      <div class="sound-pill">
+        <button id="btn-sound" class="sound-btn"><span>🔊</span> AUDIO</button>
+      </div>
+    </div>
+
+    <!-- 4x4 2048 BOARD -->
+    <div class="board-wrapper">
+      <div class="board-bezel">
+        <div id="grid-board" class="grid-board">
+          <!-- Background 16 Grid Cells -->
+          <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+          <div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div><div class="grid-cell"></div>
+
+          <!-- Dynamic Sliding/Merging Tile Container -->
+          <div id="tile-container" class="tile-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ON-SCREEN D-PAD FOR MOBILE / TOUCH -->
+    <div class="touch-controls">
+      <button class="dpad-btn dpad-up" data-dir="up">▲</button>
+      <div class="dpad-middle">
+        <button class="dpad-btn dpad-left" data-dir="left">◀</button>
+        <div class="dpad-center">⚛️</div>
+        <button class="dpad-btn dpad-right" data-dir="right">▶</button>
+      </div>
+      <button class="dpad-btn dpad-down" data-dir="down">▼</button>
+    </div>
+
+    <!-- FOOTER TIP -->
+    <p class="instructions-footer">Use <b>WASD</b>, <b>Arrow Keys</b>, or <b>Swipe</b> to merge quantum cores into the <b>2048 Singularity</b>!</p>
+
+    <!-- GAME OVER / WIN MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🏆</div>
+        <h2 id="modal-title" class="modal-title">QUANTUM SINGULARITY ACHIEVED!</h2>
+        <p id="modal-desc" class="modal-desc">You successfully synthesized the 2048 Quantum Core.</p>
+        <div class="modal-stats">
+          <p>Final Score: <span id="modal-final-score" class="text-cyan">0</span></p>
+        </div>
+        <div class="modal-buttons">
+          <button id="modal-btn-continue" class="modal-btn btn-secondary hidden">KEEP MERGING</button>
+          <button id="modal-btn-restart" class="modal-btn btn-primary">RESTART MATRIX</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Clicker - The Ultimate Cardboard Empire</title>
+    <meta name="description" content="Click the buff cardboard box, build your packaging empire, buy epic upgrades, and unlock golden box frenzies in Box Clicker!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="game-container">
+        <!-- TOP HEADER NAVBAR -->
+        <header class="top-bar">
+            <div class="brand">
+                <span class="box-icon">📦</span>
+                <span class="brand-title">BOX CLICKER</span>
+                <span class="version-tag">v1.0</span>
+            </div>
+
+            <!-- NEWS TICKER -->
+            <div class="news-ticker-container">
+                <span class="ticker-label">NEWS:</span>
+                <div class="ticker-wrapper">
+                    <div id="news-ticker" class="ticker-content">Welcome to Box Clicker! Click the buff box to start your cardboard empire!</div>
+                </div>
+            </div>
+
+            <!-- SYSTEM CONTROLS -->
+            <div class="header-actions">
+                <button id="btn-sound" class="icon-btn" title="Toggle Sound FX">
+                    <span id="sound-icon">🔊</span>
+                </button>
+                <button id="btn-music" class="icon-btn" title="Toggle Background Music">
+                    <span id="music-icon">🎵</span>
+                </button>
+                <button id="btn-stats" class="action-btn" title="View Statistics">📊 Stats</button>
+                <button id="btn-achievements" class="action-btn" title="View Achievements">🏆 Badges <span id="badge-count-tag" class="count-tag">0/16</span></button>
+                <button id="btn-save" class="action-btn" title="Save / Export Game">💾 Save</button>
+
+            </div>
+        </header>
+
+        <!-- FALLING SIDE BOXES CONTAINER -->
+        <div id="falling-boxes-container" class="falling-boxes-layer"></div>
+
+        <!-- MAIN 3-COLUMN CONTENT -->
+        <main class="main-layout">
+            <!-- LEFT COLUMN: BIG BOX CLICKER AREA -->
+            <section class="left-pane">
+                <div class="box-name-container">
+                    <h1 id="box-name" class="editable-name" title="Click to rename your Box">Buff Box</h1>
+                    <span class="edit-hint">✏️</span>
+                </div>
+
+                <div class="counter-display">
+                    <div id="box-count" class="main-count">0</div>
+                    <div class="count-unit">boxes packed</div>
+                    <div id="bps-display" class="bps-rate">per second: <span id="bps-value">0.0</span></div>
+                </div>
+
+                <!-- ACTIVE BUFFS / FRENZY TIMERS -->
+                <div id="active-buffs" class="active-buffs-container">
+                    <!-- Dynamic buff elements injected here -->
+                </div>
+
+                <!-- CLICKABLE BIG BOX ZONE -->
+                <div class="big-box-section">
+                    <!-- ROTATING SUNBURST RAYS BACKGROUND -->
+                    <div id="sunburst-bg" class="sunburst-bg"></div>
+
+                    <!-- FLOATING PARTICLES & NUMBERS CONTAINER -->
+                    <div id="particles-container" class="particles-layer"></div>
+
+                    <!-- GOLDEN BOX SPAWN LAYER -->
+                    <div id="golden-box-container" class="golden-box-layer"></div>
+
+                    <!-- MAIN BOX CHARACTER -->
+                    <div id="big-box-wrapper" class="big-box-wrapper" role="button" tabindex="0" aria-label="Click Big Box">
+                        <!-- BOX IMAGE -->
+                        <img id="big-box-img" src="assets/box_clean.png" alt="Buff Box Character" draggable="false">
+
+                        <!-- CLICK RIPPLE WAVE EFFECT -->
+                        <div id="click-ripple" class="click-ripple"></div>
+                    </div>
+                </div>
+
+                <div class="click-hint">Click the Box! 📦</div>
+
+                <div class="time-played-display">
+                    <span class="time-label">⏱️ Time Played:</span>
+                    <span id="time-played-value" class="time-value">0s</span>
+                </div>
+            </section>
+
+            <!-- CENTER COLUMN: STATS & PRESTIGE SUMMARY & NEWS & BUILDING ROWS -->
+            <section class="center-pane">
+                <div class="pane-header">
+                    <h2><span class="icon">📦</span> Packing Operations & Building Rows</h2>
+                </div>
+
+                <!-- VISUAL BUILDING ROWS (COOKIE CLICKER STYLE DISPLAY TRACKS) -->
+                <div id="building-display-rows" class="building-rows-container">
+                    <div class="empty-rows-msg">Buy buildings in the shop to see your packing machinery in action!</div>
+                </div>
+
+                <!-- QUICK STATS PANEL -->
+                <div class="quick-stats-card">
+                    <div class="stat-box">
+                        <span class="stat-label">Click Power</span>
+                        <span id="qs-click-power" class="stat-val">1</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Buildings Built</span>
+                        <span id="qs-total-buildings" class="stat-val">0</span>
+                    </div>
+                </div>
+
+
+
+
+                <!-- MINI RECENT ACHIEVEMENTS CAROUSEL -->
+                <div class="achievements-preview-card">
+                    <h3>🏆 Latest Badges Unlocked</h3>
+                    <div id="recent-badges-list" class="recent-badges-flex">
+                        <div class="empty-badges-msg">No badges unlocked yet. Start clicking!</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RIGHT COLUMN: SHOP (BUILDINGS, UPGRADES, SKINS & FX) -->
+            <section class="right-pane">
+                <div class="shop-tabs">
+                    <button id="tab-buildings" class="shop-tab active"><span class="tab-icon">🏗️</span> Buildings</button>
+                    <button id="tab-upgrades" class="shop-tab"><span class="tab-icon">⚡</span> Upgrades <span id="upgrades-available-count" class="badge-pill hidden">0</span></button>
+                    <button id="tab-skins" class="shop-tab"><span class="tab-icon">🎨</span> Skins & FX</button>
+                </div>
+
+                <!-- BUILDINGS LIST -->
+                <div id="shop-buildings-panel" class="shop-panel active">
+                    <div class="shop-bulk-controls">
+                        <span class="bulk-label">Buy Amount:</span>
+                        <button class="bulk-btn active" data-amount="1">x1</button>
+                        <button class="bulk-btn" data-amount="10">x10</button>
+                        <button class="bulk-btn" data-amount="100">x100</button>
+                    </div>
+
+                    <div id="buildings-list" class="shop-items-list">
+                        <!-- Dynamic Building Rows will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- UPGRADES LIST -->
+                <div id="shop-upgrades-panel" class="shop-panel">
+                    <div id="upgrades-list" class="shop-items-list upgrades-grid">
+                        <!-- Dynamic Upgrades will be rendered here -->
+                    </div>
+                </div>
+
+                <!-- SKINS & FX LIST -->
+                <div id="shop-skins-panel" class="shop-panel">
+                    <div id="skins-list" class="shop-items-list">
+                        <!-- Dynamic Skins and FX options rendered here -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- FLOATING SPECIAL CUSTOMER POPUP BADGE -->
+    <div id="customer-popup" class="customer-popup hidden">
+        <img src="assets/customer.jpg" alt="Special Customer" class="customer-thumb">
+        <div class="customer-badge-info">
+            <span class="customer-badge-title">🐸 Special Customer!</span>
+            <span class="customer-badge-sub">Click for Secret Trades!</span>
+        </div>
+    </div>
+
+    <!-- FLOATING CORPORATE BUYOUT POPUP BADGE -->
+    <div id="buyout-popup" class="customer-popup buyout-badge hidden">
+        <img src="assets/buyout_customer.jpg" alt="Investor Customer" class="customer-thumb">
+        <div class="customer-badge-info">
+            <span class="customer-badge-title">💼 Billionaire Investor!</span>
+            <span class="customer-badge-sub">Click to Sell Company for 1.2x Boost!</span>
+        </div>
+    </div>
+
+    <!-- MODAL CONTAINERS -->
+
+    <!-- CORPORATE BUYOUT MODAL -->
+    <div id="modal-buyout" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>💼 Corporate Buyout Proposal</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body text-center" style="text-align: center;">
+                <div class="buyout-customer-avatar" style="margin-bottom: 12px;">
+                    <img src="assets/buyout_customer.jpg" alt="Corporate Investor" class="buyout-img-large" style="width: 110px; height: 110px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary-gold); box-shadow: 0 0 25px rgba(255, 215, 0, 0.5);">
+                </div>
+                <h3 class="highlight-val" style="font-size: 1.25rem; margin: 6px 0;">"I Want To Buy Your Company!"</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px;">
+                    Outstanding work! You own at least 1 of every single building and purchased all upgrades in existence. An eccentric billionaire investor wants to buy your entire cardboard empire!
+                </p>
+
+                <div class="buyout-offer-card" style="background: rgba(255, 215, 0, 0.08); border: 1px solid var(--primary-gold); border-radius: 10px; padding: 14px; text-align: left; margin-bottom: 16px;">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 8px; font-size: 0.95rem;">🎁 Buyout Offer Terms & Rewards:</h4>
+                    <ul class="stats-list" style="font-size: 0.85rem;">
+                        <li><span>Permanent Multiplier Boost:</span> <strong id="buyout-reward-mult" class="highlight-val">+1.2x Multiplier</strong></li>
+                        <li><span>Immediate Cash Headstart:</span> <strong class="highlight-val">+200 Boxes</strong></li>
+                        <li><span>Empire Restructuring:</span> <span style="color: var(--text-muted);">Resets current boxes, buildings, & upgrades for a boosted rerun!</span></li>
+                    </ul>
+                </div>
+
+                <div class="modal-actions" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <button id="btn-accept-buyout" class="action-btn-primary" style="padding: 10px 18px; font-size: 0.88rem;">
+                        💼 Accept Buyout (Gain 1.2x & 200 Headstart)
+                    </button>
+                    <button id="btn-decline-buyout" class="action-btn-secondary" style="padding: 10px 14px; font-size: 0.88rem;">
+                        ❌ Keep Empire
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS MODAL -->
+    <div id="modal-stats" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>📊 Empire Statistics</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="stats-list">
+                    <li><span>Boxes in Stock:</span> <strong id="st-boxes-current">0</strong></li>
+                    <li><span>Total Boxes Packed (All Time):</span> <strong id="st-boxes-total">0</strong></li>
+                    <li><span>Total Manual Clicks:</span> <strong id="st-total-clicks">0</strong></li>
+                    <li><span>Boxes from Manual Clicks:</span> <strong id="st-boxes-from-clicks">0</strong></li>
+                    <li><span>Current BPS (Boxes Per Second):</span> <strong id="st-bps-current">0</strong></li>
+                    <li><span>Golden Boxes Clicked:</span> <strong id="st-golden-clicks">0</strong></li>
+                    <li><span>Buildings Owned:</span> <strong id="st-buildings-owned">0</strong></li>
+                    <li><span>Upgrades Purchased:</span> <strong id="st-upgrades-owned">0</strong></li>
+                    <li><span>Golden Packing Tape (Prestige):</span> <strong id="st-prestige-points">0</strong></li>
+                    <li><span>Corporate Buyouts Completed:</span> <strong id="st-buyouts-count">0</strong></li>
+                    <li><span>Buyout Permanent Multiplier:</span> <strong id="st-buyout-mult" class="highlight-val">1.0x</strong></li>
+                    <li><span>Time Played:</span> <strong id="st-time-played">0s</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ACHIEVEMENTS MODAL -->
+    <div id="modal-achievements" class="modal-backdrop hidden">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h2>🏆 Achievements (<span id="achievements-ratio">0/16</span>)</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="achievements-full-grid" class="achievements-grid">
+                    <!-- Dynamic Achievement Items injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SAVE / EXPORT / IMPORT MODAL -->
+    <div id="modal-save" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>💾 Save & Export Management</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="save-actions">
+                    <button id="btn-manual-save" class="action-btn-primary">💾 Save Game Now</button>
+                    <p class="save-hint">Game auto-saves every 5 seconds locally.</p>
+                    
+                    <hr class="modal-divider">
+
+                    <h3>Export / Import Save Data</h3>
+                    <textarea id="save-code-box" placeholder="Your save code string will appear here..."></textarea>
+                    <div class="save-code-btn-row">
+                        <button id="btn-export-code" class="action-btn-secondary">📋 Export to Clipboard</button>
+                        <button id="btn-import-code" class="action-btn-secondary">📥 Import Save Code</button>
+                    </div>
+
+                    <hr class="modal-divider">
+
+                    <div class="danger-zone">
+                        <h3>⚠️ Danger Zone</h3>
+                        <button id="btn-reset-game" class="btn-danger">🗑️ Hard Reset Empire</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFLINE EARNINGS MODAL -->
+    <div id="modal-offline" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>📦 Welcome Back!</h2>
+            </div>
+            <div class="modal-body text-center">
+                <p>While you were away for <strong id="offline-time-str">0 mins</strong>, your cardboard machines kept packing!</p>
+                <div class="offline-reward-box">
+                    <span class="reward-icon">🎁</span>
+                    <span id="offline-earned-boxes" class="reward-amount">+0 Boxes</span>
+                </div>
+                <button id="btn-claim-offline" class="action-btn-primary full-width">Claim Boxes & Resume</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RENAME BOX MODAL UI -->
+    <div id="modal-rename" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>📦 Rename Your Box</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="rename-preview">
+                    <img src="assets/box_clean.png" alt="Box Preview" class="rename-box-img">
+                </div>
+                <div class="rename-input-group">
+                    <input type="text" id="rename-box-input" class="custom-text-input" maxlength="24" placeholder="Enter new box name...">
+                </div>
+                <div class="name-suggestions">
+                    <span class="suggestions-label">Suggestions:</span>
+                    <button class="suggestion-tag" data-name="Buff Box">Buff Box</button>
+                    <button class="suggestion-tag" data-name="strongbox">🐸 strongbox (Secret)</button>
+                    <button class="suggestion-tag" data-name="Boxy McBoxface">Boxy McBoxface</button>
+                    <button class="suggestion-tag" data-name="Captain Cardboard">Captain Cardboard</button>
+                    <button class="suggestion-tag" data-name="Tape Titan">Tape Titan</button>
+                </div>
+                <div class="rename-modal-actions">
+                    <button id="btn-save-box-name" class="action-btn-primary full-width">✨ Save Box Name</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPECIAL CUSTOMER MODAL -->
+    <div id="modal-customer" class="modal-backdrop hidden">
+        <div class="modal-card modal-large">
+            <div class="modal-header">
+                <h2>🐸 Special Customer Trade</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="customer-profile-card">
+                    <img src="assets/customer.jpg" alt="Special Customer" class="customer-full-avatar">
+                    <div class="speech-bubble">
+                        "Yo! I need your boxes! Give me boxes and I'll trade you my <strong>SECRET EXCLUSIVE UPGRADES</strong> that nobody else has!"
+                    </div>
+                </div>
+
+                <hr class="modal-divider">
+
+                <h3>✨ Secret Trades Offered</h3>
+                <div id="customer-upgrades-list" class="shop-items-list upgrades-grid">
+                    <!-- Dynamic Special Customer Trades injected here -->
+                </div>
+
+                <div class="modal-footer" style="margin-top: 20px; text-align: center;">
+                    <button class="modal-close action-btn-secondary" style="padding: 10px 24px; font-weight: 700;">❌ Close Secret Shop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FREDDY JUMPSCARE OVERLAY -->
+    <div id="freddy-jumpscare-overlay" class="jumpscare-overlay hidden">
+        <div class="freddy-container">
+            <div class="freddy-face">🐻🍕</div>
+            <div class="jumpscare-text">BOO! FREDDY DROPPED A FREE AUTO CLICKER!</div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

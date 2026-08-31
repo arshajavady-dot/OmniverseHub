@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber High-Low: Neon Stakes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- HEADER -->
+    <header class="game-header">
+      <div class="title-block">
+        <h1 class="game-title">CYBER <span class="neon-amber">HIGH-LOW</span></h1>
+        <p class="game-subtitle">NEON DECISION PROTOCOL</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-lbl">CREDITS</span>
+          <span id="credits-val" class="stat-val text-amber">1,000</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">STREAK</span>
+          <span id="streak-val" class="stat-val text-cyan">x0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">POT</span>
+          <span id="pot-val" class="stat-val text-green">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- SOUND & CONTROL BAR -->
+    <div class="toolbar">
+      <div class="bet-selector">
+        <span class="bet-lbl">BET:</span>
+        <button class="bet-chip active" data-bet="50">50</button>
+        <button class="bet-chip" data-bet="100">100</button>
+        <button class="bet-chip" data-bet="250">250</button>
+        <button class="bet-chip" data-bet="500">500</button>
+      </div>
+      <button id="btn-sound" class="sound-toggle-btn">
+        <span>🔊</span> AUDIO
+      </button>
+    </div>
+
+    <!-- MAIN CARD TABLE -->
+    <div class="table-stage">
+      <div class="card-deck-area">
+        <!-- Current Card -->
+        <div class="card-slot current-slot">
+          <span class="slot-title">CURRENT CARD</span>
+          <div id="current-card" class="cyber-card card-glow-cyan">
+            <div class="card-corner top-left">
+              <span class="card-rank">7</span>
+              <span class="card-suit">🔷</span>
+            </div>
+            <div class="card-center">
+              <span class="card-large-icon">🔷</span>
+            </div>
+            <div class="card-corner bottom-right">
+              <span class="card-rank">7</span>
+              <span class="card-suit">🔷</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="vs-divider">
+          <span class="vs-icon">⚡</span>
+          <span id="multiplier-badge" class="mult-badge">1.5x</span>
+        </div>
+
+        <!-- Next / Mystery Card -->
+        <div class="card-slot next-slot">
+          <span class="slot-title">MYSTERY CARD</span>
+          <div id="next-card" class="cyber-card card-facedown">
+            <div class="card-back-pattern">
+              <span class="cyber-logo">⚛️</span>
+              <span class="back-text">CYBER-DECK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECISION CONTROLS -->
+      <div class="decision-buttons">
+        <button id="btn-higher" class="decision-btn btn-higher">
+          <span class="btn-icon">▲</span>
+          <span class="btn-text">HIGHER</span>
+          <span class="btn-sub">Rank > Current</span>
+        </button>
+
+        <button id="btn-lower" class="decision-btn btn-lower">
+          <span class="btn-icon">▼</span>
+          <span class="btn-text">LOWER</span>
+          <span class="btn-sub">Rank < Current</span>
+        </button>
+      </div>
+
+      <!-- CASH OUT OR DOUBLE DOWN -->
+      <div class="action-footer">
+        <button id="btn-cashout" class="cashout-btn" disabled>
+          💰 CASH OUT POT (<span id="cashout-val">0</span>)
+        </button>
+      </div>
+    </div>
+
+    <!-- RECENT HISTORY LOG -->
+    <div class="history-bar">
+      <span class="history-lbl">RECENT DRAWS:</span>
+      <div id="history-pills" class="history-pills">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

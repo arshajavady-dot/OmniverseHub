@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Subnautica Deep: Trench 99</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">DEPTH</span>
+        <span id="depth-val" class="hud-val text-cyan">-1,200m</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">ROUND</span>
+        <span id="round-val" class="hud-val text-pink">1</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LIVES</span>
+        <span id="lives-val" class="hud-val text-red">❤️❤️❤️</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">PROBES</span>
+        <span id="probes-val" class="hud-val text-amber">0 / 3 🔬</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- ABYSSAL SUB CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="abyssCanvas" width="460" height="460"></canvas>
+      </div>
+    </div>
+
+    <!-- SUB CONTROLS (SONAR PING & THRUSTERS) -->
+    <div class="controls-bar">
+      <button id="btn-sonar" class="action-sonar-btn">
+        <span>📡</span> SONAR PING (SPACE)
+      </button>
+      <div class="sub-dpad">
+        <button class="dpad-btn" data-dir="up">▲ (W)</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" data-dir="left">◀ (A)</button>
+          <button class="dpad-btn" data-dir="down">▼ (S)</button>
+          <button class="dpad-btn" data-dir="right">▶ (D)</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="instructions-footer">Pilot your submarine deeper into Trench 99. Fire <b>Sonar Pings</b> to spot abyssal leviathans in the pitch black before they breach your hull!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🌊🕳️</div>
+        <h2 id="modal-title" class="modal-title">HULL CRUSH FAILURE</h2>
+        <p id="modal-desc" class="modal-desc">The abyssal leviathan crushed your exploration sub.</p>
+        <div class="modal-stat-box">
+          <p>DEPTH REACHED: <span id="modal-depth" class="text-cyan">-1,200m</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">LAUNCH NEW SUBMERSIBLE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

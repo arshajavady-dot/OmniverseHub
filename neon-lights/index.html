@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Lights Out: Grid Breaker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- TOP HEADER -->
+    <header class="game-header">
+      <div class="title-block">
+        <h1 class="game-title">NEON <span class="neon-pink">LIGHTS OUT</span></h1>
+        <p class="game-subtitle">CYBER LOGIC GRID BREAKER</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-pill">
+          <span class="stat-lbl">STAGE</span>
+          <span id="stage-val" class="stat-val text-amber">1 / 25</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-lbl">MOVES</span>
+          <span id="moves-val" class="stat-val text-cyan">0</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-lbl">SCORE</span>
+          <span id="score-val" class="stat-val text-green">0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTROL TABS & TOOLS -->
+    <div class="mode-bar">
+      <div class="grid-size-selector">
+        <button class="size-btn active" data-size="3">3x3</button>
+        <button class="size-btn" data-size="4">4x4</button>
+        <button class="size-btn" data-size="5">5x5</button>
+      </div>
+      <div class="tool-btns">
+        <button id="btn-hint" class="tool-btn" title="Get Hint">
+          <span>💡</span> HINT (<span id="hint-count">3</span>)
+        </button>
+        <button id="btn-restart" class="tool-btn" title="Reset Level">
+          <span>🔄</span> RESET
+        </button>
+        <button id="btn-sound" class="tool-btn">
+          <span>🔊</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN LIGHTS PUZZLE BOARD -->
+    <div class="board-frame">
+      <div class="board-bezel">
+        <div id="lights-grid" class="lights-grid grid-3x3">
+          <!-- Dynamic neon nodes injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- GOAL DESCRIPTION -->
+    <div class="goal-card">
+      <p class="goal-text">🎯 <b>OBJECTIVE:</b> Deactivate all glowing neon nodes to black out the grid. Toggling a node flips itself and all adjacent nodes!</p>
+    </div>
+
+    <!-- VICTORY / STAGE CLEAR MODAL -->
+    <div id="modal-victory" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon">⚡</div>
+        <h2 class="modal-title">STAGE DEACTIVATED!</h2>
+        <p class="modal-desc">All quantum grid lines successfully severed.</p>
+        <div class="modal-metrics">
+          <p>Moves Used: <span id="modal-moves" class="text-cyan">0</span></p>
+          <p>Bonus Points: <span id="modal-bonus" class="text-amber">+500 PTS</span></p>
+        </div>
+        <div class="modal-actions">
+          <button id="btn-next-stage" class="modal-btn btn-primary">NEXT STAGE ➔</button>
+          <button id="btn-replay-stage" class="modal-btn btn-secondary">REPLAY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

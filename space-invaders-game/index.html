@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER INVADERS - Modern Retro Arcade Shooter</title>
+  <meta name="description" content="An action-packed retro-futuristic Space Invaders arcade shooter game built with HTML5 Canvas and Web Audio API. Features power-ups, boss fights, synth audio, and dynamic particle physics.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- CRT Scanline Effect Overlay -->
+  <div id="crt-overlay" class="crt-lines"></div>
+  <div id="vignette-overlay"></div>
+
+  <!-- Main Game Container -->
+  <div id="game-container">
+    
+    <!-- Canvas Viewport -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Dynamic In-Game HUD Overlay -->
+    <div id="hud-overlay" class="hud-layer hidden">
+      <div class="hud-top">
+        <div class="hud-box score-box">
+          <span class="hud-label">SCORE</span>
+          <span id="hud-score" class="hud-value glow-cyan">000,000</span>
+        </div>
+        
+        <div class="hud-box wave-box">
+          <span class="hud-label">WAVE</span>
+          <span id="hud-wave" class="hud-value glow-magenta">1</span>
+        </div>
+
+        <div class="hud-box multiplier-box">
+          <span class="hud-label">COMBO</span>
+          <span id="hud-combo" class="hud-value glow-yellow">x1.0</span>
+        </div>
+
+        <div class="hud-box highscore-box">
+          <span class="hud-label">HIGH SCORE</span>
+          <span id="hud-highscore" class="hud-value">000,000</span>
+        </div>
+      </div>
+
+      <!-- Boss Health Bar Container (Hidden until boss wave) -->
+      <div id="boss-health-container" class="boss-health-bar hidden">
+        <div class="boss-header">
+          <span id="boss-name" class="boss-title">ALERT: MOTHERSHIP DREADNOUGHT</span>
+          <span id="boss-hp-pct" class="boss-hp-val">100%</span>
+        </div>
+        <div class="boss-hp-track">
+          <div id="boss-hp-fill" class="boss-hp-fill"></div>
+        </div>
+      </div>
+
+      <!-- Bottom HUD Status -->
+      <div class="hud-bottom">
+        <div class="hud-status-group">
+          <!-- Shield Bar -->
+          <div class="status-meter-wrapper">
+            <span class="status-meter-label">SHIELD</span>
+            <div class="status-bar-track">
+              <div id="shield-bar-fill" class="status-bar-fill shield-fill" style="width: 100%;"></div>
+            </div>
+            <span id="shield-val" class="status-meter-text">100%</span>
+          </div>
+
+          <!-- Energy/Weapon Overheat Bar -->
+          <div class="status-meter-wrapper">
+            <span class="status-meter-label">ENERGY</span>
+            <div class="status-bar-track">
+              <div id="energy-bar-fill" class="status-bar-fill energy-fill" style="width: 100%;"></div>
+            </div>
+            <span id="energy-val" class="status-meter-text">100%</span>
+          </div>
+        </div>
+
+        <!-- Active Power-ups Status -->
+        <div class="hud-powerups-group">
+          <div id="active-weapon-badge" class="powerup-badge">WEAPON: PLASMA</div>
+        </div>
+
+        <!-- Lives Counter -->
+        <div class="hud-lives-box">
+          <span class="hud-label">LIVES</span>
+          <div id="lives-container" class="lives-icons">
+            <span class="life-icon">▲</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Pause Button -->
+      <button id="btn-quick-pause" class="btn-icon-pause" title="Pause Game (ESC)">❚❚</button>
+    </div>
+
+    <!-- MAIN MENU OVERLAY -->
+    <div id="menu-overlay" class="overlay-screen active">
+      <div class="menu-content glass-card">
+        <div class="title-container">
+          <h1 class="game-title glitch-text" data-text="CYBER INVADERS">CYBER INVADERS</h1>
+          <p class="subtitle">NEON ARCADE PROTOCOL v2.0</p>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-start-game" class="btn-primary glow-button">
+            <span class="btn-text">START MISSION</span>
+            <span class="btn-subtext">Defend Earth Orbit</span>
+          </button>
+
+          <button id="btn-leaderboard" class="btn-secondary">LEADERBOARD</button>
+          <button id="btn-controls" class="btn-secondary">HOW TO PLAY</button>
+          <button id="btn-settings" class="btn-secondary">SETTINGS</button>
+        </div>
+
+        <div class="menu-footer">
+          <p class="footer-tip">💡 TIP: Destroy mystery motherships to drop tactical power-ups!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY / CONTROLS MODAL -->
+    <div id="controls-overlay" class="overlay-screen hidden">
+      <div class="modal-card glass-card">
+        <h2>MISSION CONTROLS & MANUAL</h2>
+        
+        <div class="controls-grid">
+          <div class="control-item">
+            <span class="key-badge">W / A / S / D</span> <span class="key-or">or</span> <span class="key-badge">▲ / ◄ / ▼ / ►</span>
+            <span class="control-desc">8-Way Omnidirectional Flight (Up / Down / Left / Right)</span>
+          </div>
+          <div class="control-item">
+            <span class="key-badge">SPACE</span> <span class="key-or">or</span> <span class="key-badge">L-CLICK</span>
+            <span class="control-desc">Fire Primary Weapons</span>
+          </div>
+          <div class="control-item">
+            <span class="key-badge">SHIFT</span>
+            <span class="control-desc">Hyper-Dash / Tactical Evasion</span>
+          </div>
+          <div class="control-item">
+            <span class="key-badge">ESC / P</span>
+            <span class="control-desc">Pause Mission</span>
+          </div>
+          <div class="control-item">
+            <span class="key-badge">MOUSE / TOUCH</span>
+            <span class="control-desc">Full Cursor Flight & Touch Navigation</span>
+          </div>
+        </div>
+
+        <div class="powerups-guide">
+          <h3>TACTICAL POWER-UPS</h3>
+          <div class="powerup-icons-list">
+            <div class="p-item"><span class="p-icon color-spread">S</span> <span>Spread Shot</span></div>
+            <div class="p-item"><span class="p-icon color-laser">L</span> <span>Hyper Beam</span></div>
+            <div class="p-item"><span class="p-icon color-rocket">R</span> <span>Homing Rockets</span></div>
+            <div class="p-item"><span class="p-icon color-shield">+</span> <span>Shield Matrix</span></div>
+            <div class="p-item"><span class="p-icon color-slow">T</span> <span>Time Distortion</span></div>
+          </div>
+        </div>
+
+        <button id="btn-close-controls" class="btn-primary">BACK TO MENU</button>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD MODAL -->
+    <div id="leaderboard-overlay" class="overlay-screen hidden">
+      <div class="modal-card glass-card">
+        <h2>TOP DEFENDERS LEADERBOARD</h2>
+        <div id="leaderboard-list" class="leaderboard-table">
+          <!-- Populated dynamically -->
+        </div>
+        <button id="btn-close-leaderboard" class="btn-primary">BACK TO MENU</button>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-overlay" class="overlay-screen hidden">
+      <div class="modal-card glass-card">
+        <h2>GAME SETTINGS</h2>
+        
+        <div class="settings-form">
+          <div class="setting-row">
+            <label for="setting-sfx">SFX Volume</label>
+            <input type="range" id="setting-sfx" min="0" max="100" value="80">
+            <span id="sfx-val">80%</span>
+          </div>
+
+          <div class="setting-row">
+            <label for="setting-music">Synth BGM Volume</label>
+            <input type="range" id="setting-music" min="0" max="100" value="60">
+            <span id="music-val">60%</span>
+          </div>
+
+          <div class="setting-row">
+            <label for="setting-crt">Retro CRT Scanlines</label>
+            <input type="checkbox" id="setting-crt" checked>
+          </div>
+
+          <div class="setting-row">
+            <label for="setting-particles">High Quality FX Particles</label>
+            <input type="checkbox" id="setting-particles" checked>
+          </div>
+
+          <div class="setting-row">
+            <label for="setting-shake">Screen Shake</label>
+            <input type="checkbox" id="setting-shake" checked>
+          </div>
+        </div>
+
+        <button id="btn-close-settings" class="btn-primary">SAVE & CLOSE</button>
+      </div>
+    </div>
+
+    <!-- PAUSE MENU OVERLAY -->
+    <div id="pause-overlay" class="overlay-screen hidden">
+      <div class="menu-content glass-card">
+        <h2 class="pause-title">MISSION PAUSED</h2>
+        <div class="menu-actions">
+          <button id="btn-resume-game" class="btn-primary glow-button">RESUME MISSION</button>
+          <button id="btn-restart-game" class="btn-secondary">RESTART GAME</button>
+          <button id="btn-pause-settings" class="btn-secondary">SETTINGS</button>
+          <button id="btn-quit-to-menu" class="btn-secondary">QUIT TO MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAME OVER / VICTORY OVERLAY -->
+    <div id="gameover-overlay" class="overlay-screen hidden">
+      <div class="menu-content glass-card">
+        <h1 id="gameover-title" class="gameover-text glow-red">MISSION FAILED</h1>
+        <p id="gameover-subtitle" class="subtitle">Earth defenses compromised.</p>
+
+        <div class="stats-summary">
+          <div class="stat-row"><span>FINAL SCORE:</span> <strong id="go-score" class="glow-cyan">0</strong></div>
+          <div class="stat-row"><span>WAVES CLEARED:</span> <strong id="go-waves">0</strong></div>
+          <div class="stat-row"><span>ENEMIES DESTROYED:</span> <strong id="go-kills">0</strong></div>
+          <div class="stat-row"><span>ACCURACY:</span> <strong id="go-accuracy">0%</strong></div>
+          <div class="stat-row"><span>MAX COMBO:</span> <strong id="go-combo">x1.0</strong></div>
+        </div>
+
+        <div id="new-highscore-box" class="new-highscore-card hidden">
+          <span class="new-hs-label">★ NEW HIGH SCORE! ★</span>
+          <input type="text" id="player-name-input" maxlength="10" placeholder="ENTER CALLSIGN (e.g. ACE)" value="ACE">
+          <button id="btn-save-score" class="btn-save-score">SAVE SCORE</button>
+        </div>
+
+        <div class="menu-actions">
+          <button id="btn-play-again" class="btn-primary glow-button">PLAY AGAIN</button>
+          <button id="btn-go-main-menu" class="btn-secondary">MAIN MENU</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Single Game Bundle Script (Root Level for GitHub Pages Compatibility) -->
+  <script src="game.js"></script>
+</body>
+</html>

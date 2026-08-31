@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiteCraft - Fast Food Bistro & Crafter</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #1E1218;
+            --bg-card: rgba(45, 27, 36, 0.75);
+            --primary: #FF4757;
+            --primary-yellow: #FFA502;
+            --accent-green: #2ED573;
+            --accent-blue: #1E90FF;
+            --text-light: #FFF8F0;
+            --text-muted: #D1CCC0;
+            --font-head: 'Fredoka', cursive, sans-serif;
+            --font-body: 'Nunito', sans-serif;
+            --shadow-glow: 0 8px 32px 0 rgba(255, 71, 87, 0.25);
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: radial-gradient(circle at 50% 20%, #3A1C29 0%, #150B10 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- Header Navigation & Currency Bar --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: rgba(25, 12, 18, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid rgba(255, 165, 2, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-head);
+            font-size: 26px;
+            color: var(--primary-yellow);
+            text-shadow: 0 4px 12px rgba(255, 165, 2, 0.3);
+            cursor: pointer;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .coin-pill {
+            background: linear-gradient(135deg, #FFB92D, #FF8E00);
+            color: #2D1B00;
+            font-family: var(--font-head);
+            font-size: 20px;
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 142, 0, 0.4);
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 4px 15px rgba(255, 142, 0, 0.4); }
+            100% { box-shadow: 0 4px 25px rgba(255, 142, 0, 0.7); }
+        }
+
+        .btn-icon {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+            font-size: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.08);
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-tab {
+            padding: 10px 22px;
+            font-family: var(--font-head);
+            font-size: 16px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 18px rgba(255, 71, 87, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* --- Main Layout Views --- */
+        main {
+            flex: 1;
+            padding: 30px 40px;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.35s ease forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Home Dashboard View --- */
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.3), rgba(255, 165, 2, 0.2));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-banner h1 {
+            font-family: var(--font-head);
+            font-size: 44px;
+            margin-bottom: 12px;
+            color: #FFF;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .hero-banner p {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+
+        .craft-choice-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .craft-card {
+            background: var(--bg-card);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .craft-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 15px 35px rgba(255, 165, 2, 0.25);
+        }
+
+        .craft-card .food-icon-svg {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 16px;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.4));
+        }
+
+        .craft-card:hover .food-icon-svg {
+            transform: scale(1.12) rotate(5deg);
+        }
+
+        .craft-card h2 {
+            font-family: var(--font-head);
+            font-size: 30px;
+            margin-bottom: 10px;
+            color: var(--primary-yellow);
+        }
+
+        .craft-card p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 24px;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, var(--primary), #FF6B81);
+            color: white;
+            font-family: var(--font-head);
+            font-size: 18px;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(255, 71, 87, 0.6);
+        }
+
+        .btn-action.btn-secondary {
+            background: linear-gradient(135deg, var(--accent-green), #2ED573);
+            box-shadow: 0 6px 20px rgba(46, 213, 115, 0.4);
+        }
+
+        /* --- Kitchen Crafting Station --- */
+        .kitchen-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr 340px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .panel-title {
+            font-family: var(--font-head);
+            font-size: 22px;
+            color: var(--primary-yellow);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toppings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-height: 480px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .topping-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: grab;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .topping-btn:active {
+            cursor: grabbing;
+        }
+
+        .topping-btn:hover, .topping-btn.active-selected {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary-yellow);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(255, 165, 2, 0.3);
+        }
+
+        .topping-btn .svg-preview {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .topping-btn .name {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-light);
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .topping-btn .cost {
+            font-size: 12px;
+            color: var(--primary-yellow);
+            font-weight: 800;
+            margin-top: 2px;
+            pointer-events: none;
+        }
+
+        /* Food Viewport & Visual Stacker */
+        .cooking-canvas-panel {
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(255, 165, 2, 0.1) 0%, rgba(0,0,0,0) 70%);
+            border-radius: var(--radius-lg);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: border-color 0.2s ease;
+        }
+
+        .cooking-canvas-panel.drag-over {
+            border-color: var(--accent-green);
+            background: radial-gradient(circle at center, rgba(46, 213, 115, 0.2) 0%, rgba(0,0,0,0) 70%);
+        }
+
+        .food-plate {
+            width: 320px;
+            height: 350px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .plate-graphic {
+            position: absolute;
+            bottom: 10px;
+            width: 290px;
+            height: 35px;
+            background: radial-gradient(ellipse at center, #E0E0E0 0%, #B0B0B0 70%, #707070 100%);
+            border-radius: 50%;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.8);
+        }
+
+        /* Standard Burger Stack (Top-to-Bottom) */
+        .burger-builder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            bottom: 15px;
+            z-index: 10;
+        }
+
+        .topping-layer {
+            animation: dropIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-top: -24px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: center;
+        }
+
+        .topping-layer:first-child {
+            margin-top: 0;
+        }
+
+        /* Pizza Builder Canvas */
+        .pizza-builder {
+            width: 270px;
+            height: 270px;
+            background: radial-gradient(circle, #E8A858 60%, #C47A2C 100%);
+            border: 16px solid #A65D1A;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.4), 0 15px 30px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .pizza-sauce {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, #E74C3C 0%, #C0392B 100%);
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+
+        .pizza-cheese {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(254, 202, 87, 0.95) 0%, rgba(255, 159, 26, 0.9) 100%);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset 0 0 10px rgba(235, 77, 75, 0.5);
+            pointer-events: none;
+        }
+
+        .pizza-topping-item {
+            position: absolute;
+            animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.4));
+            pointer-events: none;
+        }
+
+        @keyframes dropIn {
+            0% { opacity: 0; transform: translateY(-60px) scale(1.2); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.2) rotate(-20deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+
+        /* Floating Drag Cursor Ghost */
+        .drag-floating-preview {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            transform: translate(-50%, -50%);
+            display: none;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+        }
+
+        /* Order Summary Panel */
+        .summary-list {
+            list-style: none;
+            max-height: 260px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .summary-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-item .remove-btn {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .summary-item .remove-btn:hover {
+            background: rgba(255, 71, 87, 0.2);
+        }
+
+        .price-breakdown {
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .price-row.total {
+            font-family: var(--font-head);
+            font-size: 20px;
+            color: var(--primary-yellow);
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            padding-top: 8px;
+        }
+
+        /* --- Food Naming Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-box {
+            background: #2D1B24;
+            border: 2px solid var(--primary-yellow);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            width: 440px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        .modal-box h2 {
+            font-family: var(--font-head);
+            color: var(--primary-yellow);
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius-md);
+            color: white;
+            font-family: var(--font-body);
+            font-size: 16px;
+            margin: 18px 0 24px;
+            outline: none;
+            text-align: center;
+        }
+
+        .modal-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px rgba(255, 71, 87, 0.5);
+        }
+
+        /* --- Food Collection View --- */
+        .collection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .food-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+
+        .food-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .food-card .badge-type {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .food-card .food-preview-svg {
+            width: 110px;
+            height: 110px;
+            margin: 15px 0;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .food-card h3 {
+            font-family: var(--font-head);
+            font-size: 20px;
+            color: var(--primary-yellow);
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .food-card .toppings-summary {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+
+        .food-card .card-footer {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 12px;
+            margin-top: auto;
+        }
+
+        /* --- Customer Selling Counter View --- */
+        .sell-counter-panel {
+            background: var(--bg-card);
+            border: 2px solid rgba(255, 165, 2, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 40px;
+            align-items: center;
+            position: relative;
+        }
+
+        .customer-avatar-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .customer-avatar-svg {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 12px;
+            animation: bounceIn 0.5s ease;
+        }
+
+        .customer-name {
+            font-family: var(--font-head);
+            font-size: 24px;
+            color: var(--primary-yellow);
+        }
+
+        .customer-bubble {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+            margin-bottom: 24px;
+            font-size: 18px;
+            line-height: 1.5;
+            border-left: 5px solid var(--primary);
+        }
+
+        .sell-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            max-height: 280px;
+            overflow-y: auto;
+            margin-bottom: 24px;
+            padding-right: 6px;
+        }
+
+        .sell-option-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sell-option-card:hover, .sell-option-card.selected {
+            background: rgba(46, 213, 115, 0.15);
+            border-color: var(--accent-green);
+            transform: scale(1.03);
+        }
+
+        /* --- Floating Coin Animations --- */
+        .coin-pop {
+            position: absolute;
+            font-family: var(--font-head);
+            font-size: 24px;
+            color: var(--primary-yellow);
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 1000;
+        }
+
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.4); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 999;
+        }
+
+        .toast {
+            background: rgba(30, 18, 24, 0.95);
+            border-left: 5px solid var(--accent-green);
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            animation: slideInRight 0.3s ease;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation & Stats Bar -->
+    <header>
+        <div class="logo" onclick="switchView('homeView')">
+            <svg viewBox="0 0 40 40" width="36" height="36">
+                <path d="M 5 22 Q 20 6 35 22 Z" fill="#FFA502"/>
+                <rect x="5" y="24" width="30" height="6" rx="3" fill="#8B4513"/>
+                <rect x="3" y="32" width="34" height="5" rx="2" fill="#E59849"/>
+            </svg>
+            <span>BiteCraft</span>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="switchView('homeView')">🏠 Kitchen</button>
+            <button class="nav-tab" onclick="switchView('collectionView')">📦 My Food (<span id="nav-count">0</span>)</button>
+            <button class="nav-tab" onclick="switchView('sellView')">🛒 Serve Customers</button>
+        </nav>
+
+        <div class="header-stats">
+            <div class="coin-pill">
+                🪙 <span id="coin-balance">50</span>
+            </div>
+            <button class="btn-icon" id="music-toggle-btn" title="Toggle Lo-Fi Chill Music">🎵</button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main>
+        <!-- 1. HOME DASHBOARD -->
+        <section id="homeView" class="view-section active">
+            <div class="hero-banner">
+                <h1>Welcome to BiteCraft Fast Food! 🍟</h1>
+                <p>Craft epic gourmet burgers and mouth-watering pizzas using custom fresh toppings. Name your masterpieces, store them in your pantry, and sell them to hungry customers!</p>
+            </div>
+
+            <div class="craft-choice-container">
+                <div class="craft-card" onclick="startCrafting('burger')">
+                    <div class="food-icon-svg" id="home-burger-icon"></div>
+                    <h2>Build a Burger</h2>
+                    <p>Stack grilled patties, melting cheese, crispy bacon, and fresh veggies on toasted sesame buns!</p>
+                    <button class="btn-action">Start Burger ➔</button>
+                </div>
+
+                <div class="craft-card" onclick="startCrafting('pizza')">
+                    <div class="food-icon-svg" id="home-pizza-icon"></div>
+                    <h2>Bake a Pizza</h2>
+                    <p>Stretch dough, spread marinara, layer mozzarella, pepperoni, bell peppers, and basil!</p>
+                    <button class="btn-action btn-secondary">Start Pizza ➔</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. KITCHEN CRAFTING STATION -->
+        <section id="kitchenView" class="view-section">
+            <div class="kitchen-grid">
+                <!-- Left: Available Toppings -->
+                <div class="panel-card">
+                    <div class="panel-title">
+                        <span>Select Toppings</span>
+                        <span style="font-size: 14px; color: var(--text-muted);" id="craft-type-label">BURGER</span>
+                    </div>
+                    <div class="toppings-grid" id="toppings-container">
+                        <!-- Dynamic topping buttons populate here -->
+                    </div>
+                </div>
+
+                <!-- Middle: Live Visual Food Stacker Canvas -->
+                <div class="cooking-canvas-panel" id="cooking-canvas-panel">
+                    <div class="food-plate">
+                        <div class="plate-graphic"></div>
+                        <div id="food-visual-stack"></div>
+                    </div>
+                    <div style="margin-top: 15px; font-family: var(--font-head); color: var(--primary-yellow); font-size: 16px;" id="kitchen-instruction-hint">
+                        ✋ Drag & drop toppings or click to add!
+                    </div>
+                </div>
+
+                <!-- Right: Summary & Checkout -->
+                <div class="panel-card">
+                    <div class="panel-title">Recipe Ingredients</div>
+                    <ul class="summary-list" id="ingredient-summary">
+                        <!-- Ingredient list items -->
+                    </ul>
+
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Base Cost:</span>
+                            <span>🪙 <span id="base-price">10</span></span>
+                        </div>
+                        <div class="price-row">
+                            <span>Toppings Cost:</span>
+                            <span>🪙 <span id="toppings-price">0</span></span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Total Cost:</span>
+                            <span>🪙 <span id="total-price">10</span></span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn-action" onclick="finishCreation()">Done & Name It! ✨</button>
+                        <button class="btn-action" style="background: rgba(255,255,255,0.1); box-shadow: none;" onclick="resetKitchen()">Clear Plate 🧹</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. COLLECTION VIEW -->
+        <section id="collectionView" class="view-section">
+            <div class="panel-title" style="margin-bottom: 24px; font-size: 32px;">
+                📦 Your Food Pantry
+            </div>
+            <div id="collection-grid" class="collection-grid">
+                <!-- Food items dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- 4. CUSTOMER SELLING COUNTER -->
+        <section id="sellView" class="view-section">
+            <div class="sell-counter-panel">
+                <div class="customer-avatar-box">
+                    <div class="customer-avatar-svg" id="customer-avatar-svg"></div>
+                    <div class="customer-name" id="customer-name">Satisfied Sam</div>
+                </div>
+
+                <div>
+                    <div class="customer-bubble" id="customer-speech">
+                        "Hey chef! I'm starving! Got any delicious customized food for me?"
+                    </div>
+
+                    <h3 style="font-family: var(--font-head); color: var(--primary-yellow); margin-bottom: 12px;">Choose food from your collection to sell:</h3>
+                    
+                    <div class="sell-select-grid" id="sell-food-selector">
+                        <!-- Selectable food cards -->
+                    </div>
+
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <button class="btn-action btn-secondary" id="btn-sell-confirm" onclick="confirmSale()" disabled>Sell Food 🪙</button>
+                        <button class="btn-action" style="background: rgba(255,255,255,0.1); box-shadow: none;" onclick="nextCustomer()">Next Customer ➔</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FLOATING DRAG CURSOR GHOST -->
+    <div id="drag-ghost" class="drag-floating-preview"></div>
+
+    <!-- NAMING MODAL -->
+    <div class="modal-overlay" id="namingModal">
+        <div class="modal-box">
+            <h2>Name Your Creation! 🏷️</h2>
+            <p style="color: var(--text-muted);">Give your masterpiece a cool name to store it in your collection.</p>
+            <input type="text" id="food-name-input" placeholder="e.g. Mega Cheese Monster" maxlength="25">
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="btn-action" onclick="saveNamedFood()">Save & Finish 🎉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        /* --- VECTOR SVG GRAPHICS GENERATORS --- */
+
+        const BURGER_SVGS = {
+            bunTop: () => `
+                <svg viewBox="0 0 200 65" width="200" height="65">
+                    <defs>
+                        <linearGradient id="bunTopGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#F39C12"/>
+                            <stop offset="50%" stop-color="#E67E22"/>
+                            <stop offset="100%" stop-color="#D35400"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M 10 60 C 10 5, 190 5, 190 60 Z" fill="url(#bunTopGrad)"/>
+                    <ellipse cx="60" cy="25" rx="3.5" ry="2" fill="#FFEAA7" transform="rotate(-15 60 25)"/>
+                    <ellipse cx="100" cy="18" rx="3.5" ry="2" fill="#FFEAA7"/>
+                    <ellipse cx="140" cy="25" rx="3.5" ry="2" fill="#FFEAA7" transform="rotate(15 140 25)"/>
+                    <ellipse cx="80" cy="40" rx="3.5" ry="2" fill="#FFEAA7" transform="rotate(10 80 40)"/>
+                    <ellipse cx="120" cy="38" rx="3.5" ry="2" fill="#FFEAA7" transform="rotate(-10 120 38)"/>
+                </svg>`,
+            bunBottom: () => `
+                <svg viewBox="0 0 200 35" width="200" height="35">
+                    <path d="M 15 5 L 185 5 Q 185 30 170 30 L 30 30 Q 15 30 15 5 Z" fill="#D35400"/>
+                    <rect x="18" y="2" width="164" height="6" rx="3" fill="#E67E22"/>
+                </svg>`,
+            patty: () => `
+                <svg viewBox="0 0 200 30" width="195" height="30">
+                    <rect x="10" y="2" width="180" height="26" rx="13" fill="#4A2511"/>
+                    <line x1="40" y1="5" x2="58" y2="25" stroke="#2B1408" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="80" y1="5" x2="98" y2="25" stroke="#2B1408" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="120" y1="5" x2="138" y2="25" stroke="#2B1408" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="160" y1="5" x2="175" y2="22" stroke="#2B1408" stroke-width="4" stroke-linecap="round"/>
+                </svg>`,
+            cheese: () => `
+                <svg viewBox="0 0 200 32" width="200" height="32">
+                    <path d="M 5 5 L 195 5 L 185 28 L 170 12 L 150 28 L 130 10 L 100 28 L 70 8 L 40 28 L 15 10 Z" fill="#F1C40F"/>
+                </svg>`,
+            bacon: () => `
+                <svg viewBox="0 0 200 24" width="190" height="24">
+                    <path d="M 10 12 Q 35 2 60 12 T 110 12 T 160 12 T 190 12" fill="none" stroke="#C0392B" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M 10 12 Q 35 2 60 12 T 110 12 T 160 12 T 190 12" fill="none" stroke="#F8C291" stroke-width="3" stroke-linecap="round"/>
+                </svg>`,
+            lettuce: () => `
+                <svg viewBox="0 0 200 28" width="205" height="28">
+                    <path d="M 5 14 Q 20 2 35 14 T 65 14 T 95 14 T 125 14 T 155 14 T 195 14 Q 180 27 100 26 Q 20 27 5 14 Z" fill="#2ED573"/>
+                    <path d="M 15 14 Q 40 4 80 14 T 160 14" fill="none" stroke="#7BED9F" stroke-width="2.5"/>
+                </svg>`,
+            tomato: () => `
+                <svg viewBox="0 0 200 24" width="190" height="24">
+                    <rect x="15" y="2" width="75" height="20" rx="10" fill="#EB4D4B"/>
+                    <rect x="110" y="2" width="75" height="20" rx="10" fill="#EB4D4B"/>
+                    <circle cx="52" cy="12" r="3.5" fill="#FF7979"/>
+                    <circle cx="147" cy="12" r="3.5" fill="#FF7979"/>
+                </svg>`,
+            onion: () => `
+                <svg viewBox="0 0 200 24" width="190" height="24">
+                    <path d="M 25 12 Q 100 2 175 12 Q 100 22 25 12 Z" fill="none" stroke="#8E44AD" stroke-width="7" stroke-linecap="round"/>
+                    <path d="M 35 12 Q 100 5 165 12 Q 100 19 35 12 Z" fill="none" stroke="#D6A2E8" stroke-width="2.5"/>
+                </svg>`,
+            pickle: () => `
+                <svg viewBox="0 0 200 24" width="180" height="24">
+                    <ellipse cx="55" cy="12" rx="32" ry="9" fill="#10AC84"/>
+                    <ellipse cx="55" cy="12" rx="22" ry="5.5" fill="#1DD1A1"/>
+                    <ellipse cx="145" cy="12" rx="32" ry="9" fill="#10AC84"/>
+                    <ellipse cx="145" cy="12" rx="22" ry="5.5" fill="#1DD1A1"/>
+                </svg>`,
+            egg: () => `
+                <svg viewBox="0 0 200 28" width="190" height="28">
+                    <path d="M 20 14 Q 40 2 100 4 Q 170 2 180 16 Q 160 27 90 26 Q 20 27 20 14 Z" fill="#F5F6FA"/>
+                    <circle cx="100" cy="13" r="10" fill="#FFA502"/>
+                    <circle cx="96" cy="10" r="3" fill="#FFF" opacity="0.7"/>
+                </svg>`,
+            mushroom: () => `
+                <svg viewBox="0 0 200 24" width="180" height="24">
+                    <path d="M 40 18 C 40 4 75 4 75 18 Z" fill="#D1CCC0"/>
+                    <path d="M 125 18 C 125 4 160 4 160 18 Z" fill="#D1CCC0"/>
+                    <rect x="52" y="16" width="10" height="7" rx="2" fill="#F5F6FA"/>
+                    <rect x="137" y="16" width="10" height="7" rx="2" fill="#F5F6FA"/>
+                </svg>`
+        };
+
+        const PIZZA_TOPPING_SVGS = {
+            pepperoni: () => `
+                <svg viewBox="0 0 36 36" width="34" height="34">
+                    <circle cx="18" cy="18" r="16" fill="#C0392B"/>
+                    <circle cx="18" cy="18" r="14" fill="#E74C3C"/>
+                    <circle cx="11" cy="13" r="1.8" fill="#F8C291"/>
+                    <circle cx="23" cy="22" r="1.5" fill="#F8C291"/>
+                    <circle cx="20" cy="10" r="1.5" fill="#F8C291"/>
+                </svg>`,
+            mozzarella: () => `
+                <svg viewBox="0 0 36 36" width="34" height="34">
+                    <ellipse cx="18" cy="18" rx="14" ry="10" fill="#FFF8F0"/>
+                    <ellipse cx="15" cy="15" rx="10" ry="7" fill="#FFFFFF"/>
+                </svg>`,
+            mushroom: () => `
+                <svg viewBox="0 0 36 36" width="32" height="32">
+                    <path d="M 6 20 C 6 6 30 6 30 20 Z" fill="#D1CCC0"/>
+                    <rect x="14" y="18" width="8" height="9" fill="#F5F6FA" rx="2"/>
+                </svg>`,
+            pepper: () => `
+                <svg viewBox="0 0 36 36" width="34" height="34">
+                    <path d="M 6 18 Q 18 4 30 18 Q 18 10 6 18 Z" fill="#10AC84"/>
+                    <path d="M 10 22 Q 18 10 26 22 Q 18 16 10 22 Z" fill="#1DD1A1"/>
+                </svg>`,
+            olives: () => `
+                <svg viewBox="0 0 32 32" width="30" height="30">
+                    <circle cx="16" cy="16" r="14" fill="#2D3436"/>
+                    <circle cx="16" cy="16" r="6" fill="#636E72"/>
+                    <circle cx="16" cy="16" r="4" fill="#1E1218"/>
+                </svg>`,
+            pineapple: () => `
+                <svg viewBox="0 0 34 34" width="32" height="32">
+                    <path d="M 5 7 L 29 7 L 23 27 L 11 27 Z" fill="#F1C40F"/>
+                    <path d="M 9 11 L 25 11 L 21 23 L 13 23 Z" fill="#F39C12"/>
+                </svg>`,
+            jalapeno: () => `
+                <svg viewBox="0 0 34 34" width="32" height="32">
+                    <circle cx="17" cy="17" r="14" fill="#009432"/>
+                    <circle cx="17" cy="17" r="8" fill="#44BD32"/>
+                    <circle cx="13" cy="17" r="2" fill="#EA8685"/>
+                    <circle cx="21" cy="17" r="2" fill="#EA8685"/>
+                </svg>`,
+            basil: () => `
+                <svg viewBox="0 0 34 34" width="32" height="32">
+                    <path d="M 17 3 Q 30 17 17 31 Q 4 17 17 3 Z" fill="#26DE81"/>
+                    <path d="M 17 3 L 17 31" stroke="#20BF6B" stroke-width="2"/>
+                </svg>`
+        };
+
+        const CUSTOMER_SVGS = {
+            harry: `
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FFC048"/>
+                    <circle cx="35" cy="40" r="6" fill="#2D3436"/>
+                    <circle cx="65" cy="40" r="6" fill="#2D3436"/>
+                    <path d="M 30 65 Q 50 85 70 65 Z" fill="#D63031"/>
+                    <path d="M 68 66 Q 78 78 60 78 Z" fill="#FF7979"/>
+                </svg>`,
+            penelope: `
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#FF7856"/>
+                    <path d="M 28 42 Q 35 32 42 42" fill="none" stroke="#2D3436" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 58 42 Q 65 32 72 42" fill="none" stroke="#2D3436" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M 35 60 Q 50 78 65 60 Z" fill="#FFF"/>
+                </svg>`,
+            gabe: `
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#54A0FF"/>
+                    <circle cx="35" cy="40" r="8" fill="none" stroke="#FFF" stroke-width="3"/>
+                    <circle cx="65" cy="40" r="8" fill="none" stroke="#FFF" stroke-width="3"/>
+                    <line x1="43" y1="40" x2="57" y2="40" stroke="#FFF" stroke-width="3"/>
+                    <path d="M 38 65 Q 50 55 62 65" fill="none" stroke="#FFF" stroke-width="4" stroke-linecap="round"/>
+                </svg>`,
+            sam: `
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="#1DD1A1"/>
+                    <polygon points="30,38 42,42 32,46" fill="#2D3436"/>
+                    <polygon points="70,38 58,42 68,46" fill="#2D3436"/>
+                    <path d="M 35 62 Q 50 75 65 62" fill="none" stroke="#2D3436" stroke-width="5" stroke-linecap="round"/>
+                </svg>`
+        };
+
+        /* --- GAME STATE & CONSTANTS --- */
+        let state = {
+            coins: 50,
+            collection: [],
+            currentCraft: null,
+            selectedFoodToSell: null,
+            currentCustomer: null,
+            musicPlaying: false,
+            grabbedTopping: null
+        };
+
+        const BURGER_TOPPINGS = [
+            { id: 'patty', name: 'Beef Patty', cost: 6, svgKey: 'patty' },
+            { id: 'cheese', name: 'Cheddar Cheese', cost: 4, svgKey: 'cheese' },
+            { id: 'bacon', name: 'Crispy Bacon', cost: 5, svgKey: 'bacon' },
+            { id: 'lettuce', name: 'Fresh Lettuce', cost: 2, svgKey: 'lettuce' },
+            { id: 'tomato', name: 'Sliced Tomato', cost: 3, svgKey: 'tomato' },
+            { id: 'onion', name: 'Red Onion', cost: 2, svgKey: 'onion' },
+            { id: 'pickle', name: 'Pickles', cost: 2, svgKey: 'pickle' },
+            { id: 'egg', name: 'Fried Egg', cost: 4, svgKey: 'egg' },
+            { id: 'mushroom', name: 'Sauteed Mushroom', cost: 3, svgKey: 'mushroom' }
+        ];
+
+        const PIZZA_TOPPINGS = [
+            { id: 'mozzarella', name: 'Extra Cheese', cost: 4, svgKey: 'mozzarella' },
+            { id: 'pepperoni', name: 'Pepperoni', cost: 5, svgKey: 'pepperoni' },
+            { id: 'mushroom', name: 'Mushrooms', cost: 3, svgKey: 'mushroom' },
+            { id: 'pepper', name: 'Bell Pepper', cost: 3, svgKey: 'pepper' },
+            { id: 'olives', name: 'Black Olives', cost: 2, svgKey: 'olives' },
+            { id: 'pineapple', name: 'Pineapple', cost: 3, svgKey: 'pineapple' },
+            { id: 'jalapeno', name: 'Jalapeños', cost: 3, svgKey: 'jalapeno' },
+            { id: 'basil', name: 'Fresh Basil', cost: 2, svgKey: 'basil' }
+        ];
+
+        const CUSTOMERS = [
+            { name: 'Hungry Harry', svgKey: 'harry', preference: 'burger', quote: 'I love giant stacked burgers!' },
+            { name: 'Pizza Penelope', svgKey: 'penelope', preference: 'pizza', quote: 'Nothing beats a fresh baked pizza!' },
+            { name: 'Gourmet Gabe', svgKey: 'gabe', preference: 'any', quote: 'I only buy items with 3 or more toppings!' },
+            { name: 'Speedy Sam', svgKey: 'sam', preference: 'any', quote: 'Give me anything quick and tasty!' }
+        ];
+
+        /* --- AUDIO SYNTHESIS --- */
+        let audioCtx = null;
+        let musicInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'add') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now);
+                osc.stop(now + 0.1);
+            } else if (type === 'coin') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(987.77, now);
+                osc.frequency.setValueAtTime(1318.51, now + 0.08);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'sell') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+                osc.start(now);
+                osc.stop(now + 0.35);
+            }
+        }
+
+        function toggleMusic() {
+            initAudio();
+            state.musicPlaying = !state.musicPlaying;
+            const btn = document.getElementById('music-toggle-btn');
+            
+            if (state.musicPlaying) {
+                btn.style.background = 'var(--accent-green)';
+                showToast("🎵 Playing Chill Lo-Fi Beats");
+                
+                const chords = [
+                    [261.63, 329.63, 392.00, 493.88],
+                    [220.00, 261.63, 329.63, 392.00],
+                    [174.61, 220.00, 261.63, 329.63],
+                    [196.00, 246.94, 293.66, 349.23]
+                ];
+                let chordIdx = 0;
+
+                musicInterval = setInterval(() => {
+                    if (!state.musicPlaying) return;
+                    const chord = chords[chordIdx % chords.length];
+                    chordIdx++;
+
+                    chord.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.value = freq;
+                        gain.gain.setValueAtTime(0.03, audioCtx.currentTime + i * 0.05);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.8);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(audioCtx.currentTime + i * 0.05);
+                        osc.stop(audioCtx.currentTime + 1.8);
+                    });
+                }, 2200);
+            } else {
+                btn.style.background = 'rgba(255,255,255,0.1)';
+                if (musicInterval) clearInterval(musicInterval);
+                showToast("🔇 Music Muted");
+            }
+        }
+
+        document.getElementById('music-toggle-btn').addEventListener('click', toggleMusic);
+
+        /* --- INITIALIZATION --- */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Set home icons
+            document.getElementById('home-burger-icon').innerHTML = BURGER_SVGS.bunTop() + BURGER_SVGS.patty() + BURGER_SVGS.cheese() + BURGER_SVGS.bunBottom();
+            document.getElementById('home-pizza-icon').innerHTML = `
+                <svg viewBox="0 0 120 120" width="120" height="120">
+                    <circle cx="60" cy="60" r="54" fill="#C47A2C"/>
+                    <circle cx="60" cy="60" r="44" fill="#D63031"/>
+                    <circle cx="60" cy="60" r="40" fill="#FECA57"/>
+                    <circle cx="45" cy="45" r="7" fill="#C0392B"/>
+                    <circle cx="75" cy="55" r="7" fill="#C0392B"/>
+                    <circle cx="55" cy="75" r="7" fill="#C0392B"/>
+                </svg>`;
+
+            setupDragAndDropListeners();
+            loadLocalData();
+            updateUI();
+            nextCustomer();
+        });
+
+        function loadLocalData() {
+            const savedCoins = localStorage.getItem('bitecraft_coins');
+            const savedCollection = localStorage.getItem('bitecraft_collection');
+            if (savedCoins !== null) state.coins = parseInt(savedCoins);
+            if (savedCollection !== null) state.collection = JSON.parse(savedCollection);
+        }
+
+        function saveData() {
+            localStorage.setItem('bitecraft_coins', state.coins);
+            localStorage.setItem('bitecraft_collection', JSON.stringify(state.collection));
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('coin-balance').textContent = state.coins;
+            document.getElementById('nav-count').textContent = state.collection.length;
+            renderCollection();
+        }
+
+        /* --- NAVIGATION --- */
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            
+            if (viewId === 'homeView') document.querySelectorAll('.nav-tab')[0].classList.add('active');
+            if (viewId === 'collectionView') document.querySelectorAll('.nav-tab')[1].classList.add('active');
+            if (viewId === 'sellView') {
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+                renderSellSelector();
+            }
+        }
+
+        /* --- DRAG AND DROP & GRAB HANDLERS --- */
+        function setupDragAndDropListeners() {
+            const canvasPanel = document.getElementById('cooking-canvas-panel');
+            const ghost = document.getElementById('drag-ghost');
+
+            canvasPanel.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                canvasPanel.classList.add('drag-over');
+            });
+
+            canvasPanel.addEventListener('dragleave', () => {
+                canvasPanel.classList.remove('drag-over');
+            });
+
+            canvasPanel.addEventListener('drop', (e) => {
+                e.preventDefault();
+                canvasPanel.classList.remove('drag-over');
+
+                if (!state.grabbedTopping) return;
+
+                if (state.currentCraft.type === 'pizza') {
+                    const pizzaElem = document.querySelector('.pizza-builder');
+                    if (pizzaElem) {
+                        const rect = pizzaElem.getBoundingClientRect();
+                        const x = e.clientX - rect.left - (rect.width / 2);
+                        const y = e.clientY - rect.top - (rect.height / 2);
+                        addToppingAtPosition(state.grabbedTopping, x, y);
+                    } else {
+                        addTopping(state.grabbedTopping);
+                    }
+                } else {
+                    addTopping(state.grabbedTopping);
+                }
+
+                state.grabbedTopping = null;
+                ghost.style.display = 'none';
+            });
+
+            // Follow mouse for grabbed toppings
+            window.addEventListener('mousemove', (e) => {
+                if (state.grabbedTopping) {
+                    ghost.style.left = `${e.clientX}px`;
+                    ghost.style.top = `${e.clientY}px`;
+                }
+            });
+        }
+
+        /* --- KITCHEN CRAFTING LOGIC --- */
+        function startCrafting(type) {
+            state.currentCraft = {
+                type: type,
+                toppings: [],
+                baseCost: type === 'burger' ? 10 : 12
+            };
+
+            document.getElementById('craft-type-label').textContent = type.toUpperCase();
+            document.getElementById('base-price').textContent = state.currentCraft.baseCost;
+
+            const hint = document.getElementById('kitchen-instruction-hint');
+            if (type === 'pizza') {
+                hint.textContent = "🍕 Drag toppings & drop anywhere on the pizza dough!";
+            } else {
+                hint.textContent = "🍔 Drag or click toppings to stack your burger!";
+            }
+
+            const container = document.getElementById('toppings-container');
+            container.innerHTML = '';
+            
+            const list = type === 'burger' ? BURGER_TOPPINGS : PIZZA_TOPPINGS;
+            list.forEach(topping => {
+                const btn = document.createElement('div');
+                btn.className = 'topping-btn';
+                btn.draggable = true;
+                
+                const svgContent = type === 'burger' ? BURGER_SVGS[topping.svgKey]() : PIZZA_TOPPING_SVGS[topping.svgKey]();
+
+                btn.ondragstart = (e) => {
+                    state.grabbedTopping = topping;
+                    const ghost = document.getElementById('drag-ghost');
+                    ghost.innerHTML = svgContent;
+                    ghost.style.display = 'block';
+                };
+
+                btn.onclick = () => {
+                    addTopping(topping);
+                };
+
+                btn.innerHTML = `
+                    <div class="svg-preview">${svgContent}</div>
+                    <div class="name">${topping.name}</div>
+                    <div class="cost">🪙 ${topping.cost}</div>
+                `;
+                container.appendChild(btn);
+            });
+
+            renderKitchenStack();
+            switchView('kitchenView');
+        }
+
+        function addTopping(topping) {
+            addToppingAtPosition(topping, 0, 0);
+        }
+
+        function addToppingAtPosition(topping, customX, customY) {
+            const currentTotal = state.currentCraft.baseCost + state.currentCraft.toppings.reduce((a,b) => a + b.cost, 0);
+            if (state.coins < currentTotal + topping.cost) {
+                showToast("⚠️ Not enough coins for this topping!");
+                return;
+            }
+
+            // Clamping position within pizza circle boundary
+            let posX = customX;
+            let posY = customY;
+            const dist = Math.hypot(posX, posY);
+            if (dist > 95) {
+                const scale = 95 / dist;
+                posX *= scale;
+                posY *= scale;
+            }
+
+            state.currentCraft.toppings.push({
+                ...topping,
+                posX: posX,
+                posY: posY
+            });
+            
+            playSound('add');
+            renderKitchenStack();
+        }
+
+        function removeTopping(index) {
+            state.currentCraft.toppings.splice(index, 1);
+            renderKitchenStack();
+        }
+
+        function resetKitchen() {
+            state.currentCraft.toppings = [];
+            renderKitchenStack();
+        }
+
+        function renderKitchenStack() {
+            const visual = document.getElementById('food-visual-stack');
+            const summary = document.getElementById('ingredient-summary');
+            visual.innerHTML = '';
+            summary.innerHTML = '';
+
+            let toppingsCost = 0;
+
+            if (state.currentCraft.type === 'burger') {
+                // FIXED BURGER BUILDING: Standard Top-To-Bottom Flow
+                const burgerContainer = document.createElement('div');
+                burgerContainer.className = 'burger-builder';
+
+                // 1. Top Bun
+                const topBun = document.createElement('div');
+                topBun.className = 'topping-layer';
+                topBun.innerHTML = BURGER_SVGS.bunTop();
+                burgerContainer.appendChild(topBun);
+
+                // 2. Toppings in Top-to-Bottom order
+                const toppingsCopy = [...state.currentCraft.toppings].reverse();
+                toppingsCopy.forEach(t => {
+                    const layer = document.createElement('div');
+                    layer.className = 'topping-layer';
+                    layer.innerHTML = BURGER_SVGS[t.svgKey]();
+                    burgerContainer.appendChild(layer);
+                });
+
+                // 3. Bottom Bun
+                const botBun = document.createElement('div');
+                botBun.className = 'topping-layer';
+                botBun.innerHTML = BURGER_SVGS.bunBottom();
+                burgerContainer.appendChild(botBun);
+
+                visual.appendChild(burgerContainer);
+            } else {
+                // Pizza Builder with Interactive Drag & Drop Canvas
+                const pizza = document.createElement('div');
+                pizza.className = 'pizza-builder';
+                pizza.innerHTML = `<div class="pizza-sauce"></div><div class="pizza-cheese"></div>`;
+
+                // Allow clicking anywhere on pizza to place grabbed topping
+                pizza.onclick = (e) => {
+                    if (state.grabbedTopping) {
+                        const rect = pizza.getBoundingClientRect();
+                        const x = e.clientX - rect.left - (rect.width / 2);
+                        const y = e.clientY - rect.top - (rect.height / 2);
+                        addToppingAtPosition(state.grabbedTopping, x, y);
+                    }
+                };
+
+                state.currentCraft.toppings.forEach((t, i) => {
+                    const topItem = document.createElement('div');
+                    topItem.className = 'pizza-topping-item';
+                    topItem.innerHTML = PIZZA_TOPPING_SVGS[t.svgKey]();
+                    
+                    // Use custom placed position or fallback to radial scatter
+                    let x = t.posX;
+                    let y = t.posY;
+                    if (!x && !y && x !== 0) {
+                        const angle = (i * 72) % 360;
+                        const dist = 20 + (i * 14) % 65;
+                        x = Math.cos(angle * Math.PI / 180) * dist;
+                        y = Math.sin(angle * Math.PI / 180) * dist;
+                    }
+                    
+                    topItem.style.transform = `translate(${x}px, ${y}px)`;
+                    pizza.appendChild(topItem);
+                });
+
+                visual.appendChild(pizza);
+            }
+
+            // Recipe Summary List
+            state.currentCraft.toppings.forEach((t, idx) => {
+                toppingsCost += t.cost;
+                const iconSvg = state.currentCraft.type === 'burger' ? BURGER_SVGS[t.svgKey]() : PIZZA_TOPPING_SVGS[t.svgKey]();
+
+                const item = document.createElement('li');
+                item.className = 'summary-item';
+                item.innerHTML = `
+                    <div class="summary-item-left">
+                        <div style="width: 24px; height: 24px; display:flex; align-items:center;">${iconSvg}</div>
+                        <span>${t.name}</span>
+                    </div>
+                    <div>
+                        <span>🪙 ${t.cost}</span>
+                        <span class="remove-btn" onclick="removeTopping(${idx})">✖</span>
+                    </div>
+                `;
+                summary.appendChild(item);
+            });
+
+            const total = state.currentCraft.baseCost + toppingsCost;
+            document.getElementById('toppings-price').textContent = toppingsCost;
+            document.getElementById('total-price').textContent = total;
+        }
+
+        /* --- NAMING & SAVING --- */
+        function finishCreation() {
+            if (state.currentCraft.toppings.length === 0) {
+                showToast("⚠️ Add at least 1 topping to your creation!");
+                return;
+            }
+
+            const totalCost = state.currentCraft.baseCost + state.currentCraft.toppings.reduce((a,b) => a + b.cost, 0);
+            if (state.coins < totalCost) {
+                showToast("❌ You don't have enough coins to complete this order!");
+                return;
+            }
+
+            document.getElementById('food-name-input').value = `${state.currentCraft.type === 'burger' ? 'Deluxe Burger' : 'Supreme Pizza'}`;
+            document.getElementById('namingModal').classList.add('active');
+        }
+
+        function saveNamedFood() {
+            const nameInput = document.getElementById('food-name-input').value.trim();
+            const finalName = nameInput || (state.currentCraft.type === 'burger' ? 'Classic Burger' : 'Tasty Pizza');
+
+            const toppingsCost = state.currentCraft.toppings.reduce((a,b) => a + b.cost, 0);
+            const totalCost = state.currentCraft.baseCost + toppingsCost;
+            const sellPrice = Math.round(totalCost * 1.6 + 5);
+
+            state.coins -= totalCost;
+            playSound('coin');
+
+            const newItem = {
+                id: Date.now(),
+                name: finalName,
+                type: state.currentCraft.type,
+                toppings: [...state.currentCraft.toppings],
+                cost: totalCost,
+                sellPrice: sellPrice
+            };
+
+            state.collection.push(newItem);
+            saveData();
+
+            document.getElementById('namingModal').classList.remove('active');
+            showToast(`🎉 Created "${finalName}"!`);
+            switchView('collectionView');
+        }
+
+        /* --- PANTRY COLLECTION RENDERING --- */
+        function renderCollection() {
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = '';
+
+            if (state.collection.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-muted);">
+                        <div style="font-size: 60px; margin-bottom: 10px;">📦</div>
+                        <h3>Your food pantry is empty!</h3>
+                        <p>Go to the kitchen to build awesome burgers & pizzas.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            state.collection.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'food-card';
+                
+                const toppingsStr = item.toppings.map(t => t.name).join(', ');
+                
+                let illustrationSvg = '';
+                if (item.type === 'burger') {
+                    illustrationSvg = `
+                        <svg viewBox="0 0 100 80" width="90" height="72">
+                            <path d="M 10 30 C 10 5, 90 5, 90 30 Z" fill="#F39C12"/>
+                            <rect x="8" y="32" width="84" height="12" rx="6" fill="#F1C40F"/>
+                            <rect x="12" y="46" width="76" height="14" rx="7" fill="#4A2511"/>
+                            <path d="M 15 62 L 85 62 Q 85 75 75 75 L 25 75 Q 15 75 15 62 Z" fill="#D35400"/>
+                        </svg>`;
+                } else {
+                    illustrationSvg = `
+                        <svg viewBox="0 0 90 90" width="80" height="80">
+                            <circle cx="45" cy="45" r="40" fill="#C47A2C"/>
+                            <circle cx="45" cy="45" r="32" fill="#D63031"/>
+                            <circle cx="45" cy="45" r="28" fill="#FECA57"/>
+                            <circle cx="35" cy="35" r="5" fill="#C0392B"/>
+                            <circle cx="55" cy="42" r="5" fill="#C0392B"/>
+                            <circle cx="42" cy="58" r="5" fill="#C0392B"/>
+                        </svg>`;
+                }
+
+                card.innerHTML = `
+                    <span class="badge-type">${item.type.toUpperCase()}</span>
+                    <div class="food-preview-svg">${illustrationSvg}</div>
+                    <h3>${item.name}</h3>
+                    <div class="toppings-summary">${toppingsStr}</div>
+                    <div class="card-footer">
+                        <span style="color: var(--text-muted); font-size: 13px;">Cost: 🪙 ${item.cost}</span>
+                        <span style="color: var(--accent-green); font-weight: 800; font-size: 16px;">Value: 🪙 ${item.sellPrice}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        /* --- CUSTOMER COUNTER --- */
+        function nextCustomer() {
+            const randomCust = CUSTOMERS[Math.floor(Math.random() * CUSTOMERS.length)];
+            state.currentCustomer = randomCust;
+
+            document.getElementById('customer-avatar-svg').innerHTML = CUSTOMER_SVGS[randomCust.svgKey];
+            document.getElementById('customer-name').textContent = randomCust.name;
+            document.getElementById('customer-speech').textContent = `"${randomCust.quote}"`;
+
+            state.selectedFoodToSell = null;
+            document.getElementById('btn-sell-confirm').disabled = true;
+            renderSellSelector();
+        }
+
+        function renderSellSelector() {
+            const container = document.getElementById('sell-food-selector');
+            container.innerHTML = '';
+
+            if (state.collection.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; color: var(--text-muted);">You have no created food in your pantry to sell! Craft some first.</div>`;
+                return;
+            }
+
+            state.collection.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'sell-option-card';
+                card.onclick = () => selectFoodToSell(item, card);
+                
+                let miniSvg = item.type === 'burger' ? `
+                    <svg viewBox="0 0 60 50" width="40" height="34">
+                        <path d="M 5 20 C 5 2, 55 2, 55 20 Z" fill="#F39C12"/>
+                        <rect x="6" y="22" width="48" height="8" rx="4" fill="#4A2511"/>
+                        <path d="M 10 32 L 50 32 Q 50 42 40 42 L 20 42 Q 10 42 10 32 Z" fill="#D35400"/>
+                    </svg>` : `
+                    <svg viewBox="0 0 50 50" width="36" height="36">
+                        <circle cx="25" cy="25" r="22" fill="#C47A2C"/>
+                        <circle cx="25" cy="25" r="16" fill="#FECA57"/>
+                        <circle cx="20" cy="20" r="3" fill="#C0392B"/>
+                        <circle cx="30" cy="28" r="3" fill="#C0392B"/>
+                    </svg>`;
+
+                card.innerHTML = `
+                    <div style="margin-bottom: 6px;">${miniSvg}</div>
+                    <div style="font-weight: 700; font-size: 15px;">${item.name}</div>
+                    <div style="color: var(--accent-green); font-weight: 800; font-size: 14px;">Sell for 🪙 ${item.sellPrice}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function selectFoodToSell(item, element) {
+            document.querySelectorAll('.sell-option-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+            state.selectedFoodToSell = item;
+            document.getElementById('btn-sell-confirm').disabled = false;
+        }
+
+        function confirmSale() {
+            if (!state.selectedFoodToSell) return;
+
+            const item = state.selectedFoodToSell;
+            
+            let bonus = 0;
+            if (state.currentCustomer.preference === item.type || state.currentCustomer.preference === 'any') {
+                bonus = 5;
+            }
+
+            const totalEarned = item.sellPrice + bonus;
+            state.coins += totalEarned;
+            playSound('sell');
+
+            state.collection = state.collection.filter(i => i.id !== item.id);
+            saveData();
+
+            showCoinFloat(`+🪙 ${totalEarned}`);
+            showToast(`💵 Sold "${item.name}" for 🪙 ${totalEarned}!`);
+
+            nextCustomer();
+        }
+
+        /* --- UI HELPER EFFECTS --- */
+        function showToast(msg) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function showCoinFloat(text) {
+            const pop = document.createElement('div');
+            pop.className = 'coin-pop';
+            pop.textContent = text;
+            pop.style.left = '50%';
+            pop.style.top = '40%';
+            document.body.appendChild(pop);
+            setTimeout(() => pop.remove(), 1000);
+        }
+    </script>
+</body>
+</html>

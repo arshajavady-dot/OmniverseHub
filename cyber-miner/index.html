@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Miner: Deep Dig Tycoon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">ORE CREDITS</span>
+        <span id="credits-val" class="hud-val text-amber">0 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">DEPTH</span>
+        <span id="depth-val" class="hud-val text-cyan">0m</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">RATE / SEC</span>
+        <span id="rate-val" class="hud-val text-green">+0/s</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- DRILL CORE & LAYER CONTAINER -->
+    <div class="mining-stage">
+      <div class="stage-bezel">
+        <div class="strata-header">
+          <span id="layer-name" class="layer-title">SURFACE CRUST (COPPER)</span>
+          <span id="layer-hp-text" class="layer-hp-lbl">100 / 100 HP</span>
+        </div>
+        <div class="hp-bar-track">
+          <div id="layer-hp-bar" class="hp-bar-fill" style="width: 100%;"></div>
+        </div>
+
+        <button id="btn-mine-drill" class="drill-core-btn">
+          <div class="drill-spin-icon">⚙️</div>
+          <span class="drill-lbl">DRILL PLANETARY STRATA</span>
+          <span id="click-power-lbl" class="drill-sub">+10 ORE / DRILL</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- UPGRADES & DRONES PANEL -->
+    <div class="upgrades-panel">
+      <div class="upgrades-title">AUTOMATION & DRILL RIGS</div>
+      <div id="upgrades-list" class="upgrades-list">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

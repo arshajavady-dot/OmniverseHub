@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Sweeper: Quantum Defuser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">MINES</span>
+        <span id="mines-val" class="hud-val text-amber">10</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">TIMER</span>
+        <span id="timer-val" class="hud-val text-cyan">00:00</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">CLEARED</span>
+        <span id="cleared-val" class="hud-val text-green">0%</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <div class="difficulty-bar">
+      <button class="diff-btn active" data-diff="easy">EASY (8x8)</button>
+      <button class="diff-btn" data-diff="medium">MEDIUM (12x12)</button>
+      <button class="diff-btn" data-diff="hard">HARD (16x16)</button>
+    </div>
+
+    <!-- MINESWEEPER BOARD CONTAINER -->
+    <div class="board-wrapper">
+      <div class="board-bezel">
+        <div id="grid-container" class="grid-box grid-8">
+          <!-- Dynamically generated cells -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TOUCH TOGGLE TOOL -->
+    <div class="controls-bar">
+      <button id="btn-mode-reveal" class="tool-btn active">
+        <span>🔍</span> REVEAL MODE
+      </button>
+      <button id="btn-mode-flag" class="tool-btn">
+        <span>🚩</span> FLAG MODE
+      </button>
+    </div>
+
+    <p class="instructions-footer">Left Click to <b>Reveal</b>, Right Click (or tap Flag Mode) to <b>Flag Mines (🚩)</b>. First click is always 100% safe!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">💥</div>
+        <h2 id="modal-title" class="modal-title">QUANTUM DETONATION</h2>
+        <p id="modal-desc" class="modal-desc">You triggered an unstable quantum EMP mine.</p>
+        <div class="modal-stat-box">
+          <p>TIME: <span id="modal-final-time" class="text-cyan">00:00</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RESET DEFUSER MATRIX</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

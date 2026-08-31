@@ -1,0 +1,335 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: #02040a;
+  color: #f3f4f6;
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.5;
+}
+
+#game-container {
+  width: 100%;
+  max-width: 480px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+/* HUD */
+.hud-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.hud-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.hud-label {
+  font-size: 8px;
+  font-family: 'Orbitron', sans-serif;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hud-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.text-cyan { color: #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.6); }
+.text-pink { color: #ec4899; text-shadow: 0 0 10px rgba(236, 72, 153, 0.6); }
+.text-green { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+
+.sound-pill-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* PETRI DISH CANVAS */
+.canvas-wrapper {
+  width: 100%;
+  aspect-ratio: 440 / 230;
+  max-width: 440px;
+}
+
+.canvas-bezel {
+  width: 100%;
+  height: 100%;
+  background: #010408;
+  border: 3px solid #1e293b;
+  border-radius: 18px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 35px rgba(16, 185, 129, 0.15);
+}
+
+.canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.bio-lbl {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  color: #64748b;
+  letter-spacing: 1px;
+}
+
+.mut-badge {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  color: #10b981;
+}
+
+#organismCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 4-BASE NUCLEOTIDE SEQUENCER */
+.sequencer-panel {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seq-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.seq-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.codon-slot-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.codon-slot {
+  width: 28px;
+  height: 28px;
+  background: #020617;
+  border: 2px solid #38bdf8;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #00f3ff;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+}
+
+.codon-slot.empty {
+  border-style: dashed;
+  border-color: #475569;
+  color: #475569;
+  box-shadow: none;
+}
+
+.codon-dash { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #94a3b8; }
+
+.btn-splice-action {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: #020617;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+.btn-splice-action:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.bases-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.base-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.base-btn:hover { background: #334155; }
+
+.base-a { border-color: #38bdf8; }
+.base-c { border-color: #10b981; }
+.base-g { border-color: #f59e0b; }
+.base-t { border-color: #ec4899; }
+
+.base-letter {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.base-a .base-letter { color: #38bdf8; }
+.base-c .base-letter { color: #10b981; }
+.base-g .base-letter { color: #f59e0b; }
+.base-t .base-letter { color: #ec4899; }
+
+.base-name { font-size: 8px; color: #94a3b8; font-weight: 700; }
+.base-cost { font-size: 8px; color: #10b981; font-weight: 900; }
+
+/* TRAITS PANEL */
+.traits-panel {
+  width: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.traits-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.traits-list {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.trait-pill {
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-radius: 8px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  font-size: 9px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.trait-pill .trait-val { color: #10b981; font-weight: 900; }
+
+/* ACTIONS */
+.actions-bar {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 11px;
+  cursor: pointer;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.12s ease;
+}
+
+.btn-feed {
+  background: linear-gradient(135deg, #10b981, #00f3ff);
+  color: #020617;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.instructions-footer {
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.instructions-footer b { color: #38bdf8; }

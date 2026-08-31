@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skinlr – Minecraft Skin Creator & Installer</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="app-header">
+    <h1 class="app-title">Skinlr</h1>
+    <p class="app-tagline">Create & install your Minecraft skins</p>
+  </header>
+  <nav class="mode-tabs">
+    <button id="tab-2d" class="active">2D Editor</button>
+    <button id="tab-3d">3D Preview</button>
+  </nav>
+  <main class="app-main">
+    <section id="editor-2d" class="editor-panel">
+      <canvas id="texture-canvas" width="512" height="512"></canvas>
+    </section>
+    <section id="preview-3d" class="editor-panel hidden">
+      <canvas id="model-canvas"></canvas>
+    </section>
+    <aside class="toolbar">
+      <select id="tool-select">
+        <option value="brush">Brush</option>
+        <option value="eraser">Eraser</option>
+        <option value="fill">Fill</option>
+        <option value="eyedropper">Eyedropper</option>
+        <option value="shading">Shading</option>
+        <option value="line">Line</option>
+      </select>
+      <input type="color" id="color-picker" value="#00a8a8" />
+      <input type="range" id="brush-size" min="1" max="5" value="1" />
+      <button id="undo-btn">Undo</button>
+      <button id="redo-btn">Redo</button>
+      <button id="grid-toggle" class="toggle-active">Grid</button>
+      <button id="region-toggle" class="toggle-active">Regions</button>
+      <button id="download-btn">Download PNG</button>
+      <button id="install-btn">Install to Minecraft</button>
+      <input type="file" id="upload-input" accept="image/png" style="display:none" />
+      <button id="upload-btn">Upload PNG</button>
+    </aside>
+  </main>
+  <footer class="app-footer">
+    <p>© 2026 Skinlr – built with Three.js & Vite</p>
+  </footer>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

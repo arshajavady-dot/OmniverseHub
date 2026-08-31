@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Tetris: Quantum Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LINES</span>
+        <span id="lines-val" class="hud-val text-cyan">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LEVEL</span>
+        <span id="level-val" class="hud-val text-pink">1</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <div class="main-matrix-area">
+      <!-- SIDEBAR HOLD & NEXT -->
+      <div class="sidebar-box">
+        <div class="side-card">
+          <span class="side-lbl">HOLD (C)</span>
+          <canvas id="holdCanvas" width="70" height="70"></canvas>
+        </div>
+        <div class="side-card">
+          <span class="side-lbl">NEXT</span>
+          <canvas id="nextCanvas" width="70" height="70"></canvas>
+        </div>
+      </div>
+
+      <!-- TETRIS CANVAS -->
+      <div class="canvas-bezel">
+        <canvas id="tetrisCanvas" width="240" height="480"></canvas>
+      </div>
+    </div>
+
+    <!-- TOUCH CONTROLS -->
+    <div class="controls-bar">
+      <div class="dpad-cluster">
+        <button class="dpad-btn" data-act="rot">🔄 (W/▲)</button>
+        <div class="dpad-mid">
+          <button class="dpad-btn" data-act="left">◀ (A)</button>
+          <button class="dpad-btn" data-act="drop">⬇ (S)</button>
+          <button class="dpad-btn" data-act="right">▶ (D)</button>
+        </div>
+      </div>
+      <div class="action-cluster">
+        <button class="act-btn hard-drop-btn" data-act="hard">⚡ HARD DROP (SPACE)</button>
+        <button class="act-btn hold-btn" data-act="hold">📦 HOLD (C)</button>
+      </div>
+    </div>
+
+    <p class="instructions-footer">Use <b>Arrow Keys / WASD</b> to move & rotate. <b>Space</b> for Instant Hard Drop, <b>C</b> to Hold piece.</p>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon">🧱⚡</div>
+        <h2 class="modal-title">MATRIX OVERFLOW</h2>
+        <p class="modal-desc">Quantum blocks breached top containment threshold.</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-final-score" class="text-amber">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">CLEAR & RESTART MATRIX</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

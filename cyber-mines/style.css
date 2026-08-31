@@ -1,0 +1,326 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  background-color: #030712;
+  color: #f3f4f6;
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.5;
+}
+
+#game-container {
+  width: 100%;
+  max-width: 460px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+/* HUD */
+.hud-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.hud-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.hud-label {
+  font-size: 8px;
+  font-family: 'Orbitron', sans-serif;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.hud-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.text-amber { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.6); }
+.text-cyan { color: #00f3ff; text-shadow: 0 0 10px rgba(0, 243, 255, 0.6); }
+.text-green { color: #10b981; }
+
+.sound-pill-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* CONFIG */
+.config-bar {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px 12px;
+}
+
+.cfg-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cfg-group label {
+  font-size: 9px;
+  font-family: 'Orbitron', sans-serif;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.bet-controls {
+  display: flex;
+  gap: 3px;
+}
+
+#bet-input {
+  width: 65px;
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #f59e0b;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  padding: 4px;
+}
+
+.chip-btn {
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.chip-btn:hover { background: #334155; }
+
+.mines-dropdown {
+  background: #020617;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: #00f3ff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+/* MINES GRID */
+.mines-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 420px;
+}
+
+.mines-bezel {
+  width: 100%;
+  height: 100%;
+  background: #02040a;
+  border: 3px solid #1e293b;
+  border-radius: 18px;
+  overflow: hidden;
+  padding: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 243, 255, 0.15);
+}
+
+.grid-5x5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+}
+
+.mine-tile {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.mine-tile:hover:not(.revealed):not(.disabled) {
+  background: #334155;
+  border-color: #00f3ff;
+  transform: translateY(-2px);
+}
+
+.mine-tile.revealed-gem {
+  background: rgba(16, 185, 129, 0.25) !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
+  cursor: default;
+}
+
+.mine-tile.revealed-mine {
+  background: rgba(239, 68, 68, 0.3) !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+  cursor: default;
+}
+
+.mine-tile.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ACTIONS */
+.actions-bar {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.btn-play {
+  background: linear-gradient(135deg, #00f3ff, #0284c7);
+  border: none;
+  color: #020617;
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+}
+
+.btn-cashout {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border: none;
+  color: #020617;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.action-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.instructions-footer {
+  font-size: 11px;
+  color: #64748b;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.instructions-footer b { color: #38bdf8; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 23, 0.88);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-card {
+  background: linear-gradient(180deg, #1e1b2e 0%, #08070e 100%);
+  border: 2px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 50px rgba(239, 68, 68, 0.4);
+  border-radius: 24px;
+  padding: 28px;
+  text-align: center;
+  max-width: 360px;
+  width: 100%;
+}
+
+.modal-icon { font-size: 48px; margin-bottom: 8px; }
+.modal-title { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 900; color: #ffffff; margin-bottom: 8px; }
+.modal-desc { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+
+.modal-stat-box {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  color: #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.modal-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  background: linear-gradient(135deg, #00f3ff, #0284c7);
+  color: #020617;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 243, 255, 0.4);
+}

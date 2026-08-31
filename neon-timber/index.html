@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Timber: Cyber Chop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- TOP HUD OUTSIDE CANVAS -->
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">HIGH</span>
+        <span id="high-score-val" class="hud-val text-cyan">0</span>
+      </div>
+      <div class="hud-pill timer-pill">
+        <span class="hud-label">TIME</span>
+        <div class="time-track">
+          <div id="time-bar" class="time-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- GAME CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="gameCanvas" width="460" height="520"></canvas>
+      </div>
+    </div>
+
+    <!-- TOUCH CHOP CONTROLS -->
+    <div class="controls-bar">
+      <button id="btn-chop-left" class="chop-btn chop-left">
+        <span>◀</span> CHOP LEFT (A / ◀)
+      </button>
+      <button id="btn-chop-right" class="chop-btn chop-right">
+        <span>▶</span> CHOP RIGHT (D / ▶)
+      </button>
+    </div>
+
+    <p class="instructions-footer"><b>Left Click</b> (or A / ◀) to Chop Left | <b>Right Click</b> (or D / ▶) to Chop Right! Dodge descending plasma branches.</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon">⚡🪓</div>
+        <h2 class="modal-title">SYSTEM OVERHEAT</h2>
+        <p id="modal-desc" class="modal-desc">A plasma branch struck your cyber axeman!</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-final-score" class="text-amber">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RECHARGE & CHOP AGAIN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

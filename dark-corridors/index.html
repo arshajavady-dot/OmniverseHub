@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Shadow Lurker: Deep Bunker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">KEYCARDS</span>
+        <span id="keys-val" class="hud-val text-cyan">0 / 4 💳</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">FLASHLIGHT BATTERY</span>
+        <div class="battery-track">
+          <div id="battery-bar" class="battery-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">HEARTBEAT DANGER</span>
+        <span id="danger-val" class="hud-val text-red">LOW 🖤</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- BUNKER CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="bunkerCanvas" width="460" height="460"></canvas>
+      </div>
+    </div>
+
+    <!-- TOUCH CONTROLS (D-PAD & FLASHLIGHT TOGGLE) -->
+    <div class="controls-bar">
+      <button id="btn-toggle-light" class="light-btn">
+        <span>🔦</span> FLASHLIGHT (F)
+      </button>
+      <div class="dpad-box">
+        <button class="dpad-btn" data-dir="up">▲ (W)</button>
+        <div class="dpad-row">
+          <button class="dpad-btn" data-dir="left">◀ (A)</button>
+          <button class="dpad-btn" data-dir="down">▼ (S)</button>
+          <button class="dpad-btn" data-dir="right">▶ (D)</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="instructions-footer">Use <b>WASD / Arrow Keys / D-Pad</b> to navigate the pitch-black research bunker. Collect 4 keycards to unlock the elevator exit. Avoid the Shadow Lurker!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">💀🖤</div>
+        <h2 id="modal-title" class="modal-title">CONSUMED BY SHADOWS</h2>
+        <p id="modal-desc" class="modal-desc">The Shadow Lurker ambushed you in the dark corridor.</p>
+        <div class="modal-stat-box">
+          <p>KEYCARDS FOUND: <span id="modal-keys" class="text-cyan">0 / 4</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RE-ENTER BUNKER</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

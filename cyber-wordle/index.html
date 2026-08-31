@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Wordle: Terminal Decryptor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SOLVED</span>
+        <span id="solved-val" class="hud-val text-green">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">STREAK</span>
+        <span id="streak-val" class="hud-val text-amber">0 🔥</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">ATTEMPT</span>
+        <span id="attempt-val" class="hud-val text-cyan">1 / 6</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- 6x5 WORDLE GRID -->
+    <div class="terminal-stage">
+      <div class="stage-bezel">
+        <div id="wordle-grid" class="wordle-grid">
+          <!-- 6 rows of 5 letter boxes -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ON-SCREEN VIRTUAL KEYBOARD -->
+    <div id="keyboard-container" class="keyboard-wrap">
+      <!-- 3 rows of virtual keyboard keys -->
+    </div>
+
+    <p class="instructions-footer">Guess the 5-letter cyber password in 6 attempts. 🟩 <b>Green</b> = Correct spot, 🟨 <b>Yellow</b> = Wrong spot, ⬛ <b>Dark</b> = Not in word.</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🔓</div>
+        <h2 id="modal-title" class="modal-title">ACCESS GRANTED</h2>
+        <p id="modal-desc" class="modal-desc">Mainframe decrypted successfully.</p>
+        <div class="modal-stat-box">
+          <p>SECRET KEY: <span id="modal-secret-word" class="text-green">CYBER</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">NEXT TARGET FIREWALL</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

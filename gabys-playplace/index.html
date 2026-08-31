@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaby's PlayPlace - Horror Game Engine</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- CRT Scanline & Flashlight Overlay -->
+  <div class="crt-overlay"></div>
+  <div class="flashlight-overlay" id="flashlight"></div>
+  
+  <!-- Green Smile Fullscreen Transition Overlay -->
+  <div class="green-smile-overlay" id="greenSmileOverlay">
+    <div class="compy-face-container">
+      <div class="compy-eyes">
+        <span class="compy-eye">▉</span>
+        <span class="compy-eye">▉</span>
+      </div>
+      <div class="compy-smile">\_______/</div>
+      <div class="compy-boot-text">INITIALIZING GABY'S PLAYPLACE...</div>
+    </div>
+  </div>
+
+  <!-- Soul Chamber Floating White Orbs Container -->
+  <div class="soul-orbs-container" id="soulOrbsContainer"></div>
+
+  <!-- Main Game Container -->
+  <main class="game-container crt-tv-power-on" id="gameContainer">
+    <!-- Header Controls & Status -->
+    <header id="gameHeader">
+      <div class="game-title">
+        <span>GABY'S</span> PLAYPLACE
+      </div>
+      <div class="status-bar">
+        <div class="tension-meter" title="Current Tension Level">
+          <span>TENSION:</span>
+          <div class="bar-outer">
+            <div class="bar-inner" id="tensionBar"></div>
+          </div>
+          <span id="tensionVal">15%</span>
+        </div>
+        <button id="settingsBtn" class="btn-icon" title="Game Settings">⚙️ Settings</button>
+        <button id="audioToggleBtn" class="btn-icon" title="Toggle Mute">🔊 Audio</button>
+        <button id="restartBtn" class="btn-icon" title="Return to Main Menu">🔄 Menu</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <section class="game-body">
+      <!-- Story Text & Choices Area -->
+      <article class="scene-area" id="sceneArea">
+        <div class="scene-header">
+          <h1 class="scene-title" id="sceneTitle">Loading Gaby's PlayPlace...</h1>
+        </div>
+        <div class="scene-text-wrapper">
+          <p class="scene-text" id="sceneText"></p>
+          <span class="typing-cursor" id="typingCursor">█</span>
+        </div>
+        <div class="choices-container" id="choicesContainer">
+          <!-- Dynamic choice buttons rendered here -->
+        </div>
+      </article>
+
+      <!-- Sidebar Inventory -->
+      <aside class="sidebar" id="gameSidebar">
+        <h2 class="sidebar-heading" id="inventoryHeading">INVENTORY</h2>
+        <ul class="inventory-list" id="inventoryList">
+          <li class="empty-inv">No items collected yet.</li>
+        </ul>
+      </aside>
+    </section>
+
+    <!-- Footer Status -->
+    <footer id="gameFooter">
+      <div class="footer-status">
+        <span id="statusMessage">System Ready. Explore the daycare.</span>
+      </div>
+      <div class="footer-credit">
+        Gaby's PlayPlace Engine v2.5
+      </div>
+    </footer>
+  </main>
+
+  <!-- Settings Modal Overlay -->
+  <div id="settingsModal" class="settings-modal-overlay">
+    <div class="settings-modal-card">
+      <div class="settings-header">
+        <h2 id="settingsTitle">⚙️ GAME SETTINGS</h2>
+        <button id="closeSettingsBtn" class="close-settings-btn">&times;</button>
+      </div>
+      
+      <div class="settings-group">
+        <label id="langLabel" for="langSelect">🌐 Language / Taal / زبان:</label>
+        <select id="langSelect" class="settings-select">
+          <option value="en">🇬🇧 English</option>
+          <option value="nl">🇳🇱 Nederlands (Dutch)</option>
+          <option value="fa">🇮🇷 فارسی (Persian)</option>
+        </select>
+      </div>
+
+      <div class="settings-group">
+        <label id="fullscreenLabel">🖥️ Fullscreen Mode:</label>
+        <button id="fullscreenToggleBtn" class="settings-toggle-btn">Toggle Fullscreen</button>
+      </div>
+
+      <div class="settings-group">
+        <label id="flashlightLabel">🔦 Flashlight Overlay:</label>
+        <button id="flashlightToggleBtn" class="settings-toggle-btn">Flashlight: ON</button>
+      </div>
+
+      <div class="settings-footer">
+        <button id="saveSettingsBtn" class="settings-save-btn">Save & Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="storyData.js"></script>
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

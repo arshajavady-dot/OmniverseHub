@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Backrooms: Entity 404</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  <div id="vignette" class="vignette"></div>
+
+  <div id="game-container">
+    <!-- TOP SURVEILLANCE HUD -->
+    <header class="hud-header">
+      <div class="title-wrap">
+        <h1 class="game-title">NEON <span class="text-blood">BACKROOMS</span></h1>
+        <p class="sub-title">LEVEL 0 // ENTITY 404 CONTAINMENT</p>
+      </div>
+
+      <div class="hud-meters">
+        <div class="meter-card">
+          <span class="meter-lbl">KEYCARDS</span>
+          <span id="keys-count" class="meter-val text-amber">0 / 5</span>
+        </div>
+        <div class="meter-card">
+          <span class="meter-lbl">BATTERY</span>
+          <div class="meter-bar-track">
+            <div id="battery-bar" class="meter-bar-fill fill-cyan" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="meter-card">
+          <span class="meter-lbl">STAMINA</span>
+          <div class="meter-bar-track">
+            <div id="stamina-bar" class="meter-bar-fill fill-green" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 3D / 2.5D RAYCASTER VIEWPORT CANVAS -->
+    <div class="viewport-wrapper">
+      <div class="viewport-bezel">
+        <canvas id="viewCanvas" width="480" height="320"></canvas>
+        <div id="crosshair" class="crosshair">+</div>
+        <div id="lock-overlay" class="lock-overlay">
+          <p class="lock-text">🎯 CLICK TO LOCK MOUSE & LOOK (FPS MODE)</p>
+          <span class="esc-hint">Press ESC to unlock cursor</span>
+        </div>
+        <div id="jumpscare-overlay" class="jumpscare-overlay hidden">
+          <div class="entity-face">👁️‍🗨️</div>
+          <p class="scare-text">SIGNAL LOST // ENTITY BREACH</p>
+        </div>
+        <div id="radar-minimap" class="radar-box">
+          <canvas id="radarCanvas" width="120" height="120"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOUCH / D-PAD CONTROLS -->
+    <div class="controls-panel">
+      <div class="dpad-box">
+        <button class="dpad-btn btn-fwd" data-action="fwd">▲</button>
+        <div class="dpad-row">
+          <button class="dpad-btn btn-left" data-action="rot-left">◀</button>
+          <button class="dpad-btn btn-back" data-action="back">▼</button>
+          <button class="dpad-btn btn-right" data-action="rot-right">▶</button>
+        </div>
+      </div>
+
+      <div class="action-buttons-box">
+        <button id="btn-emp" class="act-btn emp-btn">
+          <span>⚡</span> EMP STUN (SPACE)
+        </button>
+        <div class="sub-actions-row">
+          <button id="btn-flashlight" class="act-btn flash-btn">
+            <span>🔦</span> LIGHT (F)
+          </button>
+          <button id="btn-sprint" class="act-btn sprint-btn">
+            <span>💨</span> SPRINT (SHIFT)
+          </button>
+          <button id="btn-sound" class="act-btn sound-btn">
+            <span>🔊</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTIVE STATUS -->
+    <div class="status-strip">
+      <span id="status-text" class="status-msg">⚠️ Collect 5 Quantum Keycards to power the Exit Elevator. Watch out for Entity 404...</span>
+    </div>
+
+    <!-- VICTORY / DEATH MODAL -->
+    <div id="modal-screen" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">💀</div>
+        <h2 id="modal-title" class="modal-title">SIGNAL TERMINATED</h2>
+        <p id="modal-desc" class="modal-desc">Entity 404 caught you in the neon corridors.</p>
+        <button id="modal-btn-action" class="modal-btn">TRY TO ESCAPE AGAIN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

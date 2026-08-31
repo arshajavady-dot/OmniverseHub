@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Bio-Lab: Gene Alchemy Sequencer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">BIOMASS ENERGY</span>
+        <span id="dna-val" class="hud-val text-green">100 🧬</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">SYNTHESIS RATE</span>
+        <span id="rate-val" class="hud-val text-cyan">+0 /sec</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">SPECIES STAGE</span>
+        <span id="species-val" class="hud-val text-pink">PROTO-CELL (LV.1)</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- LIVING ORGANISM PETRI DISH CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <div class="canvas-header">
+          <span class="bio-lbl">QUANTUM BIO-CHAMBER PETRI DISH</span>
+          <span id="mutation-count-badge" class="mut-badge">MUTATIONS: 0 / 12</span>
+        </div>
+        <canvas id="organismCanvas" width="440" height="230"></canvas>
+      </div>
+    </div>
+
+    <!-- 4-BASE NUCLEOTIDE SEQUENCER (A, C, G, T) -->
+    <div class="sequencer-panel">
+      <div class="seq-header">
+        <span class="seq-title">CODON SPLICING BENCH</span>
+        <div class="codon-slot-box">
+          <span id="slot-1" class="codon-slot empty">_</span>
+          <span class="codon-dash">+</span>
+          <span id="slot-2" class="codon-slot empty">_</span>
+        </div>
+        <button id="btn-splice-codon" class="btn-splice-action" disabled>SPLICE</button>
+      </div>
+
+      <!-- 4 NUCLEIC BASE BUTTONS -->
+      <div class="bases-grid">
+        <button class="base-btn base-a" data-base="A">
+          <span class="base-letter">A</span>
+          <span class="base-name">Adenine</span>
+          <span class="base-cost">15 🧬</span>
+        </button>
+        <button class="base-btn base-c" data-base="C">
+          <span class="base-letter">C</span>
+          <span class="base-name">Cytosine</span>
+          <span class="base-cost">25 🧬</span>
+        </button>
+        <button class="base-btn base-g" data-base="G">
+          <span class="base-letter">G</span>
+          <span class="base-name">Guanine</span>
+          <span class="base-cost">40 🧬</span>
+        </button>
+        <button class="base-btn base-t" data-base="T">
+          <span class="base-letter">T</span>
+          <span class="base-name">Thymine</span>
+          <span class="base-cost">60 🧬</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- DISCOVERED GENETIC TRAITS ALCHEMY LOG -->
+    <div class="traits-panel">
+      <div class="traits-title">ACTIVE GENOME TRAITS & MUTATION ALCHEMY</div>
+      <div id="traits-list" class="traits-list">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- MANUAL NUTRIENT FEED BUTTON -->
+    <div class="actions-bar">
+      <button id="btn-feed-nutrients" class="action-btn btn-feed">
+        <span>🧪</span> INJECT QUANTUM NUTRIENTS (+10 🧬)
+      </button>
+    </div>
+
+    <p class="instructions-footer">Select two nucleotide bases (<b>A, C, G, T</b>) to splice unique codons! Watch your organism mutate and grow living tentacles, crystalline armor, and radiant wings in real-time.</p>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

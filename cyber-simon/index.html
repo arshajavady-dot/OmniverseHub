@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Simon: Quantum Memory Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">ROUND</span>
+        <span id="round-val" class="hud-val text-cyan">1</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LONGEST SEQUENCE</span>
+        <span id="high-score-val" class="hud-val text-green">0</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- 4-PAD CIRCULAR CYBER SIMON MATRIX -->
+    <div class="matrix-wrapper">
+      <div class="simon-disc">
+        <!-- 4 QUADRANT PADS -->
+        <button class="simon-pad pad-green" data-pad="0" title="Green (Q / 7 / ◀)">
+          <span class="pad-key-hint">Q / ◀</span>
+        </button>
+        <button class="simon-pad pad-red" data-pad="1" title="Red (W / 9 / ▲)">
+          <span class="pad-key-hint">W / ▲</span>
+        </button>
+        <button class="simon-pad pad-yellow" data-pad="2" title="Yellow (A / 1 / ▼)">
+          <span class="pad-key-hint">A / ▼</span>
+        </button>
+        <button class="simon-pad pad-blue" data-pad="3" title="Blue (S / 3 / ▶)">
+          <span class="pad-key-hint">S / ▶</span>
+        </button>
+
+        <!-- CENTER CONTROLLER HUB -->
+        <div class="simon-center-hub">
+          <div class="center-brand">CYBER<br><span>SIMON</span></div>
+          <button id="btn-start" class="center-play-btn">START</button>
+          <div id="status-text" class="center-status">PRESS START</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTROLS FOOTER -->
+    <div class="controls-guide">
+      <div class="guide-item"><span class="key-tag">Q / ◀</span> 🟢 Emerald</div>
+      <div class="guide-item"><span class="key-tag">W / ▲</span> 🔴 Ruby</div>
+      <div class="guide-item"><span class="key-tag">A / ▼</span> 🟡 Amber</div>
+      <div class="guide-item"><span class="key-tag">S / ▶</span> 🔵 Cyan</div>
+    </div>
+
+    <p class="instructions-footer">Watch the sequence of glowing neon pads, remember the pattern, and replicate it in exact order!</p>
+
+    <!-- GAME OVER MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">⚡🧠</div>
+        <h2 id="modal-title" class="modal-title">MEMORY MATRIX OVERLOAD</h2>
+        <p id="modal-desc" class="modal-desc">Sequence desynchronized at Round 8.</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-score" class="text-amber">0</span></p>
+          <p>SEQUENCE LENGTH: <span id="modal-sequence" class="text-cyan">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RE-SYNCHRONIZE MATRIX</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

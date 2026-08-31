@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Night Shift: Anomaly Breach — Psychological CRT Horror</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  <div class="scanline"></div>
+
+  <div id="game-container">
+    <!-- TOP STATUS BAR -->
+    <div id="top-bar">
+      <div class="status-box">
+        <span class="label">TIME</span>
+        <span id="time-display" class="value glow-green">12:00 AM</span>
+      </div>
+      <div class="status-box">
+        <span class="label">SANITY LEVEL</span>
+        <div class="bar-bg"><div id="sanity-bar" class="bar-fill"></div></div>
+      </div>
+      <div class="status-box">
+        <span class="label">POWER GRID</span>
+        <div class="bar-bg"><div id="power-bar" class="bar-fill power-fill"></div></div>
+      </div>
+      <div class="status-box">
+        <span class="label">NIGHT</span>
+        <span id="night-display" class="value glow-red">NIGHT 1</span>
+      </div>
+    </div>
+
+    <!-- MAIN MONITOR & SURVEILLANCE ROOM -->
+    <div id="monitor-frame">
+      <div id="camera-viewport">
+        <canvas id="cctvCanvas"></canvas>
+        
+        <div id="cam-overlay">
+          <div class="cam-tag">
+            <span class="rec-dot"></span> <span id="active-cam-title">CAM 01 — SERVER CORE</span>
+          </div>
+          <div class="timestamp" id="live-timestamp">00:00:00 [LIVE FEED]</div>
+        </div>
+
+        <!-- Static & Glitch Overlay -->
+        <div id="glitch-overlay" class="glitch-screen hidden"></div>
+      </div>
+
+      <!-- BOTTOM DEFENSE & CAMERA SELECTOR -->
+      <div id="control-panel">
+        <!-- DEFENSE ACTIONS -->
+        <div class="actions-group">
+          <button id="btn-door-emp" class="ctrl-btn emp-btn">
+            <span class="icon">⚡</span>
+            <span class="btn-text">EMP DOOR SEAL</span>
+          </button>
+          <button id="btn-flash" class="ctrl-btn strobe-btn">
+            <span class="icon">💡</span>
+            <span class="btn-text">STROBE OVERLOAD</span>
+          </button>
+          <button id="btn-reboot" class="ctrl-btn reboot-btn">
+            <span class="icon">🔄</span>
+            <span class="btn-text">FREQ JAMMER</span>
+          </button>
+          <button id="btn-compy-usb" class="ctrl-btn usb-btn hidden" style="background: linear-gradient(135deg, #15803d, #166534); border-color: #22c55e; color: #86efac;">
+            <span class="icon">💾</span>
+            <span class="btn-text">INSERT COMPY USB</span>
+          </button>
+        </div>
+
+        <!-- CAMERA SELECTOR BUTTONS -->
+        <div class="cam-selector-grid">
+          <button class="cam-btn active" data-cam="1">CAM 01: SERVER</button>
+          <button class="cam-btn" data-cam="2">CAM 02: CRYO LAB</button>
+          <button class="cam-btn" data-cam="3">CAM 03: HALLWAY</button>
+          <button class="cam-btn" data-cam="4">CAM 04: CELL B</button>
+          <button class="cam-btn" data-cam="5">CAM 05: VENT DUCT</button>
+          <button class="cam-btn alert-cam" data-cam="6">CAM 06: OFFICE DOOR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERLAYS: START & GAME OVER -->
+    <div id="modal-overlay" class="modal-layer">
+      <div class="briefing-card">
+        <div class="warning-tape">⚠️ CLASSIFIED SURVEILLANCE PROTOCOL ⚠️</div>
+        <h1 class="title">NIGHT SHIFT <span class="blood-red">ANOMALY BREACH</span></h1>
+        <p class="subtitle">FACILITY 09 — ANOMALY CONTAINMENT UNIT</p>
+
+        <div id="game-over-section" class="hidden">
+          <p class="death-title" id="death-reason">CONTAINMENT BREACH — YOU WERE COMPROMISED</p>
+          <p class="stats-text">Survived Until: <span id="survived-time">02:34 AM</span></p>
+        </div>
+
+        <div class="manual-rules">
+          <p>📹 <b>Monitor CCTV Cams 1–6</b>: Watch for moving shadows, glowing red eyes, and shifting mannequins.</p>
+          <p>⚡ <b>EMP Door Seal</b>: If an entity reaches <b>CAM 06 (Your Office Door)</b>, seal the door immediately!</p>
+          <p>💡 <b>Strobe Overload</b>: Blasts blinding light into CAM 01–05 to repel lurking entities.</p>
+          <p>🔋 <b>Manage Power & Sanity</b>: Running EMP and lights drains power. Staring at anomalies drains sanity.</p>
+          <p>🌅 <b>Goal</b>: Survive the shift from <b>12:00 AM to 6:00 AM</b>.</p>
+        </div>
+
+        <button id="btn-start" class="start-btn">INITIALIZE NIGHT SHIFT</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

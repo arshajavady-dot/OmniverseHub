@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Signal Lost: VHS Terror</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=VT323&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-scanlines"></div>
+  <div class="vhs-glitch-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">TIME</span>
+        <span id="time-val" class="hud-val text-red">03:42 AM</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">SANITY</span>
+        <div class="sanity-track">
+          <div id="sanity-bar" class="sanity-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">SIGNAL STRENGTH</span>
+        <span id="signal-val" class="hud-val text-cyan">42%</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- CRT TELEVISION SCREEN -->
+    <div class="tv-cabinet">
+      <div class="screen-frame">
+        <div id="vhs-screen" class="vhs-screen">
+          <div class="vhs-rec">● PLAY [SP] 0:14:28</div>
+          <div id="tape-content" class="tape-content">
+            <h2 id="broadcast-title">EMERGENCY BROADCAST SYSTEM</h2>
+            <p id="broadcast-sub">TUNE ANTENNA FREQUENCY TO 104.7 MHz</p>
+            <div id="spectrogram-wave" class="spectrogram-wave"></div>
+          </div>
+          <div id="jumpscare-face" class="jumpscare-face hidden">👁️‍🗨️💀</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIAL CONTROLS & DECRYPTION -->
+    <div class="controls-panel">
+      <div class="dial-group">
+        <label>FREQUENCY TUNER (MHz):</label>
+        <div class="slider-row">
+          <span class="freq-lbl">88.0</span>
+          <input type="range" id="freq-slider" min="880" max="1080" value="920" step="1">
+          <span class="freq-lbl">108.0</span>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button id="btn-descramble" class="act-btn btn-descramble">
+          <span>📻</span> DECRYPT ANALOG TAPE
+        </button>
+        <button id="btn-anti-glitch" class="act-btn btn-purge">
+          <span>⚡</span> DE-GAUSS CRT TUBE
+        </button>
+      </div>
+    </div>
+
+    <p class="instructions-footer">Adjust the analog frequency slider to lock onto the emergency broadcast signal. De-gauss CRT whenever anomalous interference spikes!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">📺💀</div>
+        <h2 id="modal-title" class="modal-title">SIGNAL LOST</h2>
+        <p id="modal-desc" class="modal-desc">The broadcast anomaly breached your reality.</p>
+        <div class="modal-stat-box">
+          <p>TAPES DECRYPTED: <span id="modal-tapes-count" class="text-cyan">0 / 5</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RE-TUNE TELEVISION</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

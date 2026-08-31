@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pixel Defense — Cyber Missile Command</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">DEFENSE SCORE</span>
+        <span id="score" class="hud-value">0000</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">WAVE</span>
+        <span id="wave" class="hud-value">WAVE 1</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">AEGIS SHIELD</span>
+        <div class="shield-bar-bg"><div id="shield-bar" class="shield-bar-fill"></div></div>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">CITY INTEGRITY</span>
+        <div class="city-bar-bg"><div id="city-bar" class="city-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <div id="overlay" class="overlay">
+      <div class="card">
+        <h1 class="title">PIXEL <span class="neon-gold">DEFENSE</span></h1>
+        <p class="subtitle">CYBER MISSILE COMMAND</p>
+
+        <div id="game-over-info" class="hidden">
+          <p class="game-over-text">CITY DESTROYED!</p>
+          <p class="final-score">Final Defense Score: <span id="final-score-val">0</span></p>
+        </div>
+
+        <div class="controls-guide">
+          <p>🎯 <b>Mouse / Aim</b> : Target Plasma Cannons</p>
+          <p>💥 <b>Left Click / Space</b> : Fire Interceptor Missiles</p>
+          <p>🛡️ <b>Right Click (Hold)</b> : Deploy Energy Shield</p>
+          <p>☢️ <b>E</b> : Trigger Orbital Nuke Shockwave</p>
+        </div>
+
+        <button id="start-btn" class="btn">DEFEND CITY</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

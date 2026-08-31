@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Crash: Moonshot Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- TOP HEADER -->
+    <header class="game-header">
+      <div class="title-block">
+        <h1 class="game-title">CYBER <span class="neon-amber">CRASH</span></h1>
+        <p class="game-subtitle">MOONSHOT MULTIPLIER PROTOCOL</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-lbl">CREDITS</span>
+          <span id="credits-val" class="stat-val text-amber">1,000</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-lbl">WIN PROFIT</span>
+          <span id="profit-val" class="stat-val text-green">+0</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- LIVE CRASH FLIGHT CANVAS & MULTIPLIER DISPLAY -->
+    <div class="flight-stage">
+      <div class="canvas-bezel">
+        <canvas id="crashCanvas" width="460" height="280"></canvas>
+
+        <div class="live-multiplier-wrap">
+          <span id="multiplier-display" class="multiplier-text">1.00x</span>
+          <span id="crash-status-lbl" class="status-lbl">READY FOR LAUNCH</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT CRASH FLIGHT HISTORY -->
+    <div class="history-bar">
+      <span class="history-lbl">RECENT FLIGHTS:</span>
+      <div id="history-pills" class="history-pills">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- CONTROLS & BETTING PANEL -->
+    <div class="controls-panel">
+      <!-- BET SELECTION -->
+      <div class="bet-row">
+        <div class="bet-input-wrap">
+          <span class="ctrl-label">BET AMOUNT</span>
+          <div class="bet-chips">
+            <button class="chip-btn active" data-bet="50">50</button>
+            <button class="chip-btn" data-bet="100">100</button>
+            <button class="chip-btn" data-bet="250">250</button>
+            <button class="chip-btn" data-bet="500">500</button>
+          </div>
+        </div>
+
+        <button id="btn-sound" class="sound-toggle-btn">
+          <span>🔊</span> AUDIO
+        </button>
+      </div>
+
+      <!-- MAIN ACTION DECISION BUTTON (LAUNCH / EJECT) -->
+      <div class="action-btn-wrap">
+        <button id="btn-main-action" class="launch-btn">
+          🚀 LAUNCH MOONSHOT (50 🪙)
+        </button>
+      </div>
+    </div>
+
+    <!-- HOW TO PLAY INSTRUCTION -->
+    <div class="help-card">
+      <p class="help-text">🎯 <b>DECISION PROTOCOL:</b> Launch the cyber rocket and watch the multiplier surge! Click <b>[💥 EJECT & CASHOUT]</b> before the rocket detonates to claim your multiplied profits.</p>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

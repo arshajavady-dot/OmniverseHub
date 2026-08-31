@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Centipede: Neon Swarm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- IN-GAME HUD OUTSIDE CANVAS -->
+    <header id="hud" class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">HIGH</span>
+        <span id="high-score-val" class="hud-val text-cyan">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">WAVE</span>
+        <span id="wave-val" class="hud-val text-pink">1</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LIVES</span>
+        <span id="lives-val" class="hud-val text-green">❤️❤️❤️</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- 2D ARCADE CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="gameCanvas" width="480" height="520"></canvas>
+      </div>
+    </div>
+
+    <!-- TOUCH / D-PAD & FIRE CONTROLS -->
+    <div class="controls-bar">
+      <div class="dpad-cluster">
+        <button class="dpad-btn btn-up" data-dir="up">▲</button>
+        <div class="dpad-mid">
+          <button class="dpad-btn btn-left" data-dir="left">◀</button>
+          <button class="dpad-btn btn-down" data-dir="down">▼</button>
+          <button class="dpad-btn btn-right" data-dir="right">▶</button>
+        </div>
+      </div>
+
+      <div class="fire-cluster">
+        <button id="btn-fire" class="fire-btn">
+          <span>🔥</span> FIRE (SPACE)
+        </button>
+      </div>
+    </div>
+
+    <!-- INSTRUCTIONS -->
+    <p class="instructions-footer">Move with <b>WASD / Arrow Keys / Mouse</b>. Press <b>Spacebar</b> or Click to shoot down the plasma centipede swarm!</p>
+
+    <!-- GAME OVER / RESTART MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🐛</div>
+        <h2 id="modal-title" class="modal-title">NEON HIVE OVERRUN</h2>
+        <p id="modal-desc" class="modal-desc">The plasma centipede swarm breached your base perimeter.</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-final-score" class="text-amber">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">INSERT COIN & RESTART</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

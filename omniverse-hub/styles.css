@@ -1,0 +1,789 @@
+/* OmniVerse Hub — Custom Styles & Shop Cosmetics */
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.8);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Nav Tab Active State */
+.nav-tab.active {
+  background-color: #4f46e5;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.nav-tab:not(.active) {
+  color: #94a3b8;
+}
+
+.nav-tab:not(.active):hover {
+  color: #f8fafc;
+  background-color: rgba(30, 41, 59, 0.6);
+}
+
+/* OS Window Manager Styles */
+.os-window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.2);
+  overflow: hidden;
+  min-width: 320px;
+  min-height: 240px;
+  transition: box-shadow 0.2s ease;
+  pointer-events: auto;
+}
+
+.os-window.active-window {
+  border-color: rgba(99, 102, 241, 0.6);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 20px rgba(99, 102, 241, 0.3);
+  z-index: 30 !important;
+}
+
+.os-window-header {
+  height: 38px;
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9));
+  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  cursor: grab;
+}
+
+.os-window-header:active {
+  cursor: grabbing;
+}
+
+.os-window-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.os-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.win-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.win-btn:hover {
+  transform: scale(1.15);
+}
+
+.win-btn-close { background-color: #ef4444; }
+.win-btn-min { background-color: #eab308; }
+.win-btn-max { background-color: #22c55e; }
+
+.os-window-content {
+  flex: 1;
+  width: 100%;
+  height: calc(100% - 38px);
+  background-color: #000000;
+  position: relative;
+}
+
+.os-window-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Window Resize Handle */
+.os-window-resize-handle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  cursor: se-resize;
+  z-index: 10;
+}
+
+.os-window-resize-handle::after {
+  content: '';
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid rgba(148, 163, 184, 0.6);
+  border-bottom: 2px solid rgba(148, 163, 184, 0.6);
+}
+
+/* Animations */
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animation-scale-up {
+  animation: scaleUp 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes toastSlideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Desktop Shortcut Icon */
+.desktop-icon-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  padding: 8px;
+  border-radius: 16px;
+  background-color: rgba(30, 41, 59, 0.3);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.desktop-icon-btn:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(99, 102, 241, 0.5);
+  transform: translateY(-2px);
+}
+
+/* --- COSMETIC AVATAR FRAMES --- */
+.avatar-frame-box {
+  position: relative;
+  border-radius: 14px;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+/* 1. Default Frame */
+.frame-default {
+  border: 2px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+}
+
+/* 2. Prismatic Neon Gradient Frame */
+@keyframes rainbowRotate {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.frame-neon-gradient {
+  background: linear-gradient(135deg, #f43f5e, #8b5cf6, #06b6d4, #10b981, #facc15, #f43f5e);
+  background-size: 300% 300%;
+  animation: rainbowRotate 4s linear infinite;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.6);
+}
+
+/* 3. Electric Pulse Frame */
+@keyframes cyanPulse {
+  0%, 100% { box-shadow: 0 0 8px #00f0ff, inset 0 0 4px #00f0ff; border-color: #00f0ff; }
+  50% { box-shadow: 0 0 20px #00f0ff, 0 0 30px #0284c7, inset 0 0 8px #00f0ff; border-color: #ffffff; }
+}
+
+.frame-cyan-pulse {
+  border: 2px solid #00f0ff;
+  animation: cyanPulse 2s ease-in-out infinite;
+}
+
+/* 4. Golden Emperor 24K Frame */
+@keyframes goldShimmer {
+  0%, 100% { box-shadow: 0 0 10px #eab308, 0 0 20px rgba(234, 179, 8, 0.4); }
+  50% { box-shadow: 0 0 22px #facc15, 0 0 35px rgba(250, 204, 21, 0.7); }
+}
+
+.frame-gold-emperor {
+  background: linear-gradient(135deg, #b45309, #facc15, #fef08a, #ca8a04);
+  border: 2px solid #fde047;
+  animation: goldShimmer 2.5s ease-in-out infinite;
+}
+
+/* 5. Cosmic Void Purple Frame */
+@keyframes voidPulse {
+  0%, 100% { box-shadow: 0 0 10px #a855f7, 0 0 20px #7e22ce; }
+  50% { box-shadow: 0 0 22px #c084fc, 0 0 35px #9333ea; }
+}
+
+.frame-void-purple {
+  background: linear-gradient(135deg, #4c1d95, #a855f7, #c084fc);
+  border: 2px solid #d8b4fe;
+  animation: voidPulse 2s ease-in-out infinite;
+}
+
+/* 6. Plasma Inferno Frame */
+@keyframes infernoFlame {
+  0%, 100% { box-shadow: 0 0 10px #ef4444, 0 0 20px #f97316; }
+  50% { box-shadow: 0 0 25px #f97316, 0 0 40px #ef4444; }
+}
+
+.frame-inferno {
+  background: linear-gradient(135deg, #991b1b, #ef4444, #f97316, #facc15);
+  border: 2px solid #fb923c;
+  animation: infernoFlame 1.8s ease-in-out infinite;
+}
+
+/* 7. Matrix Terminal Frame */
+@keyframes matrixGlow {
+  0%, 100% { box-shadow: 0 0 8px #22c55e, inset 0 0 4px #16a34a; border-color: #22c55e; }
+  50% { box-shadow: 0 0 20px #4ade80, 0 0 30px #15803d; border-color: #86efac; }
+}
+
+.frame-matrix {
+  background: linear-gradient(135deg, #052e16, #16a34a, #22c55e);
+  border: 2px solid #4ade80;
+  animation: matrixGlow 2s ease-in-out infinite;
+}
+
+/* --- SYNTHWAVE STAGE & 3D ARCADE CABINET (MATCHING REFERENCE IMAGE) --- */
+.synthwave-stage {
+  position: relative;
+  min-height: calc(100vh - 65px);
+  background: radial-gradient(circle at 50% 30%, #3b185f 0%, #1a0b2e 50%, #0c0517 100%);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 16px 60px;
+}
+
+.synthwave-horizon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  perspective: 350px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.synthwave-grid {
+  position: absolute;
+  width: 200%;
+  left: -50%;
+  height: 140%;
+  bottom: 0;
+  background-image: 
+    linear-gradient(to right, rgba(217, 70, 239, 0.4) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(217, 70, 239, 0.4) 2px, transparent 2px);
+  background-size: 60px 60px;
+  transform: rotateX(70deg);
+  transform-origin: bottom center;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+}
+
+/* 3D ARCADE CABINET CONTAINER */
+.cabinet-3d-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 35px rgba(168, 85, 247, 0.3));
+}
+
+.cabinet-body {
+  position: relative;
+  background: linear-gradient(180deg, #1e1938 0%, #16122b 40%, #0f0c1f 100%);
+  border-radius: 42px 42px 18px 18px;
+  border: 4px solid #382f61;
+  box-shadow: 
+    inset 0 4px 12px rgba(255, 255, 255, 0.15),
+    inset 0 -8px 20px rgba(0, 0, 0, 0.8),
+    0 0 0 2px #0a0814;
+  overflow: hidden;
+}
+
+/* TOP HOOD & MARQUEE BOX */
+.cabinet-marquee-hood {
+  background: linear-gradient(180deg, #120e24 0%, #1f1a3a 100%);
+  padding: 18px 24px 14px;
+  border-bottom: 5px solid #0d0a1a;
+  position: relative;
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.2);
+}
+
+.cabinet-marquee-lightbox {
+  background: linear-gradient(180deg, #2b0b4d 0%, #4c1d95 50%, #2b0b4d 100%);
+  border: 3px solid #e879f9;
+  border-radius: 18px;
+  padding: 12px 18px;
+  box-shadow: 
+    0 0 25px rgba(217, 70, 239, 0.7),
+    inset 0 0 20px rgba(232, 121, 249, 0.5);
+  text-align: center;
+  position: relative;
+}
+
+.marquee-neon-text {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 
+    0 0 5px #ffffff,
+    0 0 12px #e879f9,
+    0 0 25px #c084fc,
+    0 0 45px #a855f7,
+    0 0 70px #9333ea;
+  display: block;
+}
+
+/* 777 CHALLENGE STRIP IN MARQUEE */
+.cabinet-challenge-bar {
+  background: rgba(10, 6, 22, 0.85);
+  border: 1px solid rgba(232, 121, 249, 0.4);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  backdrop-blur: 8px;
+}
+
+/* 777 SLOT REEL ANIMATIONS */
+.slot-reel {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.slot-reel.spinning {
+  animation: reelSpinBlur 0.1s linear infinite;
+}
+
+@keyframes reelSpinBlur {
+  0% { transform: translateY(-3px); filter: blur(1.5px); }
+  50% { transform: translateY(3px); filter: blur(2px); }
+  100% { transform: translateY(-3px); filter: blur(1.5px); }
+}
+
+/* CRT SCREEN HOUSING (GREEN SCREEN LIKE IMAGE) */
+.cabinet-screen-housing {
+  padding: 24px 28px 18px;
+  background: radial-gradient(circle at 50% 50%, #15102a 0%, #0b0817 100%);
+  position: relative;
+}
+
+.cabinet-crt-bezel {
+  background: #090712;
+  border-radius: 36px;
+  padding: 14px;
+  border: 4px solid #282147;
+  box-shadow: 
+    inset 0 0 30px rgba(0, 0, 0, 0.9),
+    0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.cabinet-green-screen {
+  background: radial-gradient(circle at 50% 40%, #0284c7 0%, #0369a1 60%, #0c4a6e 100%);
+  border-radius: 28px;
+  height: 460px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 45px rgba(56, 189, 248, 0.6),
+    inset 0 0 50px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.cabinet-green-screen.game-loaded {
+  background: #000000;
+  box-shadow: 
+    0 0 35px rgba(168, 85, 247, 0.5),
+    inset 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+#arcade-game-iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  object-fit: contain;
+}
+
+#arcade-empty-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+#arcade-empty-screen * {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.crt-glass-glare {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 30%,
+    transparent 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border-radius: 28px;
+  pointer-events: none;
+  z-index: 25;
+}
+
+/* CONTROL DECK (JOYSTICKS & BUTTONS LIKE IMAGE) */
+.cabinet-control-deck {
+  background: linear-gradient(180deg, #181330 0%, #110d24 100%);
+  border-top: 5px solid #d97706; /* Warm orange edge trim */
+  padding: 18px 24px 22px;
+  position: relative;
+  box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.6);
+}
+
+/* 3D JOYSTICKS */
+.deck-joystick-unit {
+  position: relative;
+  width: 54px;
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.joystick-ball {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ff5252 0%, #d50000 60%, #5f0000 100%);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.7),
+    0 0 12px rgba(255, 23, 68, 0.6);
+  z-index: 2;
+  transition: transform 0.1s ease;
+}
+
+.deck-joystick-unit:hover .joystick-ball {
+  transform: scale(1.08) translate(-2px, -2px);
+}
+
+.joystick-shaft {
+  width: 7px;
+  height: 22px;
+  background: linear-gradient(90deg, #cfd8dc 0%, #eceff1 50%, #90a4ae 100%);
+  margin-top: -4px;
+  z-index: 1;
+}
+
+.joystick-base {
+  width: 44px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, #263238 0%, #000000 100%);
+  border: 1px solid #37474f;
+  margin-top: -6px;
+}
+
+/* 3D ARCADE PUSH BUTTONS */
+.deck-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.8);
+  transition: transform 0.1s ease;
+}
+
+.btn-arcade-yellow {
+  background: radial-gradient(circle at 35% 35%, #ffee58 0%, #fbc02d 60%, #f57f17 100%);
+  box-shadow: 0 0 8px rgba(253, 216, 53, 0.6);
+}
+
+.btn-arcade-blue {
+  background: radial-gradient(circle at 35% 35%, #42a5f5 0%, #1976d2 60%, #0d47a1 100%);
+  box-shadow: 0 0 8px rgba(33, 150, 243, 0.6);
+}
+
+.btn-arcade-orange {
+  background: radial-gradient(circle at 35% 35%, #ffa726 0%, #f57c00 60%, #e65100 100%);
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+}
+
+.btn-arcade-white {
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #e0e0e0 60%, #9e9e9e 100%);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* ==========================================================================
+   GAMBLR-INSPIRED FUTURISTIC DESIGN SYSTEM & GLASSMORPHISM
+   ========================================================================== */
+
+/* 1. GAMBLR GLASS PANELS & CARDS */
+.gamblr-card {
+  background: rgba(15, 22, 36, 0.75) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gamblr-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  border-color: rgba(0, 255, 157, 0.4) !important;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(0, 255, 157, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 2. GAMBLR NEON ACCENT HEADERS & BADGES */
+.gamblr-title {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 30%, #00ff9d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 25px rgba(0, 255, 157, 0.3);
+}
+
+.gamblr-badge-emerald {
+  background: rgba(0, 255, 157, 0.12) !important;
+  border: 1px solid rgba(0, 255, 157, 0.35) !important;
+  color: #00ff9d !important;
+  box-shadow: 0 0 12px rgba(0, 255, 157, 0.2);
+}
+
+.gamblr-badge-gold {
+  background: rgba(255, 215, 0, 0.12) !important;
+  border: 1px solid rgba(255, 215, 0, 0.35) !important;
+  color: #ffd700 !important;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
+}
+
+.gamblr-badge-purple {
+  background: rgba(157, 78, 221, 0.15) !important;
+  border: 1px solid rgba(157, 78, 221, 0.4) !important;
+  color: #c084fc !important;
+  box-shadow: 0 0 12px rgba(157, 78, 221, 0.25);
+}
+
+/* 3. GAMBLR GLASS NAVBAR & ACTIVE TABS */
+.nav-tab.active {
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.25), rgba(0, 180, 216, 0.2)) !important;
+  border: 1px solid rgba(0, 255, 157, 0.5) !important;
+  color: #00ff9d !important;
+  box-shadow: 0 0 18px rgba(0, 255, 157, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+.nav-tab:not(.active) {
+  color: #94a3b8;
+  border: 1px solid transparent;
+}
+
+.nav-tab:not(.active):hover {
+  color: #ffffff;
+  background-color: rgba(30, 41, 59, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 4. GAMBLR BUTTONS */
+.gamblr-btn-primary {
+  background: linear-gradient(135deg, #00ff9d 0%, #00b4d8 100%) !important;
+  color: #050b14 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px rgba(0, 255, 157, 0.35);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.gamblr-btn-primary:hover {
+  transform: scale(1.04) translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 255, 157, 0.5);
+}
+
+/* --- SECRET GLITCH MATRIX FRAME --- */
+@keyframes glitchMatrixBorder {
+  0% { border-color: #22c55e; box-shadow: 0 0 12px #22c55e, inset 0 0 6px #22c55e; }
+  25% { border-color: #10b981; box-shadow: 0 0 20px #10b981, inset 0 0 10px #10b981; transform: translate(1px, -1px); }
+  50% { border-color: #4ade80; box-shadow: 0 0 14px #4ade80, inset 0 0 8px #4ade80; transform: translate(-1px, 1px); }
+  75% { border-color: #15803d; box-shadow: 0 0 22px #22c55e, inset 0 0 12px #22c55e; transform: translate(0, 0); }
+  100% { border-color: #22c55e; box-shadow: 0 0 12px #22c55e, inset 0 0 6px #22c55e; }
+}
+
+.frame-glitch-green {
+  border: 3px solid #22c55e !important;
+  animation: glitchMatrixBorder 0.4s infinite !important;
+  background: rgba(5, 46, 22, 0.4) !important;
+}
+
+/* --- COMPY HUB BREACH TAKEOVER STYLES --- */
+.hub-breached {
+  filter: contrast(1.25) hue-rotate(330deg) !important;
+  background-color: #0d0004 !important;
+}
+
+.hub-breached .app-card-title,
+.glitch-text-active {
+  color: #ff2a2a !important;
+  font-family: 'VT323', monospace !important;
+  font-size: 1.6rem !important;
+  text-shadow: 2px 0 #00ffff, -2px 0 #ff0055, 0 0 12px #ff0000 !important;
+  letter-spacing: 2px !important;
+  animation: chromaticGlitch 0.25s infinite alternate ease-in-out !important;
+  display: inline-block;
+}
+
+@keyframes chromaticGlitch {
+  0% { transform: translate(0, 0) skew(0deg); text-shadow: 2px 0 #00ffff, -2px 0 #ff0055; }
+  25% { transform: translate(-2px, 1px) skew(-3deg); text-shadow: -2px 0 #00ffff, 2px 0 #ff0055; }
+  50% { transform: translate(2px, -1px) skew(4deg); text-shadow: 3px 0 #00ffff, -3px 0 #ff0055; }
+  75% { transform: translate(-1px, -2px) skew(-2deg); text-shadow: -1px 0 #00ffff, 1px 0 #ff0055; }
+  100% { transform: translate(1px, 2px) skew(1deg); text-shadow: 2px 0 #00ffff, -2px 0 #ff0055; }
+}
+
+.hub-breached p, 
+.hub-breached .gamblr-badge-emerald,
+.hub-breached h2 {
+  animation: textFlicker 0.15s infinite alternate !important;
+}
+
+@keyframes textFlicker {
+  0% { opacity: 0.95; transform: translateX(0); }
+  50% { opacity: 0.7; transform: translateX(1px); color: #f87171; }
+  100% { opacity: 1; transform: translateX(-1px); }
+}
+
+/* --- SECRET BLOODY LASER FRAME --- */
+@keyframes bloodLaserPulse {
+  0% { border-color: #ef4444; box-shadow: 0 0 14px #ef4444, inset 0 0 8px #991b1b; }
+  50% { border-color: #7f1d1d; box-shadow: 0 0 25px #dc2626, inset 0 0 14px #ef4444; }
+  100% { border-color: #ef4444; box-shadow: 0 0 14px #ef4444, inset 0 0 8px #991b1b; }
+}
+
+.frame-bloody {
+  border: 3px solid #ef4444 !important;
+  background: radial-gradient(circle at center, rgba(127, 29, 29, 0.5), rgba(69, 10, 10, 0.9)) !important;
+  animation: bloodLaserPulse 1.5s infinite ease-in-out !important;
+}
+
+/* --- CUSTOM COMPY VECTOR AVATAR DESIGNS --- */
+.compy-avatar-design,
+.bloody-compy-avatar-design {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compy-avatar-design svg {
+  filter: drop-shadow(0 0 6px #22c55e);
+  animation: compyIdleFloat 2.5s infinite ease-in-out alternate;
+}
+
+.compy-avatar-design .compy-eye-glow {
+  animation: compyEyeFlicker 1.8s infinite alternate;
+}
+
+@keyframes compyIdleFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-2px) rotate(1deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes compyEyeFlicker {
+  0%, 100% { fill: #4ade80; opacity: 1; }
+  45% { fill: #22c55e; opacity: 0.9; }
+  50% { opacity: 0.2; }
+  55% { fill: #86efac; opacity: 1; }
+}
+
+.bloody-compy-avatar-design svg {
+  filter: drop-shadow(0 0 8px #ef4444);
+  animation: bloodyCompyPulse 1.4s infinite alternate;
+}
+
+.bloody-compy-avatar-design .bloody-eye-glow {
+  animation: bloodyEyeFlash 0.8s infinite alternate;
+}
+
+@keyframes bloodyCompyPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 6px #dc2626); }
+  100% { transform: scale(1.04); filter: drop-shadow(0 0 12px #ff0033); }
+}
+
+@keyframes bloodyEyeFlash {
+  0% { fill: #ef4444; }
+  50% { fill: #ff0033; }
+  100% { fill: #ffffff; }
+}

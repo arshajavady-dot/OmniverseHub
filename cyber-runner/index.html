@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Runner — Synthwave Endless Highway</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- CRT Overlay -->
+  <div class="crt-overlay"></div>
+
+  <!-- Game Container -->
+  <div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD Overlay -->
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">DISTANCE</span>
+        <span id="score" class="hud-value">0m</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">SPEED</span>
+        <span id="speed" class="hud-value">120 KM/H</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">NITRO</span>
+        <div class="nitro-bar-bg"><div id="nitro-bar" class="nitro-bar-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- Start / GameOver Screen -->
+    <div id="overlay" class="overlay">
+      <div class="card">
+        <h1 class="title">CYBER <span class="neon-pink">RUNNER</span></h1>
+        <p class="subtitle">NEON SYNTHWAVE HIGHWAY</p>
+
+        <div id="game-over-info" class="hidden">
+          <p class="game-over-text">CRASHED!</p>
+          <p class="final-score">Final Distance: <span id="final-score-val">0m</span></p>
+        </div>
+
+        <div class="controls-guide">
+          <p>🎮 <b>A / D</b> or <b>← / →</b> : Shift Lanes</p>
+          <p>⚡ <b>W / Space</b> : Jump Plasma Hazards</p>
+          <p>🔥 <b>Shift</b> : Activate Nitro Boost</p>
+        </div>
+
+        <button id="start-btn" class="btn">PRESS START / SPACE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

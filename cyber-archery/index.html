@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Archery: Target Master</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">ARROWS</span>
+        <span id="arrows-val" class="hud-val text-cyan">10</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">BULLSEYES</span>
+        <span id="bullseyes-val" class="hud-val text-green">0</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="gameCanvas" width="480" height="420"></canvas>
+      </div>
+    </div>
+
+    <!-- TOUCH SHOOT CONTROLS -->
+    <div class="controls-bar">
+      <button id="btn-shoot-arrow" class="shoot-btn">
+        <span>🏹</span> RELEASE PLASMA ARROW (SPACE / CLICK)
+      </button>
+    </div>
+
+    <p class="instructions-footer">Click and drag to aim angle and draw tension. Hit moving holographic targets for high multipliers and bullseye bonuses!</p>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon">🎯⚡</div>
+        <h2 class="modal-title">QUIVER DEPLETED</h2>
+        <p class="modal-desc">All plasma arrows discharged.</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-final-score" class="text-amber">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">RELOAD QUIVER & REPLAY</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

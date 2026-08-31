@@ -1,0 +1,31 @@
+# Environment & Sensitive Files
+.env
+.env.*
+*.env
+*.pem
+*.key
+*.cert
+credentials.json
+token.json
+secrets/
+*.secret
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs & Temporary Cache Files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+.gemini/
+.system_generated/
+scratch_logs/

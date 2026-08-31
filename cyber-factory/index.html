@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Factory: Node Grid Automation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">TITANIUM CREDITS</span>
+        <span id="credits-val" class="hud-val text-amber">100 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">GRID OUTPUT</span>
+        <span id="rate-val" class="hud-val text-green">+0 /sec</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">GRID POWER / HEAT</span>
+        <span id="power-val" class="hud-val text-cyan">⚡ 100% | ❄️ 24°C</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- 4x4 INTERACTIVE AUTOMATION NODE GRID -->
+    <div class="grid-wrapper">
+      <div class="grid-bezel">
+        <div class="grid-header">
+          <span class="grid-title">4x4 FACTORY AUTOMATION PIPELINE MATRIX</span>
+          <span id="grid-synergy-badge" class="synergy-badge">SYNERGY: 1.0x</span>
+        </div>
+
+        <div id="factory-grid" class="factory-grid-4x4">
+          <!-- 16 interactive nodes rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILD TOOLBAR (MINER, SMELTER, CONVEYOR, TURBINE, ROBOT ARM) -->
+    <div class="build-palette">
+      <div class="palette-title">FACTORY MODULE BLUEPRINTS (CLICK TO SELECT, CLICK GRID TO PLACE/UPGRADE)</div>
+      <div class="modules-row">
+        <button class="module-btn active" data-type="miner">
+          <span class="mod-icon">⛏️</span>
+          <span class="mod-name">Extractor</span>
+          <span class="mod-cost" id="cost-miner">25 🪙</span>
+        </button>
+        <button class="module-btn" data-type="smelter">
+          <span class="mod-icon">🔥</span>
+          <span class="mod-name">Smelter</span>
+          <span class="mod-cost" id="cost-smelter">60 🪙</span>
+        </button>
+        <button class="module-btn" data-type="conveyor">
+          <span class="mod-icon">⏩</span>
+          <span class="mod-name">Conveyor</span>
+          <span class="mod-cost" id="cost-conveyor">15 🪙</span>
+        </button>
+        <button class="module-btn" data-type="turbine">
+          <span class="mod-icon">⚡</span>
+          <span class="mod-name">Turbine</span>
+          <span class="mod-cost" id="cost-turbine">150 🪙</span>
+        </button>
+        <button class="module-btn" data-type="arm">
+          <span class="mod-icon">🦾</span>
+          <span class="mod-name">Robo-Arm</span>
+          <span class="mod-cost" id="cost-arm">350 🪙</span>
+        </button>
+        <button class="module-btn delete-btn" data-type="demolish">
+          <span class="mod-icon">🗑️</span>
+          <span class="mod-name">Recycle</span>
+          <span class="mod-cost">+50% Refund</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- QUICK MANUAL HARVEST & OVERCLOCK BUTTONS -->
+    <div class="actions-bar">
+      <button id="btn-manual-crank" class="action-btn btn-crank">
+        <span>⚙️</span> MANUAL GENERATOR (+5 🪙)
+      </button>
+      <button id="btn-pulse-overclock" class="action-btn btn-overclock">
+        <span>⚡</span> QUANTUM OVERCLOCK (3x FOR 8s)
+      </button>
+    </div>
+
+    <p class="instructions-footer">Build an interconnected production network! <b>Extractors</b> feed ores into adjacent <b>Smelters</b> and <b>Conveyors</b>. <b>Turbines</b> double the output of adjacent modules.</p>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Hopper: Neon Crossroad — Retro Cyber Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">SCORE</span>
+        <span id="score" class="hud-value">00000</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">TIME LIMIT</span>
+        <div class="time-bar-bg"><div id="time-bar" class="time-bar-fill"></div></div>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">DOCK BAYS</span>
+        <span id="bays-filled" class="hud-value" style="color: #4ade80;">0 / 5</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">LIVES</span>
+        <div id="lives-container" class="lives-icons">
+          <span class="life-icon">🐸</span>
+          <span class="life-icon">🐸</span>
+          <span class="life-icon">🐸</span>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="overlay" class="overlay">
+      <div class="card">
+        <h1 class="title">CYBER <span class="neon-green">HOPPER</span></h1>
+        <p class="subtitle">NEON CROSSROAD PROTOCOL</p>
+
+        <div id="game-over-info" class="hidden">
+          <p class="game-over-text">NEURAL LINK SEVERED — GAME OVER</p>
+          <p class="final-score">Final Score: <span id="final-score-val">0</span></p>
+        </div>
+
+        <div class="controls-guide">
+          <p>🕹️ <b>W / A / S / D</b> or <b>Arrow Keys</b> : Hop Grid</p>
+          <p>🏎️ <b>Neon Highway</b> : Dodge Speeding Hovercars & Cyber Trucks</p>
+          <p>⚡ <b>Plasma River</b> : Ride Floating Solar Logs & Data Barges</p>
+          <p>🛸 <b>Sub-Drones</b> : Beware of Drones that Submerge!</p>
+          <p>🎯 <b>5 Docking Bays</b> : Fill all 5 Bays to Clear Stage!</p>
+        </div>
+
+        <button id="start-btn" class="btn">INITIALIZE HOPPER</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

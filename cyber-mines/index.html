@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Mines: Grid Gamble</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">CREDITS</span>
+        <span id="credits-val" class="hud-val text-amber">1,000 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">NEXT MULTIPLIER</span>
+        <span id="next-mult-val" class="hud-val text-cyan">1.15x</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">GEMS FOUND</span>
+        <span id="gems-val" class="hud-val text-green">0 / 22</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- BET & MINES CONFIG BAR -->
+    <div class="config-bar">
+      <div class="cfg-group">
+        <label>BET:</label>
+        <div class="bet-controls">
+          <button id="btn-bet-half" class="chip-btn">½</button>
+          <input type="number" id="bet-input" value="50" min="10" max="5000" step="10">
+          <button id="btn-bet-double" class="chip-btn">2x</button>
+          <button id="btn-bet-max" class="chip-btn">MAX</button>
+        </div>
+      </div>
+      <div class="cfg-group">
+        <label>MINES:</label>
+        <select id="mines-select" class="mines-dropdown">
+          <option value="1">1 Mine</option>
+          <option value="3" selected>3 Mines</option>
+          <option value="5">5 Mines</option>
+          <option value="10">10 Mines</option>
+          <option value="15">15 Mines</option>
+          <option value="20">20 Mines</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 5x5 MINES GRID -->
+    <div class="mines-wrapper">
+      <div class="mines-bezel">
+        <div id="mines-grid" class="grid-5x5">
+          <!-- 25 dynamic tiles -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTION CONTROLS -->
+    <div class="actions-bar">
+      <button id="btn-start-game" class="action-btn btn-play">
+        <span>🚀</span> START CYPHER RUN
+      </button>
+      <button id="btn-cashout" class="action-btn btn-cashout" disabled>
+        <span>💰</span> CASHOUT (<span id="cashout-amt">0</span> 🪙)
+      </button>
+    </div>
+
+    <p class="instructions-footer">Select your bet and mine count, then uncover tiles. Hit gems to build your multiplier, and cash out before triggering a hidden mine!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">💥</div>
+        <h2 id="modal-title" class="modal-title">DETONATION!</h2>
+        <p id="modal-desc" class="modal-desc">You hit an EMP mine and lost your wager.</p>
+        <div class="modal-stat-box">
+          <p>PROFIT / LOSS: <span id="modal-stat-val" class="text-amber">0 🪙</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">PLAY AGAIN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

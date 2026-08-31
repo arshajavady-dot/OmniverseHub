@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Match 3: Gem Core Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <!-- TOP HEADER -->
+    <header class="game-header">
+      <div class="title-block">
+        <h1 class="game-title">CYBER <span class="neon-purple">MATCH 3</span></h1>
+        <p class="game-subtitle">GEM CORE PROTOCOL</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-label">SCORE</span>
+          <span id="score-display" class="stat-value text-amber">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">TIME</span>
+          <span id="time-display" class="stat-value text-cyan">60s</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">COMBO</span>
+          <span id="combo-display" class="stat-value text-pink">x1</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTROLS & SOUND -->
+    <div class="toolbar">
+      <button id="btn-restart" class="action-btn">
+        <span>🔄</span> NEW RUN
+      </button>
+      <div class="objective-pill">
+        <span>🎯</span> Match 3+ Glowing Cores
+      </div>
+      <button id="btn-sound" class="action-btn">
+        <span>🔊</span> AUDIO
+      </button>
+    </div>
+
+    <!-- 8x8 MATCH-3 BOARD -->
+    <div class="board-frame">
+      <div class="board-bezel">
+        <div id="match-grid" class="match-grid">
+          <!-- 64 gems dynamic grid -->
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER INSTRUCTION -->
+    <p class="instructions-footer">Click or drag adjacent gems to swap and trigger cascading fusion chains!</p>
+
+    <!-- TIME UP / GAME OVER MODAL -->
+    <div id="modal-gameover" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-icon">💎</div>
+        <h2 class="modal-title">EXTRACTION COMPLETE!</h2>
+        <p class="modal-desc">Quantum energy harvested from cascading core reactions.</p>
+        <div class="modal-score-wrap">
+          <p class="final-score-lbl">TOTAL SCORE</p>
+          <p id="modal-final-score" class="final-score-val">0</p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">INITIALIZE NEW RUN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

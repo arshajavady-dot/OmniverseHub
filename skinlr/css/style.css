@@ -1,0 +1,141 @@
+/* Skinlr – Dark glass‑morphic theme (Gamble style) */
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-panel: rgba(255, 255, 255, 0.06);
+  --bg-panel-hover: rgba(255, 255, 255, 0.12);
+  --accent-pink: #ec4899;
+  --accent-cyan: #06b6d4;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  text-align: center;
+  padding: 1.5rem 0;
+  background: var(--bg-panel);
+  backdrop-filter: blur(8px);
+}
+
+.app-title {
+  font-size: 2.4rem;
+  color: var(--accent-pink);
+  margin-bottom: 0.3rem;
+}
+
+.app-tagline {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 0.8rem 0;
+}
+
+.mode-tabs button {
+  background: var(--bg-panel);
+  border: none;
+  color: var(--text-primary);
+  padding: 0.6rem 1.2rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mode-tabs button.active,
+.mode-tabs button:hover {
+  background: var(--bg-panel-hover);
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.editor-panel {
+  flex: 1;
+  background: var(--bg-panel);
+  backdrop-filter: blur(8px);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.editor-panel.hidden { display: none; }
+
+#texture-canvas, #model-canvas {
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+.toolbar {
+  width: 200px;
+  background: var(--bg-panel);
+  backdrop-filter: blur(8px);
+  border-radius: 0.8rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.toolbar select,
+.toolbar input[type="color"],
+.toolbar input[type="range"] {
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--bg-panel-hover);
+  color: var(--text-primary);
+  padding: 0.3rem;
+  border-radius: 0.4rem;
+}
+
+.toolbar button {
+  background: var(--bg-panel);
+  border: none;
+  color: var(--text-primary);
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toolbar button:hover {
+  background: var(--bg-panel-hover);
+}
+
+.toolbar button.toggle-active {
+  background: var(--accent-cyan);
+  color: #fff;
+}
+
+.app-footer {
+  text-align: center;
+  padding: 0.8rem 0;
+  background: var(--bg-panel);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}

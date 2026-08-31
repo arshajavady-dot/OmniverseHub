@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Diner: Neon Tycoon — Futuristic Restaurant Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="neon-grid-bg"></div>
+
+  <div id="diner-app">
+    <!-- TOP STATS HEADER -->
+    <header id="diner-header">
+      <div class="brand">
+        <span class="logo-icon">🍜</span>
+        <div>
+          <h1>CYBER DINER</h1>
+          <p class="tagline">NEO-TOKYO STREET FOOD EMPIRE</p>
+        </div>
+      </div>
+
+      <div class="metrics-bar">
+        <div class="metric-pill cash-pill">
+          <span class="m-label">CREDITS</span>
+          <span id="credits-val" class="m-val">¥ 0</span>
+        </div>
+        <div class="metric-pill">
+          <span class="m-label">REVENUE / SEC</span>
+          <span id="income-val" class="m-val">¥ 0 /s</span>
+        </div>
+        <div class="metric-pill">
+          <span class="m-label">SATISFIED CUSTOMERS</span>
+          <span id="customers-val" class="m-val">0 🤖</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN RESTAURANT STAGE -->
+    <main id="diner-layout">
+      <!-- 1. LEFT: FOOD STATIONS (AUTOMATION UPGRADES) -->
+      <section class="diner-panel" id="stations-panel">
+        <div class="panel-header">
+          <h2>🍳 Cooking Stations</h2>
+        </div>
+        <div class="stations-list" id="stations-list">
+          <!-- Dynamically populated cooking station cards -->
+        </div>
+      </section>
+
+      <!-- 2. CENTER: INTERACTIVE RESTAURANT COUNTER -->
+      <section id="counter-stage">
+        <!-- CUSTOMER QUEUE -->
+        <div id="customers-queue">
+          <!-- Animated waiting cyber customers -->
+        </div>
+
+        <!-- CHEF WORKBENCH CLICKER -->
+        <div id="chef-workbench">
+          <button id="btn-serve-order" class="serve-button">
+            <div class="dish-display" id="active-dish-icon">🍜</div>
+            <div class="serve-prompt">
+              <span>TAP TO SERVE DISH!</span>
+              <small id="tap-reward-text">+¥ 5</small>
+            </div>
+          </button>
+        </div>
+
+        <!-- FRENZY EVENT BAR -->
+        <div class="frenzy-container">
+          <button id="btn-frenzy" class="frenzy-btn disabled">
+            <span>🔥 VIP FOOD CRITIC FRENZY (3X REVENUE)</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- 3. RIGHT: ROBOT CHEF MANAGERS & FRANCHISE -->
+      <section class="diner-panel" id="managers-panel">
+        <div class="panel-header">
+          <h2>🤖 Android Chefs & Tech</h2>
+        </div>
+        <div class="managers-list" id="managers-list">
+          <!-- Dynamically populated chef managers -->
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="floating-cash-layer"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-MOOD AI — Real-time Facial Emotion Recognition</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              happy: '#f59e0b',
+              sad: '#3b82f6',
+              angry: '#ef4444',
+              surprised: '#ec4899',
+              fearful: '#8b5cf6',
+              disgusted: '#10b981',
+              neutral: '#06b6d4',
+              dark: '#0a0d14'
+            }
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+            sans: ['Inter', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="bg-[#080b11] text-slate-100 min-h-screen overflow-x-hidden font-sans transition-colors duration-700">
+
+  <!-- File Protocol Warning Overlay -->
+  <div id="file-protocol-warning" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-950/95 backdrop-blur-xl p-6 text-center">
+    <div class="max-w-md w-full p-8 rounded-3xl bg-slate-900 border border-amber-500/40 shadow-2xl flex flex-col items-center">
+      <div class="w-16 h-16 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-3xl mb-4">
+        ⚠️
+      </div>
+      <h2 class="text-xl font-bold text-white mb-2">Web Server Required</h2>
+      <p class="text-sm text-slate-300 mb-6 leading-relaxed">
+        You opened this file directly via <code class="bg-slate-800 px-2 py-0.5 rounded text-amber-300 font-mono text-xs">file://</code>.
+        Modern web browsers block webcam access and JavaScript modules on local file paths.
+      </p>
+      <a href="http://localhost:3000/" class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-400 hover:to-yellow-300 text-slate-950 font-bold text-base shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2">
+        <span>Launch on http://localhost:3000</span>
+        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+      </a>
+      <p class="text-xs text-slate-500 mt-4">The local web server is already running on port 3000!</p>
+    </div>
+  </div>
+
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.addEventListener('DOMContentLoaded', function() {
+        var warn = document.getElementById('file-protocol-warning');
+        if (warn) warn.classList.remove('hidden');
+      });
+    }
+  </script>
+
+  <!-- Ambient Dynamic Mood Background Glow -->
+  <div id="ambient-glow" class="fixed inset-0 pointer-events-none z-0 transition-all duration-1000 opacity-40 blur-3xl bg-gradient-to-tr from-cyan-900/30 via-slate-900/50 to-indigo-900/30"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col min-h-screen">
+    
+    <!-- Top Header Bar -->
+    <header class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800/80 mb-6">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30 text-cyan-400 shadow-lg shadow-cyan-500/10">
+          <i data-lucide="scan-face" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-teal-300 to-indigo-400">
+            E-MOOD <span class="text-xs font-semibold px-2 py-0.5 rounded-full border border-cyan-500/40 bg-cyan-950/60 text-cyan-300 uppercase tracking-widest ml-1">AI 2.0</span>
+          </h1>
+          <p class="text-xs text-slate-400">Real-Time Facial Expression & Emotion Analytics</p>
+        </div>
+      </div>
+
+      <!-- App Controls Header -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- AI Model Status Badge -->
+        <div id="status-badge" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-700/60 text-xs font-mono text-slate-300">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
+          <span id="status-text">Initializing AI Model...</span>
+        </div>
+
+        <!-- FPS Counter -->
+        <div class="px-3 py-1.5 rounded-full bg-slate-900/80 border border-slate-800 text-xs font-mono text-slate-400">
+          FPS: <span id="fps-counter" class="text-cyan-400 font-bold">--</span>
+        </div>
+
+        <!-- Audio Soundscape Toggle -->
+        <button id="btn-sound" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-cyan-400 transition-all" title="Toggle Mood Soundscape">
+          <i data-lucide="volume-x" id="icon-sound" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Mesh Overlay Toggle -->
+        <button id="btn-mesh" class="p-2 rounded-xl bg-cyan-950/60 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-900/60 transition-all" title="Toggle Sci-Fi Mesh">
+          <i data-lucide="grid" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Mirror Camera Toggle -->
+        <button id="btn-flip" class="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 hover:text-cyan-400 transition-all" title="Flip Mirror Camera">
+          <i data-lucide="flip-horizontal" class="w-5 h-5"></i>
+        </button>
+
+        <!-- Snapshot Button -->
+        <button id="btn-snapshot" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 transition-all transform hover:scale-[1.02]">
+          <i data-lucide="camera" class="w-4 h-4"></i>
+          <span>Snap Mood</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Grid Content -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+      
+      <!-- Left Column: Camera Feed & Real-time Canvas (Lg: 7 cols) -->
+      <section class="lg:col-span-7 flex flex-col gap-4">
+        <!-- Main Camera Container -->
+        <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900/90 border border-slate-800 shadow-2xl group">
+          
+          <!-- Hidden Video Feed -->
+          <video id="webcam-video" autoplay playsinline muted class="w-full h-full object-cover transform -scale-x-100 hidden"></video>
+          
+          <!-- Face Canvas (Video Frame Render + Sci-Fi Mesh) -->
+          <canvas id="face-canvas" class="w-full h-full object-cover"></canvas>
+          
+          <!-- AR Particle Canvas Overlay -->
+          <canvas id="particle-canvas" class="absolute inset-0 pointer-events-none w-full h-full"></canvas>
+
+          <!-- Top-Left Floating Live Badge -->
+          <div class="absolute top-4 left-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-950/75 backdrop-blur-md border border-slate-800 text-xs font-medium text-slate-300">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse" id="cam-status-dot"></span>
+            <span id="cam-status-text">CAMERA OFF</span>
+          </div>
+
+          <!-- Top-Right Dominant Emotion Floating Tag -->
+          <div id="floating-emotion-tag" class="absolute top-4 right-4 z-20 flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-slate-950/80 backdrop-blur-md border border-slate-700 shadow-xl transition-all duration-300">
+            <span id="floating-emoji" class="text-2xl">📷</span>
+            <div>
+              <div id="floating-label" class="text-xs font-bold uppercase tracking-wider text-slate-400">Waiting</div>
+              <div id="floating-pct" class="text-xs font-mono text-slate-500">--</div>
+            </div>
+          </div>
+
+          <!-- Camera Loading / Permission Overlay -->
+          <div id="camera-overlay" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-md p-6 text-center">
+            <div class="w-16 h-16 rounded-full border-4 border-cyan-500/30 border-t-cyan-400 animate-spin mb-4"></div>
+            <h3 class="text-lg font-bold text-slate-100 mb-2">Requesting Camera Access</h3>
+            <p class="text-sm text-slate-400 max-w-xs mb-4">Please allow camera permissions in your browser to activate AI facial emotion detection.</p>
+            <button id="btn-start-cam" class="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-semibold transition-all">
+              Enable Webcam
+            </button>
+          </div>
+
+          <!-- Flash Effect overlay for snapshots -->
+          <div id="flash-overlay" class="absolute inset-0 bg-white pointer-events-none opacity-0 transition-opacity duration-200 z-40"></div>
+        </div>
+
+        <!-- Camera Toolbar Bottom Controls -->
+        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md text-xs text-slate-400">
+          <div class="flex items-center gap-4 flex-wrap">
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="chk-landmarks" checked class="rounded border-slate-700 bg-slate-800 text-cyan-500 focus:ring-cyan-500/20" />
+              <span>Draw 3D Landmarks</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer select-none">
+              <input type="checkbox" id="chk-particles" checked class="rounded border-slate-700 bg-slate-800 text-cyan-500 focus:ring-cyan-500/20" />
+              <span>AR Mood Effects</span>
+            </label>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[11px] text-slate-400">AI Sensitivity:</span>
+            <select id="sel-sensitivity" class="bg-slate-800 border border-slate-700 text-cyan-300 text-xs rounded-lg px-2.5 py-1 focus:ring-cyan-500 focus:border-cyan-500 font-medium">
+              <option value="high" selected>High (Instant)</option>
+              <option value="balanced">Balanced</option>
+              <option value="low">Strict</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Dashboard & Real-Time Emotion Analytics (Lg: 5 cols) -->
+      <section class="lg:col-span-5 flex flex-col gap-5">
+
+        <!-- Dominant Emotion Card -->
+        <div id="dominant-card" class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl relative overflow-hidden transition-all duration-500 shadow-xl">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-mono font-semibold uppercase tracking-widest text-slate-400">Status</span>
+              <h2 id="dominant-name" class="text-2xl font-bold tracking-tight text-slate-300 capitalize mt-1">Waiting for Camera</h2>
+            </div>
+            <div id="dominant-emoji-container" class="w-16 h-16 rounded-2xl bg-slate-950/50 border border-slate-800 flex items-center justify-center text-4xl shadow-inner">
+              <span id="dominant-emoji">📷</span>
+            </div>
+          </div>
+          
+          <p id="dominant-desc" class="text-sm text-slate-400 mt-3 leading-relaxed">
+            Please allow camera permissions and position your face in front of the camera.
+          </p>
+
+          <!-- Confidence Progress Bar -->
+          <div class="mt-4 pt-4 border-t border-slate-800/80">
+            <div class="flex justify-between text-xs font-mono text-slate-400 mb-1.5">
+              <span>Confidence Score</span>
+              <span id="dominant-confidence-pct" class="text-slate-500 font-bold">0%</span>
+            </div>
+            <div class="w-full h-2.5 rounded-full bg-slate-800 overflow-hidden p-0.5 border border-slate-700/50">
+              <div id="dominant-bar" class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-teal-400 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Emotion Spectrum Breakdown (7 Emotion Meters) -->
+        <div class="p-5 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl shadow-xl flex-grow flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-cyan-400"></i>
+              Emotion Spectrum
+            </h3>
+            <span class="text-xs text-slate-500 font-mono">7 Categories</span>
+          </div>
+
+          <div class="space-y-3" id="emotion-spectrum-list">
+            <!-- Happy -->
+            <div class="emotion-meter" data-emotion="happy">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-amber-300">
+                  <span>😊</span> Happy
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Sad -->
+            <div class="emotion-meter" data-emotion="sad">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-blue-300">
+                  <span>😢</span> Sad
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Angry -->
+            <div class="emotion-meter" data-emotion="angry">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-red-300">
+                  <span>😠</span> Angry
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-red-600 to-orange-500 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Surprised -->
+            <div class="emotion-meter" data-emotion="surprised">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-pink-300">
+                  <span>😮</span> Surprised
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-pink-500 to-purple-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Fearful -->
+            <div class="emotion-meter" data-emotion="fearful">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-purple-300">
+                  <span>😨</span> Fearful
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-purple-600 to-indigo-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Disgusted -->
+            <div class="emotion-meter" data-emotion="disgusted">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-emerald-300">
+                  <span>🤢</span> Disgusted
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-emerald-600 to-teal-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <!-- Neutral -->
+            <div class="emotion-meter" data-emotion="neutral">
+              <div class="flex justify-between text-xs mb-1">
+                <span class="flex items-center gap-1.5 font-medium text-cyan-300">
+                  <span>😐</span> Neutral
+                </span>
+                <span class="font-mono text-slate-400 meter-pct">0%</span>
+              </div>
+              <div class="w-full h-2 rounded-full bg-slate-800/90 overflow-hidden">
+                <div class="meter-bar h-full bg-gradient-to-r from-cyan-500 to-slate-400 transition-all duration-300" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Real-Time Facial Metrics Box -->
+          <div class="mt-4 pt-4 border-t border-slate-800 grid grid-cols-3 gap-2 text-center">
+            <div class="p-2 rounded-xl bg-slate-950/40 border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-mono">Eye Openness</div>
+              <div id="metric-eyes" class="text-xs font-bold font-mono text-cyan-300">--</div>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-950/40 border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-mono">Smile Ratio</div>
+              <div id="metric-smile" class="text-xs font-bold font-mono text-amber-300">--</div>
+            </div>
+            <div class="p-2 rounded-xl bg-slate-950/40 border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-mono">Brow Tension</div>
+              <div id="metric-brow" class="text-xs font-bold font-mono text-slate-300">--</div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Bottom Section: Mood Snapshots Gallery & Recent History Log -->
+    <section class="mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Mood Timeline Log (Lg: 7 cols) -->
+      <div class="lg:col-span-7 p-5 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="history" class="w-4 h-4 text-cyan-400"></i>
+            Live Mood History Log
+          </h3>
+          <span class="text-xs text-slate-500 font-mono" id="history-count">0 entries</span>
+        </div>
+        <div id="history-container" class="flex gap-2 overflow-x-auto pb-2 min-h-[70px] scrollbar-thin">
+          <div class="text-xs text-slate-500 italic py-4">Waiting for continuous facial detection data...</div>
+        </div>
+      </div>
+
+      <!-- Saved Mood Snapshots Gallery (Lg: 5 cols) -->
+      <div class="lg:col-span-5 p-5 rounded-2xl bg-slate-900/70 border border-slate-800/80 backdrop-blur-xl shadow-xl">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+            <i data-lucide="images" class="w-4 h-4 text-amber-400"></i>
+            Mood Snapshots
+          </h3>
+          <span class="text-xs text-slate-500 font-mono" id="snapshot-count">0 photos</span>
+        </div>
+        <div id="snapshot-gallery" class="grid grid-cols-3 gap-2 max-h-[90px] overflow-y-auto">
+          <div class="col-span-3 text-xs text-slate-500 italic text-center py-4">No snapshots saved yet. Click "Snap Mood" above!</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-8 pt-4 border-t border-slate-800/60 text-center text-xs text-slate-500 flex flex-wrap justify-between items-center gap-2">
+      <div>E-MOOD AI • Powered by MediaPipe Local WASM & WebAssembly</div>
+      <div>Designed for real-time camera emotion analysis</div>
+    </footer>
+
+  </div>
+
+  <!-- Snapshot View Modal -->
+  <div id="snapshot-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 p-4">
+    <div class="relative max-w-lg w-full rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300">
+      <div class="p-4 border-b border-slate-800 flex justify-between items-center">
+        <h3 class="font-bold text-slate-100 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+          Mood Snapshot Captured
+        </h3>
+        <button id="modal-close" class="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div class="p-4 flex flex-col items-center">
+        <img id="modal-img" class="w-full rounded-xl border border-slate-800 shadow-lg object-cover" />
+        <div class="mt-4 flex items-center justify-between w-full">
+          <span id="modal-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-cyan-950 text-cyan-300 border border-cyan-500/40">
+            😊 HAPPY 95%
+          </span>
+          <a id="modal-download" download="mood-snapshot.png" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs flex items-center gap-2 transition-all">
+            <i data-lucide="download" class="w-4 h-4"></i>
+            Download Photo
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Logic Modules -->
+  <script type="module" src="app.js?v=6.0"></script>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber 21: Neural Blackjack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">CREDITS</span>
+        <span id="credits-val" class="hud-val text-amber">1,000 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">CURRENT BET</span>
+        <span id="bet-val" class="hud-val text-cyan">50 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">WIN STREAK</span>
+        <span id="streak-val" class="hud-val text-green">0 🔥</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- BLACKJACK TABLE -->
+    <div class="table-stage">
+      <!-- DEALER HAND -->
+      <div class="hand-zone">
+        <div class="hand-header">
+          <span class="zone-title">AI DEALER MAINFRAME</span>
+          <span id="dealer-score-lbl" class="score-badge">?</span>
+        </div>
+        <div id="dealer-cards" class="cards-row">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- STATUS BANNER -->
+      <div id="status-banner" class="status-banner">PLACE YOUR WAGER & DEAL</div>
+
+      <!-- PLAYER HAND -->
+      <div class="hand-zone">
+        <div class="hand-header">
+          <span class="zone-title">PLAYER NEURAL HAND</span>
+          <span id="player-score-lbl" class="score-badge">0</span>
+        </div>
+        <div id="player-cards" class="cards-row">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- BETTING & ACTION CONTROLS -->
+    <div class="controls-panel">
+      <!-- BETTING CHIPS -->
+      <div class="chips-row">
+        <button class="chip-btn" data-val="10">+10</button>
+        <button class="chip-btn" data-val="50">+50</button>
+        <button class="chip-btn" data-val="100">+100</button>
+        <button class="chip-btn" data-val="500">+500</button>
+        <button id="btn-clear-wager" class="clear-wager-btn">CLEAR</button>
+      </div>
+
+      <!-- GAME ACTIONS (DEAL, HIT, STAND, DOUBLE) -->
+      <div class="actions-row">
+        <button id="btn-deal" class="act-btn btn-deal">DEAL</button>
+        <button id="btn-hit" class="act-btn btn-hit" disabled>HIT</button>
+        <button id="btn-stand" class="act-btn btn-stand" disabled>STAND</button>
+        <button id="btn-double" class="act-btn btn-double" disabled>2x DOUBLE</button>
+      </div>
+    </div>
+
+    <p class="instructions-footer">Get closer to 21 than the AI Dealer without busting! Blackjack pays 3:2.</p>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

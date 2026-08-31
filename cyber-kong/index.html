@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mecha Kong: Girder Rampage — Retro Cyber Platformer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <div id="hud">
+      <div class="hud-box">
+        <span class="hud-label">SCORE</span>
+        <span id="score" class="hud-value">00000</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">LEVEL</span>
+        <span id="level" class="hud-value">STAGE 1</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">HAMMER POWER</span>
+        <div class="hammer-bar-bg"><div id="hammer-bar" class="hammer-bar-fill"></div></div>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label">LIVES</span>
+        <div id="lives-container" class="lives-icons">
+          <span class="life-icon">🤖</span>
+          <span class="life-icon">🤖</span>
+          <span class="life-icon">🤖</span>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="overlay" class="overlay">
+      <div class="card">
+        <h1 class="title">MECHA <span class="neon-crimson">KONG</span></h1>
+        <p class="subtitle">GIRDER RAMPAGE PROTOCOL</p>
+
+        <div id="game-over-info" class="hidden">
+          <p class="game-over-text">CIRCUIT CRUSHED — GAME OVER</p>
+          <p class="final-score">Final Score: <span id="final-score-val">0</span></p>
+        </div>
+
+        <div class="controls-guide">
+          <p>🏃 <b>A / D</b> or <b>◄ / ►</b> : Run Across Steel Girders</p>
+          <p>🪜 <b>W / S</b> or <b>▲ / ▼</b> : Climb Vertical Ladders</p>
+          <p>🦘 <b>SPACE / W</b> : Jump Over Rolling Plasma Barrels</p>
+          <p>🔨 <b>SMASH HAMMER</b> : Pulverize Barrels & Fireballs</p>
+          <p>👑 <b>SUMMIT GOAL</b> : Rescue Cyber VIP at the Top!</p>
+        </div>
+
+        <button id="start-btn" class="btn">SCALE GIRDERS</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

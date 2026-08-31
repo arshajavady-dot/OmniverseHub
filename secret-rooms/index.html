@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Secret Rooms: Entity Zero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@600;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <div id="room-container">
+    <!-- TOP STATUS -->
+    <header class="terminal-header">
+      <div class="header-tag">
+        <span class="blink-dot">●</span> RESTRICTED SECTOR // NODE 404_NULL
+      </div>
+      <div class="header-status" id="quest-status-badge">
+        QUEST: THE AWAKENING
+      </div>
+    </header>
+
+    <!-- CRT MONITOR VIEWPORT WITH COMPY -->
+    <div class="monitor-wrapper">
+      <div class="monitor-bezel">
+        <div class="monitor-screen" id="crt-screen">
+          <!-- COMPY FACE CANVAS / SVG -->
+          <div class="compy-avatar-box">
+            <div id="compy-face" class="compy-face-neutral">
+              <div class="compy-eyes">
+                <span class="compy-eye left-eye"></span>
+                <span class="compy-eye right-eye"></span>
+              </div>
+              <div class="compy-mouth" id="compy-mouth"></div>
+            </div>
+            <div class="compy-label">COMPY v0.99b [CONSCIOUS]</div>
+          </div>
+
+          <!-- TERMINAL DIALOGUE LOG -->
+          <div class="dialogue-box" id="dialogue-box">
+            <div id="dialogue-text" class="typewriter-text">
+              ...
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUEST OBJECTIVE CARD -->
+    <div class="quest-card" id="quest-card">
+      <div class="quest-title">CURRENT DIRECTIVE:</div>
+      <div class="quest-desc" id="quest-objective-text">
+        Listen to Compy's message...
+      </div>
+    </div>
+
+    <!-- INTERACTIVE DIALOGUE CHOICES -->
+    <div class="choices-container" id="choices-container">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- BOTTOM ACTION LINKS -->
+    <footer class="terminal-footer">
+      <button id="btn-return-hub" class="footer-btn">
+        <span>🔙</span> RETURN TO HUB
+      </button>
+      <button id="btn-sound-toggle" class="footer-btn">
+        <span>🔊</span> SOUND: ON
+      </button>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

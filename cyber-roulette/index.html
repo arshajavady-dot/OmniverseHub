@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Neon Roulette: Quantum Wheel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">CREDITS</span>
+        <span id="credits-val" class="hud-val text-amber">1,000 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">TOTAL BET</span>
+        <span id="total-bet-val" class="hud-val text-cyan">0 🪙</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">LAST WIN</span>
+        <span id="last-win-val" class="hud-val text-green">+0 🪙</span>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- NEON ROULETTE WHEEL CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="rouletteCanvas" width="460" height="280"></canvas>
+      </div>
+    </div>
+
+    <!-- BETTING TABLE GRID -->
+    <div class="table-container">
+      <!-- OUTSIDE BETS (RED, BLACK, EVEN, ODD, 1-18, 19-36) -->
+      <div class="outside-bets">
+        <button class="bet-spot-btn btn-red" data-type="red">RED (2x)</button>
+        <button class="bet-spot-btn btn-black" data-type="black">BLACK (2x)</button>
+        <button class="bet-spot-btn" data-type="even">EVEN (2x)</button>
+        <button class="bet-spot-btn" data-type="odd">ODD (2x)</button>
+        <button class="bet-spot-btn" data-type="low">1-18 (2x)</button>
+        <button class="bet-spot-btn" data-type="high">19-36 (2x)</button>
+      </div>
+
+      <!-- ZERO & NUMBER STRIP (0 to 12) -->
+      <div class="numbers-strip">
+        <button class="num-spot-btn num-green" data-type="num" data-val="0">0 (14x)</button>
+        <div id="numbers-grid" class="nums-grid">
+          <!-- Numbers 1 to 12 rendered via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- CHIP SELECTOR & ACTIONS -->
+    <div class="chips-bar">
+      <div class="chip-options">
+        <button class="chip-val-btn active" data-chip="10">10</button>
+        <button class="chip-val-btn" data-chip="50">50</button>
+        <button class="chip-val-btn" data-chip="100">100</button>
+        <button class="chip-val-btn" data-chip="500">500</button>
+      </div>
+      <button id="btn-clear-bets" class="ctrl-btn">CLEAR</button>
+      <button id="btn-spin-wheel" class="ctrl-btn btn-spin">SPIN (SPACE)</button>
+    </div>
+
+    <p class="instructions-footer">Select chip value and place bets on Numbers, Colors, or Odds/Evens, then hit <b>SPIN</b>!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🎰</div>
+        <h2 id="modal-title" class="modal-title">QUANTUM SPIN COMPLETE</h2>
+        <p id="modal-desc" class="modal-desc">Ball landed on #7 RED.</p>
+        <div class="modal-stat-box">
+          <p>PAYOUT: <span id="modal-payout" class="text-green">+0 🪙</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">NEXT SPIN</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

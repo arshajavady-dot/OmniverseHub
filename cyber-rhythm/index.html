@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Rhythm: Beat Matrix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="crt-overlay"></div>
+
+  <div id="game-container">
+    <header class="hud-bar">
+      <div class="hud-pill">
+        <span class="hud-label">SCORE</span>
+        <span id="score-val" class="hud-val text-amber">0</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">COMBO</span>
+        <span id="combo-val" class="hud-val text-pink">0x</span>
+      </div>
+      <div class="hud-pill">
+        <span class="hud-label">GROOVE</span>
+        <div class="groove-track">
+          <div id="groove-bar" class="groove-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+      <button id="btn-sound" class="sound-pill-btn"><span>🔊</span></button>
+    </header>
+
+    <!-- 4-LANE HIGHWAY CANVAS -->
+    <div class="canvas-wrapper">
+      <div class="canvas-bezel">
+        <canvas id="rhythmCanvas" width="440" height="500"></canvas>
+      </div>
+    </div>
+
+    <!-- 4 TOUCH HIT PADS (LEFT, UP, DOWN, RIGHT) -->
+    <div class="controls-bar">
+      <button class="lane-pad-btn pad-0" data-lane="0">
+        <span class="pad-key">◀</span>
+        <span class="pad-lbl">LEFT</span>
+      </button>
+      <button class="lane-pad-btn pad-1" data-lane="1">
+        <span class="pad-key">▲</span>
+        <span class="pad-lbl">UP</span>
+      </button>
+      <button class="lane-pad-btn pad-2" data-lane="2">
+        <span class="pad-key">▼</span>
+        <span class="pad-lbl">DOWN</span>
+      </button>
+      <button class="lane-pad-btn pad-3" data-lane="3">
+        <span class="pad-key">▶</span>
+        <span class="pad-lbl">RIGHT</span>
+      </button>
+    </div>
+
+    <p class="instructions-footer">Hit <b>Arrow Keys (◀ ▲ ▼ ▶) / WASD / DFJK</b> (or tap the glowing pads) exactly when falling beat arrows align with the target zone!</p>
+
+    <!-- MODAL -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div id="modal-icon" class="modal-icon">🎵🔥</div>
+        <h2 id="modal-title" class="modal-title">TRACK COMPLETED</h2>
+        <p id="modal-desc" class="modal-desc">You kept the rhythm matrix synchronized!</p>
+        <div class="modal-stat-box">
+          <p>FINAL SCORE: <span id="modal-final-score" class="text-amber">0</span></p>
+          <p class="stat-sub">MAX COMBO: <span id="modal-max-combo" class="text-pink">0</span></p>
+        </div>
+        <button id="modal-btn-restart" class="modal-btn">PLAY NEXT TRACK</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
