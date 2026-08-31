@@ -49,6 +49,39 @@ const PROJECTS = [
     featured: true
   },
   {
+    id: 'cyber-pinball',
+    title: 'Cyber Pinball',
+    icon: '⚡',
+    path: '../cyber-pinball/index.html',
+    category: 'Arcade & Action',
+    badge: 'Neon Tilt Matrix',
+    description: 'Retro-arcade cyberpunk pinball! Multi-ball frenzy, bouncy bumpers, drop targets, sloped physics & 135 BPM synth music.',
+    tags: ['pinball', 'arcade', 'tilt', 'physics', 'retro', 'frenzy'],
+    featured: true
+  },
+  {
+    id: 'neon-asteroids',
+    title: 'Neon Asteroids',
+    icon: '☄️',
+    path: '../neon-asteroids/index.html',
+    category: 'Arcade & Action',
+    badge: 'Vector Drift',
+    description: 'Vector-space arcade shooter! Rotate, thrust, blast splitting quantum asteroids, dodge alien UFO saucers & hyperspace jump.',
+    tags: ['asteroids', 'arcade', 'vector', 'space', 'shooter', 'ufo'],
+    featured: true
+  },
+  {
+    id: 'cyber-galaga',
+    title: 'Cyber Galaga',
+    icon: '🚀',
+    path: '../cyber-galaga/index.html',
+    category: 'Arcade & Action',
+    badge: 'Star Fighter',
+    description: 'Legendary Galaga space fleet shooter! Twin plasma lasers, swooping alien dive-bombers, tractor beam boss capture & dual starfighters.',
+    tags: ['galaga', 'arcade', 'space', 'shooter', 'aliens', 'retro'],
+    featured: true
+  },
+  {
     id: 'cyber-runner',
     title: 'Cyber Runner',
     icon: '🏎️',
