@@ -11,6 +11,10 @@ const hudBalls = document.getElementById('hud-balls');
 const startOverlay = document.getElementById('start-overlay');
 const btnStart = document.getElementById('btn-start');
 
+const btnFlipperLeft = document.getElementById('btn-flipper-left');
+const btnFlipperRight = document.getElementById('btn-flipper-right');
+const btnLaunchBall = document.getElementById('btn-launch-ball');
+
 // --- 1. PROCEDURAL CHIPTUNE / ARCADE SYNTHESIZER ---
 class PinballAudioEngine {
   constructor() {
@@ -83,7 +87,6 @@ class PinballAudioEngine {
     if (!this.ctx || this.ctx.state === 'suspended') return;
     try {
       const now = this.ctx.currentTime;
-      // Bass on 16ths
       if (step % 2 === 0) {
         const bIdx = Math.floor(step / 4) % this.bassline.length;
         const bFreq = this.bassline[bIdx];
@@ -98,7 +101,6 @@ class PinballAudioEngine {
         osc.start(now);
         osc.stop(now + 0.14);
       }
-      // Lead Synth
       const mFreq = this.melody[step];
       if (mFreq > 0) {
         const osc = this.ctx.createOscillator();
@@ -151,21 +153,21 @@ class PinballAudioEngine {
     } catch(e) {}
   }
 
-  playPlunger(power) {
+  playPlunger() {
     const actx = this.ensureCtx();
     if (!actx || actx.state === 'suspended') return;
     try {
       const osc = actx.createOscillator();
       const gain = actx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(150 + power * 400, actx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(80, actx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.15, actx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
+      osc.frequency.setValueAtTime(300, actx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, actx.currentTime + 0.18);
+      gain.gain.setValueAtTime(0.18, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.2);
       osc.connect(gain);
       gain.connect(actx.destination);
       osc.start();
-      osc.stop(actx.currentTime + 0.25);
+      osc.stop(actx.currentTime + 0.22);
     } catch(e) {}
   }
 }
@@ -177,8 +179,7 @@ let score = 0;
 let highScore = parseInt(localStorage.getItem('cyber_pinball_high') || '0', 10);
 let ballsLeft = 3;
 let gameState = 'START'; // START, PLAYING, GAMEOVER
-let plungerCharge = 0;
-let isChargingPlunger = false;
+let autoLaunchTimer = 0;
 
 hudHighscore.textContent = String(highScore).padStart(6, '0');
 
@@ -192,19 +193,20 @@ let balls = [];
 function spawnBall() {
   balls.push({
     x: 430,
-    y: 540,
+    y: 520,
     vx: 0,
     vy: 0,
     radius: 7.5,
     inPlungerLane: true,
     color: '#06b6d4'
   });
+  autoLaunchTimer = 0;
 }
 
 // Flippers
 const leftFlipper = {
   x: 140,
-  y: 535,
+  y: 515,
   length: 65,
   angle: 0.45,
   restAngle: 0.45,
@@ -215,7 +217,7 @@ const leftFlipper = {
 
 const rightFlipper = {
   x: 270,
-  y: 535,
+  y: 515,
   length: 65,
   angle: Math.PI - 0.45,
   restAngle: Math.PI - 0.45,
@@ -226,42 +228,41 @@ const rightFlipper = {
 
 // Bumpers (Circular bouncy nodes)
 const bumpers = [
-  { x: 150, y: 180, radius: 24, color: '#ec4899', score: 250, lit: 0 },
-  { x: 260, y: 180, radius: 24, color: '#06b6d4', score: 250, lit: 0 },
-  { x: 205, y: 260, radius: 28, color: '#a855f7', score: 500, lit: 0 },
-  { x: 90, y: 320, radius: 18, color: '#eab308', score: 150, lit: 0 },
-  { x: 320, y: 320, radius: 18, color: '#eab308', score: 150, lit: 0 }
+  { x: 150, y: 170, radius: 24, color: '#ec4899', score: 250, lit: 0 },
+  { x: 260, y: 170, radius: 24, color: '#06b6d4', score: 250, lit: 0 },
+  { x: 205, y: 245, radius: 28, color: '#a855f7', score: 500, lit: 0 },
+  { x: 90, y: 310, radius: 18, color: '#eab308', score: 150, lit: 0 },
+  { x: 320, y: 310, radius: 18, color: '#eab308', score: 150, lit: 0 }
 ];
 
-// Drop Targets (rectangular matrix nodes)
+// Drop Targets
 const dropTargets = [
-  { x: 60, y: 120, w: 12, h: 28, hit: false, score: 300 },
-  { x: 60, y: 160, w: 12, h: 28, hit: false, score: 300 },
-  { x: 60, y: 200, w: 12, h: 28, hit: false, score: 300 },
-  { x: 340, y: 120, w: 12, h: 28, hit: false, score: 300 },
-  { x: 340, y: 160, w: 12, h: 28, hit: false, score: 300 },
-  { x: 340, y: 200, w: 12, h: 28, hit: false, score: 300 }
+  { x: 60, y: 110, w: 12, h: 28, hit: false, score: 300 },
+  { x: 60, y: 150, w: 12, h: 28, hit: false, score: 300 },
+  { x: 60, y: 190, w: 12, h: 28, hit: false, score: 300 },
+  { x: 340, y: 110, w: 12, h: 28, hit: false, score: 300 },
+  { x: 340, y: 150, w: 12, h: 28, hit: false, score: 300 },
+  { x: 340, y: 190, w: 12, h: 28, hit: false, score: 300 }
 ];
 
 // Static boundary walls & sloped guides
 const walls = [
-  // Outer perimeter
-  { x1: 20, y1: 580, x2: 20, y2: 120 },
+  { x1: 20, y1: 560, x2: 20, y2: 120 },
   { x1: 20, y1: 120, x2: 120, y2: 20 },
   { x1: 120, y1: 20, x2: 300, y2: 20 },
   { x1: 300, y1: 20, x2: 445, y2: 100 },
-  { x1: 445, y1: 100, x2: 445, y2: 580 },
+  { x1: 445, y1: 100, x2: 445, y2: 560 },
   
   // Plunger lane separator
-  { x1: 410, y1: 140, x2: 410, y2: 580 },
+  { x1: 410, y1: 140, x2: 410, y2: 560 },
   
   // Slingshot guide walls above flippers
-  { x1: 35, y1: 440, x2: 130, y2: 515 },
-  { x1: 375, y1: 440, x2: 280, y2: 515 },
+  { x1: 35, y1: 420, x2: 130, y2: 495 },
+  { x1: 375, y1: 420, x2: 280, y2: 495 },
   
   // Outer drain gutters
-  { x1: 35, y1: 440, x2: 35, y2: 560 },
-  { x1: 375, y1: 440, x2: 375, y2: 560 }
+  { x1: 35, y1: 420, x2: 35, y2: 540 },
+  { x1: 375, y1: 420, x2: 375, y2: 540 }
 ];
 
 // Particle Sparks
@@ -288,7 +289,7 @@ function addScorePopup(x, y, text, color) {
   popups.push({ x, y, text: `+${text}`, color: color || '#38bdf8', life: 1 });
 }
 
-// --- 3. INPUT LISTENERS ---
+// --- 3. INPUT LISTENERS & ON-SCREEN CONTROLS ---
 window.addEventListener('keydown', (e) => {
   if (gameState !== 'PLAYING') return;
 
@@ -300,38 +301,63 @@ window.addEventListener('keydown', (e) => {
     rightFlipper.isPressed = true;
     audio.playFlipper();
   }
-  if ((e.key === ' ' || e.key === 'ArrowDown') && !isChargingPlunger) {
-    isChargingPlunger = true;
-    plungerCharge = 0;
+  if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    triggerLaunch();
   }
 });
 
 window.addEventListener('keyup', (e) => {
-  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
-    leftFlipper.isPressed = false;
-  }
-  if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
-    rightFlipper.isPressed = false;
-  }
-  if (e.key === ' ' || e.key === 'ArrowDown') {
-    if (isChargingPlunger) {
-      launchPlunger(plungerCharge);
-      isChargingPlunger = false;
-      plungerCharge = 0;
-    }
-  }
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') leftFlipper.isPressed = false;
+  if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') rightFlipper.isPressed = false;
 });
 
-function launchPlunger(power) {
+// On-screen buttons
+btnFlipperLeft.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  leftFlipper.isPressed = true;
+  audio.playFlipper();
+});
+btnFlipperLeft.addEventListener('pointerup', (e) => {
+  e.preventDefault();
+  leftFlipper.isPressed = false;
+});
+
+btnFlipperRight.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  rightFlipper.isPressed = true;
+  audio.playFlipper();
+});
+btnFlipperRight.addEventListener('pointerup', (e) => {
+  e.preventDefault();
+  rightFlipper.isPressed = false;
+});
+
+btnLaunchBall.addEventListener('click', (e) => {
+  e.preventDefault();
+  triggerLaunch();
+});
+
+canvas.addEventListener('click', () => {
+  if (gameState === 'PLAYING') triggerLaunch();
+});
+
+function triggerLaunch() {
+  let launchedAny = false;
   balls.forEach(ball => {
-    if (ball.inPlungerLane && ball.y > 450) {
-      ball.vy = - (14 + power * 15);
-      ball.vx = -1.2;
+    if (ball.x > 400 || ball.y > 480) {
+      ball.vy = -24;
+      ball.vx = -2.2;
       ball.inPlungerLane = false;
-      audio.playPlunger(power);
-      addSparks(ball.x, ball.y, '#eab308', 20);
+      audio.playPlunger();
+      addSparks(ball.x, ball.y, '#eab308', 25);
+      launchedAny = true;
     }
   });
+  if (!launchedAny && balls.length === 0) {
+    spawnBall();
+    triggerLaunch();
+  }
 }
 
 btnStart.addEventListener('click', startGame);
@@ -385,9 +411,18 @@ function gameOver() {
 function update() {
   if (gameState !== 'PLAYING') return;
 
-  // Charge plunger
-  if (isChargingPlunger) {
-    plungerCharge = Math.min(1, plungerCharge + 0.035);
+  // Auto-launch safety check (if ball is resting in plunger lane for 2.5 seconds)
+  autoLaunchTimer++;
+  if (autoLaunchTimer > 150) {
+    balls.forEach(b => {
+      if (b.x > 400 && Math.abs(b.vy) < 0.5) {
+        b.vy = -22;
+        b.vx = -2;
+        b.inPlungerLane = false;
+        audio.playPlunger();
+      }
+    });
+    autoLaunchTimer = 0;
   }
 
   // Update flipper angles
@@ -430,7 +465,7 @@ function update() {
   for (let bIdx = balls.length - 1; bIdx >= 0; bIdx--) {
     const b = balls[bIdx];
 
-    // Gravity
+    // Gravity & damping
     b.vy += GRAVITY;
     b.vx *= DAMPING;
     b.vy *= DAMPING;
@@ -441,6 +476,8 @@ function update() {
     // Plunger lane check
     if (b.x > 410) {
       b.inPlungerLane = true;
+    } else {
+      b.inPlungerLane = false;
     }
 
     // 1. Wall Collisions
@@ -453,8 +490,8 @@ function update() {
     const leftTipY = leftFlipper.y + Math.sin(leftFlipper.angle) * leftFlipper.length;
     const hitLeft = collideBallSegment(b, leftFlipper.x, leftFlipper.y, leftTipX, leftTipY, true);
     if (hitLeft && leftFlipper.isPressed) {
-      b.vy -= 8.5;
-      b.vx += (leftTipX - leftFlipper.x) * 0.08;
+      b.vy -= 10;
+      b.vx += (leftTipX - leftFlipper.x) * 0.1;
       addSparks(b.x, b.y, '#ec4899', 15);
     }
 
@@ -462,8 +499,8 @@ function update() {
     const rightTipY = rightFlipper.y + Math.sin(rightFlipper.angle) * rightFlipper.length;
     const hitRight = collideBallSegment(b, rightFlipper.x, rightFlipper.y, rightTipX, rightTipY, true);
     if (hitRight && rightFlipper.isPressed) {
-      b.vy -= 8.5;
-      b.vx += (rightTipX - rightFlipper.x) * 0.08;
+      b.vy -= 10;
+      b.vx += (rightTipX - rightFlipper.x) * 0.1;
       addSparks(b.x, b.y, '#06b6d4', 15);
     }
 
@@ -478,8 +515,7 @@ function update() {
         b.x = bump.x + nx * (b.radius + bump.radius);
         b.y = bump.y + ny * (b.radius + bump.radius);
         
-        // Super impulse bounce
-        const speed = Math.max(9, Math.hypot(b.vx, b.vy) * 1.3);
+        const speed = Math.max(10, Math.hypot(b.vx, b.vy) * 1.35);
         b.vx = nx * speed;
         b.vy = ny * speed;
 
@@ -505,10 +541,9 @@ function update() {
           addSparks(dt.x + dt.w / 2, dt.y + dt.h / 2, '#eab308', 14);
           audio.playBumper();
 
-          // Check if all targets down -> reset & bonus!
           if (dropTargets.every(t => t.hit)) {
             score += 2500;
-            addScorePopup(200, 300, 2500, '#a855f7');
+            addScorePopup(200, 280, 2500, '#a855f7');
             setTimeout(() => dropTargets.forEach(t => t.hit = false), 600);
           }
         }
@@ -552,11 +587,9 @@ function collideBallSegment(ball, x1, y1, x2, y2, isFlipper = false) {
     let nx = dist > 0 ? distX / dist : 0;
     let ny = dist > 0 ? distY / dist : -1;
 
-    // Normal separation
     ball.x = nearX + nx * ball.radius;
     ball.y = nearY + ny * ball.radius;
 
-    // Dot product velocity reflection
     const dot = ball.vx * nx + ball.vy * ny;
     if (dot < 0) {
       ball.vx = (ball.vx - 2 * dot * nx) * RESTITUTION;
@@ -649,7 +682,6 @@ function draw() {
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ffffff';
     ctx.stroke();
-    // Pivot joint
     ctx.beginPath();
     ctx.arc(0, 0, 5, 0, Math.PI * 2);
     ctx.fillStyle = '#0f172a';
@@ -662,11 +694,10 @@ function draw() {
 
   // Draw Plunger
   ctx.save();
-  ctx.fillStyle = isChargingPlunger ? '#eab308' : '#64748b';
-  ctx.shadowColor = isChargingPlunger ? '#eab308' : 'transparent';
+  ctx.fillStyle = '#eab308';
+  ctx.shadowColor = '#eab308';
   ctx.shadowBlur = 10;
-  const plungerY = 560 + plungerCharge * 30;
-  ctx.fillRect(420, plungerY, 20, 45);
+  ctx.fillRect(420, 530, 20, 45);
   ctx.restore();
 
   // Draw Particles

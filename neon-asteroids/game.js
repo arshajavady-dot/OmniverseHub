@@ -12,6 +12,13 @@ const hudLevel = document.getElementById('hud-level');
 const startOverlay = document.getElementById('start-overlay');
 const btnStart = document.getElementById('btn-start');
 
+const btnRotLeft = document.getElementById('btn-rot-left');
+const btnRotRight = document.getElementById('btn-rot-right');
+const btnThrustFwd = document.getElementById('btn-thrust-fwd');
+const btnThrustRev = document.getElementById('btn-thrust-rev');
+const btnFire = document.getElementById('btn-fire');
+const btnHyper = document.getElementById('btn-hyper');
+
 // --- 1. PROCEDURAL SPACE SYNTHWAVE AUDIO ENGINE ---
 class AsteroidAudioEngine {
   constructor() {
@@ -20,7 +27,7 @@ class AsteroidAudioEngine {
     this.bgmTimer = null;
     this.step = 0;
     this.tempo = 124;
-    this.bassNotes = [73.42, 73.42, 87.31, 98.00, 73.42, 73.42, 110.00, 98.00]; // D, D, F, G, D, D, A, G
+    this.bassNotes = [73.42, 73.42, 87.31, 98.00, 73.42, 73.42, 110.00, 98.00];
     this.arpNotes = [
       293.66, 349.23, 440.00, 523.25, 440.00, 349.23, 293.66, 440.00,
       329.63, 392.00, 493.88, 587.33, 493.88, 392.00, 329.63, 493.88
@@ -82,7 +89,6 @@ class AsteroidAudioEngine {
     if (!this.ctx || this.ctx.state === 'suspended') return;
     try {
       const now = this.ctx.currentTime;
-      // Pulse Bass
       if (step % 2 === 0) {
         const bFreq = this.bassNotes[Math.floor(step / 4) % this.bassNotes.length];
         const osc = this.ctx.createOscillator();
@@ -96,7 +102,6 @@ class AsteroidAudioEngine {
         osc.start(now);
         osc.stop(now + 0.15);
       }
-      // Space Arpeggio
       const aFreq = this.arpNotes[step % this.arpNotes.length];
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
@@ -168,7 +173,8 @@ const ship = {
   radius: 12,
   angle: -Math.PI / 2,
   rotation: 0,
-  thrusting: false,
+  thrustingFwd: false,
+  thrustingRev: false,
   invulnerableTimer: 0,
   shootCooldown: 0
 };
@@ -185,6 +191,7 @@ const keys = {
   left: false,
   right: false,
   up: false,
+  down: false,
   space: false
 };
 
@@ -194,11 +201,12 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = true;
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
   if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.up = true;
+  if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.down = true;
   if (e.key === ' ') {
     keys.space = true;
     e.preventDefault();
   }
-  if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+  if (e.key === 'Shift' || e.key === 'Enter' || e.key === 'h' || e.key === 'H') {
     hyperspaceJump();
   }
 });
@@ -207,7 +215,27 @@ window.addEventListener('keyup', (e) => {
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = false;
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
   if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') keys.up = false;
+  if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') keys.down = false;
   if (e.key === ' ') keys.space = false;
+});
+
+// On-Screen Buttons
+const bindBtn = (btn, keyProp) => {
+  if (!btn) return;
+  btn.addEventListener('pointerdown', (e) => { e.preventDefault(); keys[keyProp] = true; });
+  btn.addEventListener('pointerup', (e) => { e.preventDefault(); keys[keyProp] = false; });
+  btn.addEventListener('pointerleave', (e) => { e.preventDefault(); keys[keyProp] = false; });
+};
+
+bindBtn(btnRotLeft, 'left');
+bindBtn(btnRotRight, 'right');
+bindBtn(btnThrustFwd, 'up');
+bindBtn(btnThrustRev, 'down');
+bindBtn(btnFire, 'space');
+
+btnHyper.addEventListener('click', (e) => {
+  e.preventDefault();
+  if (gameState === 'PLAYING') hyperspaceJump();
 });
 
 function hyperspaceJump() {
@@ -259,7 +287,6 @@ function updateLivesHUD() {
   }
 }
 
-// Asteroid generator with jagged vector vertices
 function createAsteroid(x, y, tier) {
   const radius = tier === 3 ? 38 : (tier === 2 ? 22 : 12);
   const vertexCount = 8 + Math.floor(Math.random() * 4);
@@ -343,16 +370,16 @@ function gameOver() {
 function update() {
   if (gameState !== 'PLAYING') return;
 
-  // Ship Rotation & Thrust
+  // Ship Rotation
   if (keys.left) ship.angle -= 0.075;
   if (keys.right) ship.angle += 0.075;
 
-  ship.thrusting = keys.up;
-  if (ship.thrusting) {
+  // Forward Thrusters
+  ship.thrustingFwd = keys.up;
+  if (ship.thrustingFwd) {
     ship.vx += Math.cos(ship.angle) * 0.16;
     ship.vy += Math.sin(ship.angle) * 0.16;
 
-    // Thruster exhaust particles
     const tailX = ship.x - Math.cos(ship.angle) * 14;
     const tailY = ship.y - Math.sin(ship.angle) * 14;
     particles.push({
@@ -363,6 +390,25 @@ function update() {
       life: 1,
       decay: 0.08,
       color: Math.random() > 0.5 ? '#06b6d4' : '#ec4899'
+    });
+  }
+
+  // Reverse Thrusters (Go Backwards!)
+  ship.thrustingRev = keys.down;
+  if (ship.thrustingRev) {
+    ship.vx -= Math.cos(ship.angle) * 0.14;
+    ship.vy -= Math.sin(ship.angle) * 0.14;
+
+    const noseX = ship.x + Math.cos(ship.angle) * 14;
+    const noseY = ship.y + Math.sin(ship.angle) * 14;
+    particles.push({
+      x: noseX,
+      y: noseY,
+      vx: Math.cos(ship.angle) * 2.5 + (Math.random() - 0.5) * 1.5,
+      vy: Math.sin(ship.angle) * 2.5 + (Math.random() - 0.5) * 1.5,
+      life: 1,
+      decay: 0.08,
+      color: '#a855f7'
     });
   }
 
@@ -386,13 +432,13 @@ function update() {
     bullets.push({
       x: ship.x + Math.cos(ship.angle) * 14,
       y: ship.y + Math.sin(ship.angle) * 14,
-      vx: Math.cos(ship.angle) * 9 + ship.vx * 0.5,
-      vy: Math.sin(ship.angle) * 9 + ship.vy * 0.5,
+      vx: Math.cos(ship.angle) * 9.5 + ship.vx * 0.5,
+      vy: Math.sin(ship.angle) * 9.5 + ship.vy * 0.5,
       life: 55,
       color: '#38bdf8'
     });
     audio.playLaser();
-    ship.shootCooldown = 11;
+    ship.shootCooldown = 10;
   }
 
   // Update Bullets
@@ -402,7 +448,6 @@ function update() {
     b.y += b.vy;
     b.life--;
 
-    // Wrap bullets
     if (b.x < 0) b.x = canvas.width;
     if (b.x > canvas.width) b.x = 0;
     if (b.y < 0) b.y = canvas.height;
@@ -477,7 +522,6 @@ function update() {
         addSparks(ast.x, ast.y, ast.color, 18);
         audio.playExplosion(ast.tier === 3);
 
-        // Split Asteroid
         if (ast.tier > 1) {
           asteroids.push(createAsteroid(ast.x, ast.y, ast.tier - 1));
           asteroids.push(createAsteroid(ast.x, ast.y, ast.tier - 1));
@@ -509,7 +553,6 @@ function update() {
 
   // Ship vs Asteroid / Enemy Bullet Collisions
   if (ship.invulnerableTimer <= 0) {
-    // Asteroid collision
     for (let aIdx = 0; aIdx < asteroids.length; aIdx++) {
       const ast = asteroids[aIdx];
       const dist = Math.hypot(ship.x - ast.x, ship.y - ast.y);
@@ -518,7 +561,6 @@ function update() {
         break;
       }
     }
-    // Enemy bullet collision
     for (let bIdx = bullets.length - 1; bIdx >= 0; bIdx--) {
       const b = bullets[bIdx];
       if (b.isEnemy) {
@@ -613,7 +655,6 @@ function draw() {
     ctx.shadowColor = '#eab308';
     ctx.shadowBlur = 12;
     ctx.lineWidth = 2;
-    // Saucer dome & hull
     ctx.beginPath();
     ctx.ellipse(0, 0, 16, 7, 0, 0, Math.PI * 2);
     ctx.stroke();
@@ -655,7 +696,6 @@ function draw() {
     ctx.rotate(ship.angle);
 
     if (ship.invulnerableTimer % 6 < 3) {
-      // Vector Ship Shape
       ctx.strokeStyle = '#38bdf8';
       ctx.shadowColor = '#38bdf8';
       ctx.shadowBlur = 14;
@@ -668,7 +708,6 @@ function draw() {
       ctx.closePath();
       ctx.stroke();
 
-      // Shield Aura if invulnerable
       if (ship.invulnerableTimer > 0) {
         ctx.beginPath();
         ctx.arc(0, 0, 18, 0, Math.PI * 2);

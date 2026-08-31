@@ -55,10 +55,10 @@
 
     <!-- Main Game Canvas Container -->
     <div class="relative w-full max-w-[640px]">
-      <canvas id="gameCanvas" width="640" height="480" class="w-full h-auto rounded-b-xl"></canvas>
+      <canvas id="gameCanvas" width="640" height="460" class="w-full h-auto border-b-0"></canvas>
 
       <!-- Start / Game Over Overlay -->
-      <div id="start-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 rounded-b-xl text-center">
+      <div id="start-overlay" class="absolute inset-0 bg-slate-950/85 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
         <div class="text-5xl mb-2 animate-pulse">☄️🚀☄️</div>
         <h2 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-2">NEON ASTEROIDS</h2>
         <p class="text-xs text-slate-300 max-w-xs mb-4">Pilot your vector starfighter through holographic asteroid fields, blast quantum space rocks & destroy enemy alien saucers!</p>
@@ -66,15 +66,38 @@
         <div class="bg-slate-900/90 border border-cyan-500/30 rounded-lg p-3 w-full max-w-xs text-left text-[11px] mb-5 space-y-1">
           <p class="text-cyan-300 font-bold">🕹️ CONTROLS:</p>
           <p><span class="text-pink-400 font-bold">A / D or Left / Right:</span> Rotate Starship</p>
-          <p><span class="text-pink-400 font-bold">W or Up Arrow:</span> Plasma Thrusters</p>
+          <p><span class="text-cyan-400 font-bold">W / Up Arrow:</span> Forward Thrusters</p>
+          <p><span class="text-purple-400 font-bold">S / Down Arrow:</span> Reverse Thrusters (Backwards)</p>
           <p><span class="text-yellow-400 font-bold">Space:</span> Fire Plasma Cannons</p>
-          <p><span class="text-cyan-400 font-bold">S or Down Arrow:</span> Hyperspace Jump</p>
+          <p><span class="text-pink-400 font-bold">Shift / Enter:</span> Hyperspace Jump</p>
         </div>
 
         <button id="btn-start" class="font-orbitron font-bold px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 hover:to-purple-400 text-slate-950 rounded-lg shadow-lg shadow-cyan-500/30 tracking-widest text-sm transition-all transform hover:scale-105 active:scale-95">
           ENGAGE THRUSTERS
         </button>
       </div>
+    </div>
+
+    <!-- On-Screen Control Buttons Bar -->
+    <div class="grid grid-cols-6 w-full max-w-[640px] bg-slate-900/90 border border-cyan-500/30 rounded-b-xl p-2 gap-1.5 backdrop-blur-md text-[11px]">
+      <button id="btn-rot-left" class="py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded font-orbitron font-bold text-cyan-300 text-center">
+        ↺ LEFT (A)
+      </button>
+      <button id="btn-rot-right" class="py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/50 rounded font-orbitron font-bold text-cyan-300 text-center">
+        ↻ RIGHT (D)
+      </button>
+      <button id="btn-thrust-fwd" class="py-2.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 rounded font-orbitron font-bold text-blue-300 text-center">
+        ▲ FWD (W)
+      </button>
+      <button id="btn-thrust-rev" class="py-2.5 bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/50 rounded font-orbitron font-bold text-purple-300 text-center">
+        ▼ REV (S)
+      </button>
+      <button id="btn-fire" class="py-2.5 bg-yellow-500/20 hover:bg-yellow-500/30 border border-yellow-500/50 rounded font-orbitron font-bold text-yellow-300 text-center">
+        🔥 FIRE (SPACE)
+      </button>
+      <button id="btn-hyper" class="py-2.5 bg-pink-500/20 hover:bg-pink-500/30 border border-pink-500/50 rounded font-orbitron font-bold text-pink-300 text-center">
+        ⚡ HYPER
+      </button>
     </div>
   </div>
 
