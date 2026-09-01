@@ -43,7 +43,7 @@ class PinballAudioEngine {
         this.ctx.resume().catch(() => {});
       }
     };
-    ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(evt => {
+    ['click', 'keydown', 'touchstart', 'pointerdown', 'mousedown'].forEach(evt => {
       window.addEventListener(evt, unlock, { passive: true });
     });
   }
@@ -269,17 +269,13 @@ const dropTargets = [
   { x: 340, y: 190, w: 12, h: 28, hit: false, score: 300 }
 ];
 
-// Static boundary walls & sloped guides (NO PHASE THROUGH ROOF)
+// Static boundary walls & sloped guides
 const walls = [
-  // Outer side walls
   { x1: 20, y1: 560, x2: 20, y2: 120 },
-  
-  // Solid Roof Roof Line Segments (Curved Arch Top Ceiling)
   { x1: 20, y1: 120, x2: 100, y2: 30 },
   { x1: 100, y1: 30, x2: 230, y2: 20 },
   { x1: 230, y1: 20, x2: 360, y2: 30 },
   { x1: 360, y1: 30, x2: 445, y2: 100 },
-  
   { x1: 445, y1: 100, x2: 445, y2: 560 },
   
   // Plunger lane separator
@@ -318,7 +314,35 @@ function addScorePopup(x, y, text, color) {
   popups.push({ x, y, text: `+${text}`, color: color || '#38bdf8', life: 1 });
 }
 
-// --- 3. INPUT LISTENERS & ON-SCREEN CONTROLS ---
+// --- 3. INPUT LISTENERS & MOUSE CLICKS ---
+
+// Prevent right-click context menu so Right Click triggers Right Flipper smoothly
+window.addEventListener('contextmenu', (e) => e.preventDefault());
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
+
+// MOUSE CLICK CONTROLS (Left Click = Left Flipper, Right Click = Right Flipper)
+window.addEventListener('mousedown', (e) => {
+  if (gameState !== 'PLAYING') return;
+  if (e.button === 0) { // Left Mouse Click
+    leftFlipper.isPressed = true;
+    audio.playFlipper();
+  } else if (e.button === 2) { // Right Mouse Click
+    rightFlipper.isPressed = true;
+    audio.playFlipper();
+  } else if (e.button === 1) { // Middle Mouse Click
+    triggerLaunch();
+  }
+});
+
+window.addEventListener('mouseup', (e) => {
+  if (e.button === 0) {
+    leftFlipper.isPressed = false;
+  } else if (e.button === 2) {
+    rightFlipper.isPressed = false;
+  }
+});
+
+// KEYBOARD CONTROLS (A = Left, D = Right, Space = Launch)
 window.addEventListener('keydown', (e) => {
   if (gameState !== 'PLAYING') return;
 
@@ -341,7 +365,7 @@ window.addEventListener('keyup', (e) => {
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') rightFlipper.isPressed = false;
 });
 
-// On-screen buttons
+// ON-SCREEN BUTTON CONTROLS
 btnFlipperLeft.addEventListener('pointerdown', (e) => {
   e.preventDefault();
   leftFlipper.isPressed = true;
@@ -367,15 +391,11 @@ btnLaunchBall.addEventListener('click', (e) => {
   triggerLaunch();
 });
 
-canvas.addEventListener('click', () => {
-  if (gameState === 'PLAYING') triggerLaunch();
-});
-
 function triggerLaunch() {
-  countdownTimer = 0; // Clear countdown if manually launched
+  countdownTimer = 0;
   balls.forEach(ball => {
     if (ball.x > 400 || ball.y > 480) {
-      ball.vy = -18.5; // Controlled smooth launch velocity
+      ball.vy = -18.5;
       ball.vx = -1.8;
       ball.inPlungerLane = false;
       audio.playPlunger();
@@ -488,12 +508,11 @@ function update() {
     if (pop.life <= 0) popups.splice(i, 1);
   }
 
-  // Update Balls with 4 CCD Sub-Steps (Eliminates Ceiling Phase-Through)
+  // Update Balls with 4 CCD Sub-Steps
   const SUB_STEPS = 4;
   for (let bIdx = balls.length - 1; bIdx >= 0; bIdx--) {
     const b = balls[bIdx];
 
-    // Gravity & damping
     b.vy += GRAVITY / SUB_STEPS;
     b.vx *= Math.pow(DAMPING, 1 / SUB_STEPS);
     b.vy *= Math.pow(DAMPING, 1 / SUB_STEPS);
@@ -502,17 +521,16 @@ function update() {
       b.x += b.vx / SUB_STEPS;
       b.y += b.vy / SUB_STEPS;
 
-      // Plunger lane check
       if (b.x > 410) {
         b.inPlungerLane = true;
       } else {
         b.inPlungerLane = false;
       }
 
-      // 1. HARD CEILING & ROOF ARCH BOUNDARY CHECKS (ROOF NO PHASE THROUGH)
+      // 1. HARD CEILING & ROOF ARCH BOUNDARY CHECKS
       if (b.y - b.radius < 22) {
         b.y = 22 + b.radius;
-        b.vy = Math.abs(b.vy) * 0.6; // Bounce down
+        b.vy = Math.abs(b.vy) * 0.6;
         b.vx *= 0.8;
         addSparks(b.x, b.y, '#06b6d4', 6);
       }
@@ -525,10 +543,9 @@ function update() {
         b.vx = Math.abs(b.vx) * 0.65;
       }
 
-      // Smooth Top-Right Arch Curve Redirect (Guides ball out of plunger lane into board)
       if (b.x > 360 && b.y < 80) {
-        b.vx = -6; // Smoothly redirect left
-        if (b.vy < -4) b.vy = -4; // Cap upward velocity
+        b.vx = -6;
+        if (b.vy < -4) b.vy = -4;
       }
 
       // 2. Wall Collisions
@@ -672,7 +689,7 @@ function draw() {
     ctx.stroke();
   }
 
-  // Draw Walls & Top Roof Arch
+  // Draw Walls
   ctx.strokeStyle = '#06b6d4';
   ctx.lineWidth = 4;
   ctx.shadowColor = '#06b6d4';
