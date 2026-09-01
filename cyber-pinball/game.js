@@ -128,7 +128,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.12);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.14);
     } catch(e) {}
@@ -146,7 +146,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.12, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -164,7 +164,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.18, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.15);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.16);
     } catch(e) {}
@@ -182,7 +182,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.2, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.25);
     } catch(e) {}
@@ -236,11 +236,11 @@ function startCountdown() {
   audio.playBeep(600);
 }
 
-// Flippers with Authentic Arcade Gap Space (115px & 295px = 63px center gap!)
+// Flippers with Clear Center Gap Space (Pivot x: 105px & 305px, length: 60px -> 88px Center Gap!)
 const leftFlipper = {
-  x: 115,
+  x: 105,
   y: 515,
-  length: 65,
+  length: 60,
   angle: 0.45,
   restAngle: 0.45,
   upAngle: -0.55,
@@ -249,9 +249,9 @@ const leftFlipper = {
 };
 
 const rightFlipper = {
-  x: 295,
+  x: 305,
   y: 515,
-  length: 65,
+  length: 60,
   angle: Math.PI - 0.45,
   restAngle: Math.PI - 0.45,
   upAngle: Math.PI + 0.55,
@@ -274,11 +274,11 @@ const dropTargets = [
   { x: 60, y: 150, w: 12, h: 28, hit: false, score: 300 },
   { x: 60, y: 190, w: 12, h: 28, hit: false, score: 300 },
   { x: 340, y: 110, w: 12, h: 28, hit: false, score: 300 },
-  { x: 340, y: 150, w: 12, h: 28, hit: false, score: 300 },
+  { x: 340, y: 160, w: 12, h: 28, hit: false, score: 300 },
   { x: 340, y: 190, w: 12, h: 28, hit: false, score: 300 }
 ];
 
-// Static boundary walls & sloped guides (With widened flipper gap)
+// Static boundary walls & sloped guides (With widened flipper gap & solid launcher gate)
 const walls = [
   { x1: 20, y1: 560, x2: 20, y2: 120 },
   { x1: 20, y1: 120, x2: 100, y2: 30 },
@@ -287,16 +287,16 @@ const walls = [
   { x1: 360, y1: 30, x2: 445, y2: 100 },
   { x1: 445, y1: 100, x2: 445, y2: 560 },
   
-  // Plunger lane separator
-  { x1: 410, y1: 140, x2: 410, y2: 560 },
+  // Plunger lane separator wall (Solid left boundary for plunger lane)
+  { x1: 410, y1: 130, x2: 410, y2: 560 },
   
   // Slingshot guide walls above widened flippers
-  { x1: 30, y1: 420, x2: 105, y2: 495 },
-  { x1: 380, y1: 420, x2: 305, y2: 495 },
+  { x1: 25, y1: 420, x2: 95, y2: 495 },
+  { x1: 385, y1: 420, x2: 315, y2: 495 },
   
   // Outer drain gutters
-  { x1: 30, y1: 420, x2: 30, y2: 540 },
-  { x1: 380, y1: 420, x2: 380, y2: 540 }
+  { x1: 25, y1: 420, x2: 25, y2: 540 },
+  { x1: 385, y1: 420, x2: 385, y2: 540 }
 ];
 
 // Particle Sparks
@@ -329,44 +329,63 @@ function addScorePopup(x, y, text, color) {
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-// MOUSE / CANVAS CLICK CONTROLS WITH DEDICATED PLUNGER HITBOX
+// Canvas Pointer/Click Handler (Detects Plunger Hitbox Click vs Flipper Clicks)
 canvas.addEventListener('pointerdown', (e) => {
   if (gameState !== 'PLAYING') return;
 
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
-  const clickX = (e.clientX - rect.left) * scaleX;
-  const clickY = (e.clientY - rect.top) * scaleY;
+  const mouseX = (e.clientX - rect.left) * scaleX;
+  const mouseY = (e.clientY - rect.top) * scaleY;
 
-  // 1. Check Plunger Hitbox Click (Bottom Right Launch Channel)
-  if (clickX >= plungerHitbox.x && clickY >= plungerHitbox.y) {
+  // Check if click is inside Plunger Hitbox
+  if (mouseX >= plungerHitbox.x && mouseX <= plungerHitbox.x + plungerHitbox.w &&
+      mouseY >= plungerHitbox.y && mouseY <= plungerHitbox.y + plungerHitbox.h) {
     plungerFlashTimer = 15;
     triggerLaunch();
     return;
   }
 
-  // 2. Otherwise check Left / Right flipper clicks based on click position or mouse button
-  if (e.button === 2 || clickX >= 205) { // Right Click or Right Half of canvas
+  // Left vs Right Flipper Click
+  if (e.button === 2 || mouseX > canvas.width / 2) {
     rightFlipper.isPressed = true;
     audio.playFlipper();
-  } else { // Left Click or Left Half of canvas
+  } else {
     leftFlipper.isPressed = true;
     audio.playFlipper();
   }
 });
 
-canvas.addEventListener('pointerup', () => {
-  leftFlipper.isPressed = false;
-  rightFlipper.isPressed = false;
+canvas.addEventListener('pointerup', (e) => {
+  if (e.button === 2) {
+    rightFlipper.isPressed = false;
+  } else {
+    leftFlipper.isPressed = false;
+  }
+});
+
+// Global Mouse Down for Left/Right Flipper outside Canvas
+window.addEventListener('mousedown', (e) => {
+  if (gameState !== 'PLAYING') return;
+  if (e.target === canvas) return; // Handled by canvas pointerdown
+
+  if (e.button === 0) {
+    leftFlipper.isPressed = true;
+    audio.playFlipper();
+  } else if (e.button === 2) {
+    rightFlipper.isPressed = true;
+    audio.playFlipper();
+  }
 });
 
 window.addEventListener('mouseup', (e) => {
+  if (e.target === canvas) return;
   if (e.button === 0) leftFlipper.isPressed = false;
   if (e.button === 2) rightFlipper.isPressed = false;
 });
 
-// KEYBOARD CONTROLS (A = Left, D = Right, Space = Launch)
+// Keyboard Controls
 window.addEventListener('keydown', (e) => {
   if (gameState !== 'PLAYING') return;
 
@@ -390,7 +409,7 @@ window.addEventListener('keyup', (e) => {
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') rightFlipper.isPressed = false;
 });
 
-// ON-SCREEN BUTTON CONTROLS
+// On-Screen Buttons
 btnFlipperLeft.addEventListener('pointerdown', (e) => {
   e.preventDefault();
   leftFlipper.isPressed = true;
@@ -481,8 +500,6 @@ function gameOver() {
 function update() {
   if (gameState !== 'PLAYING') return;
 
-  if (plungerFlashTimer > 0) plungerFlashTimer--;
-
   // Countdown Auto-Launch
   if (countdownTimer > 0) {
     countdownTimer--;
@@ -495,10 +512,13 @@ function update() {
     } else if (countdownTimer === 0) {
       countdownText = 'LAUNCH!';
       audio.playBeep(1200);
+      plungerFlashTimer = 15;
       triggerLaunch();
       setTimeout(() => { countdownText = ''; }, 600);
     }
   }
+
+  if (plungerFlashTimer > 0) plungerFlashTimer--;
 
   // Update flipper angles
   const flipSpeed = 0.38;
@@ -549,13 +569,28 @@ function update() {
       b.x += b.vx / SUB_STEPS;
       b.y += b.vy / SUB_STEPS;
 
-      if (b.x > 410) {
+      // Track Plunger Lane State
+      if (b.x > 410 && b.y > 130) {
         b.inPlungerLane = true;
-      } else {
+      } else if (b.x < 410) {
         b.inPlungerLane = false;
       }
 
-      // 1. HARD CEILING & ROOF ARCH BOUNDARY CHECKS
+      // SOLID PLUNGER BASE PLATFORM (Ball rests solidly at y = 520, never sinks or phases through bottom)
+      if (b.inPlungerLane && b.y + b.radius > 525) {
+        b.y = 525 - b.radius;
+        if (b.vy > 0) b.vy = -b.vy * 0.2; // Solid resting bounce
+        b.vx = 0;
+      }
+
+      // SOLID ONE-WAY PLUNGER GATE & SEPARATOR (Balls in main table can NEVER re-enter plunger lane)
+      if (!b.inPlungerLane && b.x + b.radius > 410 && b.y > 130) {
+        b.x = 410 - b.radius;
+        b.vx = -Math.abs(b.vx) * RESTITUTION;
+        addSparks(b.x, b.y, '#06b6d4', 4);
+      }
+
+      // HARD CEILING & ROOF ARCH BOUNDARY CHECKS
       if (b.y - b.radius < 22) {
         b.y = 22 + b.radius;
         b.vy = Math.abs(b.vy) * 0.6;
@@ -647,7 +682,7 @@ function update() {
       });
     }
 
-    // Drain Out of Bottom
+    // Drain Out of Bottom Center Gap
     if (b.y > canvas.height + 20) {
       balls.splice(bIdx, 1);
       if (balls.length === 0) {
@@ -716,6 +751,21 @@ function draw() {
     ctx.lineTo(canvas.width, y);
     ctx.stroke();
   }
+
+  // Draw Drain Warning Zone under widened Flipper Gap
+  ctx.save();
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.12)';
+  ctx.beginPath();
+  ctx.moveTo(165, 520);
+  ctx.lineTo(245, 520);
+  ctx.lineTo(205, 570);
+  ctx.closePath();
+  ctx.fill();
+  ctx.font = 'bold 9px Orbitron';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#ef4444';
+  ctx.fillText('DRAIN', 205, 545);
+  ctx.restore();
 
   // Draw Walls
   ctx.strokeStyle = '#06b6d4';
@@ -788,30 +838,39 @@ function draw() {
   drawFlipper(leftFlipper, '#ec4899');
   drawFlipper(rightFlipper, '#06b6d4');
 
-  // DRAW VISUAL PLUNGER HITBOX AREA & SPRING
+  // Draw Solid Plunger Piston & Glowing Interactive Plunger Hitbox
   ctx.save();
-  const isFlashed = plungerFlashTimer > 0;
-  ctx.fillStyle = isFlashed ? 'rgba(234, 179, 8, 0.4)' : 'rgba(234, 179, 8, 0.12)';
-  ctx.strokeStyle = isFlashed ? '#ffffff' : '#eab308';
-  ctx.lineWidth = isFlashed ? 3 : 1.5;
+  const isFlashing = plungerFlashTimer > 0;
+  ctx.fillStyle = isFlashing ? '#ffffff' : '#eab308';
   ctx.shadowColor = '#eab308';
-  ctx.shadowBlur = isFlashed ? 25 : 10;
-  ctx.fillRect(plungerHitbox.x, plungerHitbox.y, plungerHitbox.w, plungerHitbox.h);
+  ctx.shadowBlur = isFlashing ? 25 : 12;
+  ctx.strokeStyle = '#fef08a';
+  ctx.lineWidth = 2;
+  
+  // Plunger Hitbox Frame
   ctx.strokeRect(plungerHitbox.x, plungerHitbox.y, plungerHitbox.w, plungerHitbox.h);
+  ctx.fillRect(422, 525, 18, 50); // Solid Piston Platform
 
-  // Plunger Metal Spring & Handle
-  ctx.fillStyle = '#eab308';
-  ctx.fillRect(420, 530, 20, 45);
+  // Plunger Handle Spring
+  ctx.strokeStyle = '#eab308';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(431, 545);
+  ctx.lineTo(431, 570);
+  ctx.stroke();
 
-  // Plunger Label inside Hitbox
+  // Rotated "⚡ LAUNCH" text inside plunger channel
   ctx.save();
   ctx.translate(432, 490);
   ctx.rotate(-Math.PI / 2);
-  ctx.font = 'bold 10px Orbitron';
-  ctx.fillStyle = isFlashed ? '#ffffff' : '#eab308';
+  ctx.font = 'black 11px Orbitron';
   ctx.textAlign = 'center';
+  ctx.fillStyle = isFlashing ? '#ffffff' : '#eab308';
+  ctx.shadowColor = '#eab308';
+  ctx.shadowBlur = 10;
   ctx.fillText('⚡ LAUNCH', 0, 0);
   ctx.restore();
+
   ctx.restore();
 
   // Draw Particles
