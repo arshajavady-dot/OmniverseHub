@@ -128,7 +128,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.12);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.14);
     } catch(e) {}
@@ -146,7 +146,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.12, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -164,7 +164,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.18, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.15);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.16);
     } catch(e) {}
@@ -182,7 +182,7 @@ class PinballAudioEngine {
       gain.gain.setValueAtTime(0.2, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.25);
     } catch(e) {}
@@ -198,6 +198,7 @@ let ballsLeft = 3;
 let gameState = 'START'; // START, PLAYING, GAMEOVER
 let countdownTimer = 0; // Countdown in frames (180 = 3s)
 let countdownText = '';
+let plungerFlashTimer = 0; // Visual flash timer when plunger hitbox is clicked
 
 hudHighscore.textContent = String(highScore).padStart(6, '0');
 
@@ -205,6 +206,14 @@ hudHighscore.textContent = String(highScore).padStart(6, '0');
 const GRAVITY = 0.22;
 const DAMPING = 0.985;
 const RESTITUTION = 0.72;
+
+// Plunger Hitbox Bounds (Bottom Right Launch Channel)
+const plungerHitbox = {
+  x: 410,
+  y: 460,
+  w: 45,
+  h: 115
+};
 
 // Ball object
 let balls = [];
@@ -227,9 +236,9 @@ function startCountdown() {
   audio.playBeep(600);
 }
 
-// Flippers
+// Flippers with Authentic Arcade Gap Space (115px & 295px = 63px center gap!)
 const leftFlipper = {
-  x: 140,
+  x: 115,
   y: 515,
   length: 65,
   angle: 0.45,
@@ -240,7 +249,7 @@ const leftFlipper = {
 };
 
 const rightFlipper = {
-  x: 270,
+  x: 295,
   y: 515,
   length: 65,
   angle: Math.PI - 0.45,
@@ -269,7 +278,7 @@ const dropTargets = [
   { x: 340, y: 190, w: 12, h: 28, hit: false, score: 300 }
 ];
 
-// Static boundary walls & sloped guides
+// Static boundary walls & sloped guides (With widened flipper gap)
 const walls = [
   { x1: 20, y1: 560, x2: 20, y2: 120 },
   { x1: 20, y1: 120, x2: 100, y2: 30 },
@@ -281,13 +290,13 @@ const walls = [
   // Plunger lane separator
   { x1: 410, y1: 140, x2: 410, y2: 560 },
   
-  // Slingshot guide walls above flippers
-  { x1: 35, y1: 420, x2: 130, y2: 495 },
-  { x1: 375, y1: 420, x2: 280, y2: 495 },
+  // Slingshot guide walls above widened flippers
+  { x1: 30, y1: 420, x2: 105, y2: 495 },
+  { x1: 380, y1: 420, x2: 305, y2: 495 },
   
   // Outer drain gutters
-  { x1: 35, y1: 420, x2: 35, y2: 540 },
-  { x1: 375, y1: 420, x2: 375, y2: 540 }
+  { x1: 30, y1: 420, x2: 30, y2: 540 },
+  { x1: 380, y1: 420, x2: 380, y2: 540 }
 ];
 
 // Particle Sparks
@@ -316,30 +325,45 @@ function addScorePopup(x, y, text, color) {
 
 // --- 3. INPUT LISTENERS & MOUSE CLICKS ---
 
-// Prevent right-click context menu so Right Click triggers Right Flipper smoothly
+// Prevent right-click context menu
 window.addEventListener('contextmenu', (e) => e.preventDefault());
 canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
-// MOUSE CLICK CONTROLS (Left Click = Left Flipper, Right Click = Right Flipper)
-window.addEventListener('mousedown', (e) => {
+// MOUSE / CANVAS CLICK CONTROLS WITH DEDICATED PLUNGER HITBOX
+canvas.addEventListener('pointerdown', (e) => {
   if (gameState !== 'PLAYING') return;
-  if (e.button === 0) { // Left Mouse Click
-    leftFlipper.isPressed = true;
-    audio.playFlipper();
-  } else if (e.button === 2) { // Right Mouse Click
+
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const clickX = (e.clientX - rect.left) * scaleX;
+  const clickY = (e.clientY - rect.top) * scaleY;
+
+  // 1. Check Plunger Hitbox Click (Bottom Right Launch Channel)
+  if (clickX >= plungerHitbox.x && clickY >= plungerHitbox.y) {
+    plungerFlashTimer = 15;
+    triggerLaunch();
+    return;
+  }
+
+  // 2. Otherwise check Left / Right flipper clicks based on click position or mouse button
+  if (e.button === 2 || clickX >= 205) { // Right Click or Right Half of canvas
     rightFlipper.isPressed = true;
     audio.playFlipper();
-  } else if (e.button === 1) { // Middle Mouse Click
-    triggerLaunch();
+  } else { // Left Click or Left Half of canvas
+    leftFlipper.isPressed = true;
+    audio.playFlipper();
   }
 });
 
+canvas.addEventListener('pointerup', () => {
+  leftFlipper.isPressed = false;
+  rightFlipper.isPressed = false;
+});
+
 window.addEventListener('mouseup', (e) => {
-  if (e.button === 0) {
-    leftFlipper.isPressed = false;
-  } else if (e.button === 2) {
-    rightFlipper.isPressed = false;
-  }
+  if (e.button === 0) leftFlipper.isPressed = false;
+  if (e.button === 2) rightFlipper.isPressed = false;
 });
 
 // KEYBOARD CONTROLS (A = Left, D = Right, Space = Launch)
@@ -356,6 +380,7 @@ window.addEventListener('keydown', (e) => {
   }
   if (e.key === ' ' || e.key === 'ArrowDown' || e.key === 'Enter' || e.key === 'ArrowUp') {
     e.preventDefault();
+    plungerFlashTimer = 15;
     triggerLaunch();
   }
 });
@@ -388,6 +413,7 @@ btnFlipperRight.addEventListener('pointerup', (e) => {
 
 btnLaunchBall.addEventListener('click', (e) => {
   e.preventDefault();
+  plungerFlashTimer = 15;
   triggerLaunch();
 });
 
@@ -454,6 +480,8 @@ function gameOver() {
 // --- 4. PHYSICS & UPDATE LOOP ---
 function update() {
   if (gameState !== 'PLAYING') return;
+
+  if (plungerFlashTimer > 0) plungerFlashTimer--;
 
   // Countdown Auto-Launch
   if (countdownTimer > 0) {
@@ -760,12 +788,30 @@ function draw() {
   drawFlipper(leftFlipper, '#ec4899');
   drawFlipper(rightFlipper, '#06b6d4');
 
-  // Draw Plunger
+  // DRAW VISUAL PLUNGER HITBOX AREA & SPRING
   ctx.save();
-  ctx.fillStyle = '#eab308';
+  const isFlashed = plungerFlashTimer > 0;
+  ctx.fillStyle = isFlashed ? 'rgba(234, 179, 8, 0.4)' : 'rgba(234, 179, 8, 0.12)';
+  ctx.strokeStyle = isFlashed ? '#ffffff' : '#eab308';
+  ctx.lineWidth = isFlashed ? 3 : 1.5;
   ctx.shadowColor = '#eab308';
-  ctx.shadowBlur = 10;
+  ctx.shadowBlur = isFlashed ? 25 : 10;
+  ctx.fillRect(plungerHitbox.x, plungerHitbox.y, plungerHitbox.w, plungerHitbox.h);
+  ctx.strokeRect(plungerHitbox.x, plungerHitbox.y, plungerHitbox.w, plungerHitbox.h);
+
+  // Plunger Metal Spring & Handle
+  ctx.fillStyle = '#eab308';
   ctx.fillRect(420, 530, 20, 45);
+
+  // Plunger Label inside Hitbox
+  ctx.save();
+  ctx.translate(432, 490);
+  ctx.rotate(-Math.PI / 2);
+  ctx.font = 'bold 10px Orbitron';
+  ctx.fillStyle = isFlashed ? '#ffffff' : '#eab308';
+  ctx.textAlign = 'center';
+  ctx.fillText('⚡ LAUNCH', 0, 0);
+  ctx.restore();
   ctx.restore();
 
   // Draw Particles
