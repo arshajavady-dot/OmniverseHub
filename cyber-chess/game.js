@@ -11,6 +11,7 @@ const startOverlay = document.getElementById('start-overlay');
 const btnVsAi = document.getElementById('btn-vs-ai');
 const btn2p = document.getElementById('btn-2p');
 const btnReset = document.getElementById('btn-reset');
+const btnModeToggle = document.getElementById('btn-mode-toggle');
 
 const BOARD_SIZE = 8;
 const TILE_SIZE = 500 / BOARD_SIZE;
@@ -99,7 +100,7 @@ let vsAi = true;
 let selectedSquare = null; // { r, c }
 let validMoves = []; // array of { r, c }
 let particles = [];
-let gameState = 'START';
+let gameState = 'PLAYING';
 
 function initBoard() {
   board = [
@@ -116,6 +117,8 @@ function initBoard() {
   selectedSquare = null;
   validMoves = [];
   particles = [];
+  gameState = 'PLAYING';
+  if (startOverlay) startOverlay.classList.add('hidden');
   updateHUD();
 }
 
@@ -123,6 +126,7 @@ function updateHUD() {
   turnIndicator.textContent = turn === 'w' ? "WHITE'S TURN" : "BLACK'S TURN";
   turnIndicator.className = turn === 'w' ? "px-3 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded-lg text-cyan-300 font-bold" : "px-3 py-1 bg-pink-500/20 border border-pink-500/50 rounded-lg text-pink-300 font-bold";
   gameStatus.textContent = vsAi ? "VS MAINFRAME AI" : "2-PLAYER MODE";
+  if (btnModeToggle) btnModeToggle.textContent = vsAi ? "🤖 VS AI" : "👥 2-PLAYER";
 }
 
 btnVsAi.addEventListener('click', () => {
@@ -137,16 +141,23 @@ btn2p.addEventListener('click', () => {
 
 btnReset.addEventListener('click', initBoard);
 
+if (btnModeToggle) {
+  btnModeToggle.addEventListener('click', () => {
+    vsAi = !vsAi;
+    updateHUD();
+  });
+}
+
 function startGame() {
   initBoard();
   gameState = 'PLAYING';
-  startOverlay.classList.add('hidden');
+  if (startOverlay) startOverlay.classList.add('hidden');
 }
 
 // --- 3. LEGAL MOVE GENERATION ---
 function getLegalMoves(r, c) {
+  if (!board[r] || !board[r][c]) return [];
   const piece = board[r][c];
-  if (!piece) return [];
   const color = piece[0];
   const type = piece[1];
   const moves = [];
@@ -244,7 +255,7 @@ canvas.addEventListener('click', (e) => {
   }
 
   // Select piece of current turn color
-  const piece = board[r][c];
+  const piece = board[r] ? board[r][c] : null;
   if (piece && piece[0] === turn) {
     selectedSquare = { r, c };
     validMoves = getLegalMoves(r, c);
@@ -292,7 +303,7 @@ function makeAiMove() {
   const allMoves = [];
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
-      if (board[r][c] && board[r][c][0] === 'b') {
+      if (board[r] && board[r][c] && board[r][c][0] === 'b') {
         const moves = getLegalMoves(r, c);
         moves.forEach(m => {
           const target = board[m.r][m.c];
@@ -348,7 +359,8 @@ function draw() {
       // Valid Moves Highlight
       if (validMoves.some(m => m.r === r && m.c === c)) {
         ctx.save();
-        ctx.fillStyle = board[r][c] ? 'rgba(236, 72, 153, 0.5)' : 'rgba(6, 182, 212, 0.5)';
+        const hasPiece = board[r] && board[r][c];
+        ctx.fillStyle = hasPiece ? 'rgba(236, 72, 153, 0.5)' : 'rgba(6, 182, 212, 0.5)';
         ctx.beginPath();
         ctx.arc(c * TILE_SIZE + TILE_SIZE / 2, r * TILE_SIZE + TILE_SIZE / 2, 10, 0, Math.PI * 2);
         ctx.fill();
@@ -356,7 +368,7 @@ function draw() {
       }
 
       // Render Piece
-      const piece = board[r][c];
+      const piece = board[r] ? board[r][c] : null;
       if (piece) {
         ctx.save();
         ctx.font = '36px JetBrains Mono';
@@ -397,4 +409,6 @@ function gameLoop() {
 
 function update() {}
 
+// Auto-initialize board immediately on load!
+initBoard();
 requestAnimationFrame(gameLoop);

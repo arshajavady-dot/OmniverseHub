@@ -44,8 +44,8 @@
     <div class="relative w-full max-w-[500px]">
       <canvas id="gameCanvas" width="500" height="500" class="w-full h-auto border-b-0 cursor-pointer"></canvas>
 
-      <!-- Start / Game Over Overlay -->
-      <div id="start-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
+      <!-- Victory / Restart Overlay (Hidden by Default) -->
+      <div id="start-overlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
         <div class="text-6xl mb-2 animate-bounce">♟️👑♞</div>
         <h2 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-2">CYBER CHESS</h2>
         <p class="text-xs text-slate-300 max-w-xs mb-4">Cyberpunk 2D Tactical Chess! Play against the AI mainframe or 2-Player local mode with glowing move matrix & chiptune audio.</p>
@@ -63,8 +63,16 @@
 
     <!-- Bottom Status Bar -->
     <div class="flex items-center justify-between w-full max-w-[500px] bg-slate-900/90 border border-cyan-500/30 rounded-b-xl p-2.5 backdrop-blur-md text-xs font-mono">
-      <span class="text-slate-400">STATUS: <span id="game-status" class="text-emerald-400 font-bold">READY</span></span>
-      <button id="btn-reset" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-300 font-orbitron text-[11px]">RESET BOARD</button>
+      <div class="flex items-center gap-2">
+        <span class="text-slate-400">STATUS: <span id="game-status" class="text-emerald-400 font-bold">READY</span></span>
+      </div>
+
+      <div class="flex items-center gap-2 font-orbitron">
+        <button id="btn-mode-toggle" class="px-2.5 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 rounded text-cyan-300 text-[11px]">
+          🤖 VS AI
+        </button>
+        <button id="btn-reset" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-300 text-[11px]">RESET BOARD</button>
+      </div>
     </div>
   </div>
 

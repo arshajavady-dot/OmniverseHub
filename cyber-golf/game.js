@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Cyber Golf: Neon Links — Retro Chiptune Mini-Golf Engine
  */
 
@@ -530,5 +530,9 @@ function gameLoop() {
   draw();
   requestAnimationFrame(gameLoop);
 }
+
+// Auto-initialize course 0 on load!
+loadCourse(0);
+gameState = 'PLAYING';
 
 requestAnimationFrame(gameLoop);
