@@ -7,6 +7,11 @@ class CompyAudioEngine {
   constructor() {
     this.ctx = null;
     this.enabled = true;
+    this.isPlayingBGM = false;
+    this.bgmTimer = null;
+    this.step = 0;
+    this.tempo = 40;
+    this.bassline = [55.00, 55.00, 65.41, 55.00, 49.00, 55.00, 65.41, 58.27];
     this.initOnGesture();
   }
 
@@ -28,10 +33,53 @@ class CompyAudioEngine {
   initOnGesture() {
     const unlock = () => {
       this.init();
+      if (!this.isPlayingBGM) this.startBGM();
     };
     ['click', 'keydown', 'touchstart'].forEach(evt => {
-      window.addEventListener(evt, unlock, { passive: true, once: true });
+      window.addEventListener(evt, unlock, { passive: true });
     });
+  }
+
+  startBGM() {
+    this.init();
+    if (!this.ctx || !this.enabled) return;
+    this.stopBGM();
+    this.isPlayingBGM = true;
+    this.step = 0;
+    const stepMs = (60 / this.tempo / 4) * 1000;
+
+    this.bgmTimer = setInterval(() => {
+      if (!this.isPlayingBGM || !this.ctx || this.ctx.state === 'suspended') return;
+      this.playBgmStep(this.step);
+      this.step = (this.step + 1) % 8;
+    }, stepMs);
+  }
+
+  stopBGM() {
+    this.isPlayingBGM = false;
+    if (this.bgmTimer) {
+      clearInterval(this.bgmTimer);
+      this.bgmTimer = null;
+    }
+  }
+
+  playBgmStep(step) {
+    if (!this.ctx || this.ctx.state === 'suspended') return;
+    try {
+      const now = this.ctx.currentTime;
+      const bFreq = this.bassline[step];
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(bFreq, now);
+      gain.gain.setValueAtTime(0.04, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.connect(gain);
+      gain.connect(this.masterGain || this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.38);
+    } catch(e) {}
   }
 
   playBeep(freq = 520, dur = 0.04) {

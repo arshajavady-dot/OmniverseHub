@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Cyber Chess: Tactical Matrix — 10x Smarter Cyberpunk Chess Engine
  */
 
@@ -20,6 +20,12 @@ const TILE_SIZE = 500 / BOARD_SIZE;
 class ChessAudio {
   constructor() {
     this.ctx = null;
+    this.isPlayingBGM = false;
+    this.bgmTimer = null;
+    this.step = 0;
+    this.tempo = 110;
+    this.bassline = [110, 110, 146.83, 130.81, 110, 110, 164.81, 146.83];
+    this.chords = [220, 261.63, 329.63, 392.00];
     this.initOnUserGesture();
   }
 
@@ -32,10 +38,67 @@ class ChessAudio {
       if (this.ctx && this.ctx.state === 'suspended') {
         this.ctx.resume().catch(() => {});
       }
+      if (!this.isPlayingBGM) this.startBGM();
     };
     ['click', 'keydown', 'touchstart', 'pointerdown', 'mousedown'].forEach(evt => {
       window.addEventListener(evt, unlock, { passive: true });
     });
+  }
+
+  startBGM() {
+    const actx = this.ensureCtx();
+    if (!actx) return;
+    this.stopBGM();
+    this.isPlayingBGM = true;
+    this.step = 0;
+    const stepMs = (60 / this.tempo / 4) * 1000;
+
+    this.bgmTimer = setInterval(() => {
+      if (!this.isPlayingBGM || !this.ctx || this.ctx.state === 'suspended') return;
+      this.playBgmStep(this.step);
+      this.step = (this.step + 1) % 8;
+    }, stepMs);
+  }
+
+  stopBGM() {
+    this.isPlayingBGM = false;
+    if (this.bgmTimer) {
+      clearInterval(this.bgmTimer);
+      this.bgmTimer = null;
+    }
+  }
+
+  playBgmStep(step) {
+    if (!this.ctx || this.ctx.state === 'suspended') return;
+    try {
+      const now = this.ctx.currentTime;
+      const bFreq = this.bassline[step];
+      const cFreq = this.chords[step % 4];
+
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(bFreq, now);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.18);
+
+      if (step % 2 === 0) {
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(cFreq, now);
+        gain2.gain.setValueAtTime(0.04, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now);
+        osc2.stop(now + 0.28);
+      }
+    } catch(e) {}
   }
 
   ensureCtx() {
