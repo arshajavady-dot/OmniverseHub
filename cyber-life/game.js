@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Cyber Life: 2D Sandbox Survival — Terraria Knockoff Engine & Chiptune Audio
  */
 
@@ -371,7 +371,8 @@ window.addEventListener('keydown', (e) => {
 
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = true;
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
-  if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.key === 'ArrowUp') {
+  if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp') {
+    if (e.key === ' ' || e.code === 'Space') e.preventDefault();
     if (player.onGround) {
       player.vy = -6.8;
       player.onGround = false;
