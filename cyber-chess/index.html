@@ -28,7 +28,9 @@
     <!-- Top Header HUD -->
     <div class="flex items-center justify-between w-full max-w-[500px] bg-slate-900/90 border border-cyan-500/30 rounded-t-xl px-4 py-2 backdrop-blur-md">
       <div class="flex items-center gap-2">
-        <span class="text-2xl">♟️</span>
+        <div class="w-7 h-7 bg-cyan-500/20 border border-cyan-400/50 rounded-lg flex items-center justify-center text-cyan-400 font-bold text-xs shadow-[0_0_10px_rgba(56,189,248,0.4)]">
+          CY
+        </div>
         <div>
           <h1 class="font-orbitron font-bold text-sm tracking-wider bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">CYBER CHESS</h1>
           <p class="text-[10px] text-cyan-400/70">TACTICAL NEON MATRIX</p>
@@ -46,16 +48,18 @@
 
       <!-- Victory / Restart Overlay (Hidden by Default) -->
       <div id="start-overlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
-        <div class="text-6xl mb-2 animate-bounce">♟️👑♞</div>
+        <div class="w-16 h-16 bg-cyan-500/20 border-2 border-cyan-400/60 rounded-2xl flex items-center justify-center text-cyan-400 font-black text-xl mb-3 shadow-[0_0_25px_rgba(56,189,248,0.5)]">
+          CYBER
+        </div>
         <h2 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-2">CYBER CHESS</h2>
-        <p class="text-xs text-slate-300 max-w-xs mb-4">Cyberpunk 2D Tactical Chess! Play against the AI mainframe or 2-Player local mode with glowing move matrix & chiptune audio.</p>
+        <p class="text-xs text-slate-300 max-w-xs mb-4">Cyberpunk 2D Tactical Chess! Powered by Minimax Alpha-Beta AI & Custom Vector Canvas Geometry.</p>
 
         <div class="flex gap-3 mb-5">
           <button id="btn-vs-ai" class="font-orbitron font-bold px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 text-slate-950 rounded-lg shadow-lg text-xs">
-            🤖 VS MAINFRAME AI
+            MAINFRAME AI v2.0
           </button>
           <button id="btn-2p" class="font-orbitron font-bold px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 rounded-lg text-xs">
-            👥 2-PLAYER LOCAL
+            2-PLAYER LOCAL
           </button>
         </div>
       </div>
@@ -69,7 +73,7 @@
 
       <div class="flex items-center gap-2 font-orbitron">
         <button id="btn-mode-toggle" class="px-2.5 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 rounded text-cyan-300 text-[11px]">
-          🤖 VS AI
+          VS AI
         </button>
         <button id="btn-reset" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-300 text-[11px]">RESET BOARD</button>
       </div>
