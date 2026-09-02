@@ -18,7 +18,7 @@
     canvas {
       box-shadow: 0 0 35px rgba(16, 185, 129, 0.25), 0 0 70px rgba(6, 182, 212, 0.15);
       border: 2px solid rgba(16, 185, 129, 0.4);
-      background-color: #030712;
+      background-color: #0c1a30;
     }
     .hotbar-slot {
       transition: all 0.15s ease-in-out;
@@ -65,31 +65,40 @@
     <div class="relative w-full max-w-[800px]">
       <canvas id="gameCanvas" width="800" height="500" class="w-full h-auto border-b-0 cursor-crosshair"></canvas>
 
-      <!-- Start / Overlay Screen -->
-      <div id="start-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
+      <!-- Game Over / Respawn Overlay (Hidden by Default) -->
+      <div id="start-overlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
         <div class="text-6xl mb-2 animate-bounce">🌲⛏️🗡️</div>
         <h2 class="font-orbitron font-black text-3xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 mb-2">CYBER LIFE</h2>
         <p class="text-xs text-slate-300 max-w-md mb-4">Terraria-inspired 2D Sandbox! Mine neon ores, chop laser wood, craft shelters, and slay cyber slimes under a day/night synth sky.</p>
 
-        <div class="bg-slate-900/90 border border-emerald-500/30 rounded-lg p-3 w-full max-w-sm text-left text-[11px] mb-5 space-y-1">
-          <p class="text-emerald-300 font-bold">🕹️ CONTROLS:</p>
-          <p><span class="text-emerald-400 font-bold">A / D or Arrows:</span> Move Left / Right</p>
-          <p><span class="text-cyan-400 font-bold">W / Space:</span> Jump</p>
-          <p><span class="text-yellow-400 font-bold">Left Click:</span> Mine Block / Swing Weapon</p>
-          <p><span class="text-purple-400 font-bold">Right Click:</span> Place Selected Block / Torch</p>
-          <p><span class="text-pink-400 font-bold">Keys 1 - 6:</span> Select Hotbar Tool / Block</p>
-        </div>
-
         <button id="btn-start" class="font-orbitron font-bold px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 rounded-lg shadow-lg shadow-emerald-500/30 tracking-widest text-sm transition-all transform hover:scale-105 active:scale-95">
-          ENTER THE SANDBOX
+          RESPAWN MATRIX
         </button>
       </div>
     </div>
 
-    <!-- Inventory Hotbar Toolbar -->
-    <div class="flex items-center justify-between w-full max-w-[800px] bg-slate-900/90 border border-emerald-500/30 rounded-b-xl p-2 gap-2 backdrop-blur-md">
+    <!-- Inventory Hotbar Toolbar & On-Screen Control Buttons -->
+    <div class="flex flex-col w-full max-w-[800px] bg-slate-900/90 border border-emerald-500/30 rounded-b-xl p-2 gap-2 backdrop-blur-md">
       <div id="hotbar" class="flex items-center gap-2 w-full justify-center">
         <!-- 6 Hotbar Slots populated by JS -->
+      </div>
+
+      <!-- Action Control Buttons Bar -->
+      <div class="flex items-center justify-between gap-2 pt-1 border-t border-slate-800 text-[11px]">
+        <div class="flex items-center gap-1.5 flex-1">
+          <button id="btn-move-left" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded font-orbitron font-bold text-emerald-300 text-center">
+            ◀ LEFT (A)
+          </button>
+          <button id="btn-move-right" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded font-orbitron font-bold text-emerald-300 text-center">
+            RIGHT (D) ▶
+          </button>
+          <button id="btn-jump" class="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 rounded font-orbitron font-bold text-cyan-300 text-center">
+            ▲ JUMP (W)
+          </button>
+        </div>
+        <div class="text-[10px] text-slate-400 font-mono text-right hidden sm:block">
+          <span>LEFT CLICK: Mine / Attack</span> | <span>RIGHT CLICK: Place Block</span>
+        </div>
       </div>
     </div>
   </div>
