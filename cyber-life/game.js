@@ -128,7 +128,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -146,7 +146,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.12, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -164,7 +164,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.13);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.14);
     } catch(e) {}
@@ -177,14 +177,14 @@ class CyberLifeAudio {
       const osc = actx.createOscillator();
       const gain = actx.createGain();
       osc.type = 'square';
-      osc.frequency.setValueAtTime(150, actx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(60, actx.currentTime + 0.2);
-      gain.gain.setValueAtTime(0.2, actx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.22);
+      osc.frequency.setValueAtTime(220, actx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(80, actx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.25, actx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.16);
       osc.connect(gain);
-      gain.connect(actx.destination);
+      gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(actx.currentTime + 0.25);
+      osc.stop(actx.currentTime + 0.18);
     } catch(e) {}
   }
 }
@@ -253,7 +253,6 @@ function generateWorld() {
     for (let h = 1; h <= treeHeight; h++) {
       world[surfaceRow - h][c] = TILES.WOOD;
     }
-    // Canopy
     const topR = surfaceRow - treeHeight;
     for (let dr = -2; dr <= 0; dr++) {
       for (let dc = -2; dc <= 2; dc++) {
@@ -322,14 +321,16 @@ let player = {
   onGround: false,
   facing: 'right',
   swingAngle: 0,
-  isSwinging: false
+  isSwinging: false,
+  walkFrame: 0,
+  hurtTimer: 0
 };
 
 let camera = { x: 0, y: 0 };
 let enemies = [];
 let particles = [];
 let popups = [];
-let timeOfDay = 0; // 0 to 1200
+let timeOfDay = 0;
 
 function resetPlayer() {
   player.x = 400;
@@ -337,6 +338,7 @@ function resetPlayer() {
   player.vx = 0;
   player.vy = 0;
   player.hp = 100;
+  player.hurtTimer = 0;
   updateHpUI();
 }
 
@@ -512,6 +514,8 @@ function update() {
   timeText.textContent = isNight ? 'NIGHT TIME' : 'DAYTIME';
   timeText.className = isNight ? 'text-indigo-400 font-bold' : 'text-amber-300 font-bold';
 
+  if (player.hurtTimer > 0) player.hurtTimer--;
+
   // Move Clouds
   clouds.forEach(c => {
     c.x += c.speed;
@@ -523,28 +527,38 @@ function update() {
     spawnSlime();
   }
 
-  // Player Movement
+  // Player Movement & Walking Frame Animation
   if (keys.left) {
-    player.vx = -2.8;
+    player.vx = -3.2;
     player.facing = 'left';
+    player.walkFrame += 0.2;
   } else if (keys.right) {
-    player.vx = 2.8;
+    player.vx = 3.2;
     player.facing = 'right';
+    player.walkFrame += 0.2;
   } else {
-    player.vx *= 0.7;
+    player.vx *= 0.65;
+    player.walkFrame = 0;
   }
 
   // Gravity
-  player.vy += 0.28;
+  player.vy += 0.32;
+
+  // Separate Axis Movement & Smooth Non-Teleporting Collision
   player.x += player.vx;
-  collideWorld(player, 'x');
+  player.x = Math.max(player.w / 2 + 10, Math.min(COLS * TILE_SIZE - player.w / 2 - 10, player.x));
+  collideAxis(player, 'x');
+
   player.y += player.vy;
   player.onGround = false;
-  collideWorld(player, 'y');
+  collideAxis(player, 'y');
 
-  // Camera Follow Player
-  camera.x = player.x - canvas.width / 2;
-  camera.y = player.y - canvas.height / 2;
+  // Smooth Centered Camera Follow
+  const targetCamX = player.x - canvas.width / 2;
+  const targetCamY = player.y - canvas.height / 2;
+  camera.x += (targetCamX - camera.x) * 0.18;
+  camera.y += (targetCamY - camera.y) * 0.18;
+
   camera.x = Math.max(0, Math.min(COLS * TILE_SIZE - canvas.width, camera.x));
   camera.y = Math.max(0, Math.min(ROWS * TILE_SIZE - canvas.height, camera.y));
 
@@ -560,13 +574,20 @@ function update() {
     e.vy += 0.25;
     e.x += e.vx;
     e.y += e.vy;
-    collideWorld(e, 'y');
+    collideAxis(e, 'y');
 
+    // Non-Looping Damage Audio & Hurt Cooldown
     const dist = Math.hypot(e.x - player.x, e.y - player.y);
-    if (dist < 18) {
-      player.hp -= 0.5;
+    if (dist < 18 && player.hurtTimer <= 0) {
+      player.hp -= 12;
+      player.hurtTimer = 45; // 45 frames (~0.75s) invulnerability window
+      player.vy = -3;
+      player.vx = e.x < player.x ? 4 : -4;
       updateHpUI();
       audio.playHurt();
+      addSparks(player.x, player.y, '#ef4444', 12);
+      addPopup(player.x, player.y - 10, '-12 HP', '#ef4444');
+
       if (player.hp <= 0) {
         gameState = 'GAMEOVER';
         audio.stopBGM();
@@ -600,28 +621,45 @@ function update() {
   }
 }
 
-function collideWorld(entity, axis) {
-  const startCol = Math.floor((entity.x - entity.w / 2) / TILE_SIZE);
-  const endCol = Math.floor((entity.x + entity.w / 2) / TILE_SIZE);
-  const startRow = Math.floor((entity.y - entity.h / 2) / TILE_SIZE);
-  const endRow = Math.floor((entity.y + entity.h / 2) / TILE_SIZE);
+// Precise Tile Collision (Zero Teleportation)
+function isSolidTile(c, r) {
+  if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return false;
+  const tile = world[r][c];
+  return tile !== TILES.AIR && tile !== TILES.TORCH;
+}
 
-  for (let r = startRow; r <= endRow; r++) {
-    for (let c = startCol; c <= endCol; c++) {
-      if (world[r] && world[r][c] && world[r][c] !== TILES.AIR && world[r][c] !== TILES.TORCH) {
-        if (axis === 'x') {
-          if (entity.vx > 0) entity.x = c * TILE_SIZE - entity.w / 2;
-          else if (entity.vx < 0) entity.x = (c + 1) * TILE_SIZE + entity.w / 2;
-          entity.vx = 0;
-        } else if (axis === 'y') {
-          if (entity.vy > 0) {
-            entity.y = r * TILE_SIZE - entity.h / 2;
-            entity.onGround = true;
-          } else if (entity.vy < 0) {
-            entity.y = (r + 1) * TILE_SIZE + entity.h / 2;
-          }
-          entity.vy = 0;
-        }
+function collideAxis(entity, axis) {
+  const halfW = entity.w / 2;
+  const halfH = entity.h / 2;
+
+  const leftC = Math.floor((entity.x - halfW + 1) / TILE_SIZE);
+  const rightC = Math.floor((entity.x + halfW - 1) / TILE_SIZE);
+  const topR = Math.floor((entity.y - halfH + 1) / TILE_SIZE);
+  const bottomR = Math.floor((entity.y + halfH - 1) / TILE_SIZE);
+
+  if (axis === 'x') {
+    if (entity.vx > 0) {
+      if (isSolidTile(rightC, topR) || isSolidTile(rightC, bottomR)) {
+        entity.x = rightC * TILE_SIZE - halfW;
+        entity.vx = 0;
+      }
+    } else if (entity.vx < 0) {
+      if (isSolidTile(leftC, topR) || isSolidTile(leftC, bottomR)) {
+        entity.x = (leftC + 1) * TILE_SIZE + halfW;
+        entity.vx = 0;
+      }
+    }
+  } else if (axis === 'y') {
+    if (entity.vy > 0) {
+      if (isSolidTile(leftC, bottomR) || isSolidTile(rightC, bottomR)) {
+        entity.y = bottomR * TILE_SIZE - halfH;
+        entity.vy = 0;
+        entity.onGround = true;
+      }
+    } else if (entity.vy < 0) {
+      if (isSolidTile(leftC, topR) || isSolidTile(rightC, topR)) {
+        entity.y = (topR + 1) * TILE_SIZE + halfH;
+        entity.vy = 0;
       }
     }
   }
@@ -684,7 +722,6 @@ function draw() {
         ctx.fillStyle = TILE_COLORS[tile] || '#10b981';
         ctx.fillRect(tx, ty, TILE_SIZE, TILE_SIZE);
 
-        // Tile Highlights / Textures
         if (tile === TILES.GRASS) {
           ctx.fillStyle = '#34d399';
           ctx.fillRect(tx, ty, TILE_SIZE, 3);
@@ -760,29 +797,59 @@ function draw() {
     ctx.restore();
   });
 
-  // Draw Player Character
+  // Draw Redesigned Terraria Cyber-Explorer Character
   if (gameState === 'PLAYING') {
     ctx.save();
     ctx.translate(player.x, player.y);
 
-    // Character Body
+    // Red Flash on Damage
+    if (player.hurtTimer > 0 && Math.floor(player.hurtTimer / 4) % 2 === 0) {
+      ctx.globalAlpha = 0.5;
+    }
+
+    const isRight = player.facing === 'right';
+
+    // 1. Legs (Animated walking cycle)
+    const legOffset = Math.sin(player.walkFrame) * 4;
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(-5, 4, 4, 9 + legOffset);
+    ctx.fillRect(1, 4, 4, 9 - legOffset);
+
+    // 2. Armored Body / Chestplate
     ctx.fillStyle = '#10b981';
     ctx.shadowColor = '#10b981';
-    ctx.shadowBlur = 12;
-    ctx.fillRect(-player.w / 2, -player.h / 2, player.w, player.h);
+    ctx.shadowBlur = 8;
+    ctx.fillRect(-6, -6, 12, 11);
 
-    // Head Visor
+    // 3. Cyber Helmet with Glowing Neon Visor
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(-7, -15, 14, 9);
     ctx.fillStyle = '#06b6d4';
-    ctx.fillRect(player.facing === 'right' ? 0 : -player.w / 2, -player.h / 2 + 3, 7, 5);
+    ctx.shadowColor = '#06b6d4';
+    ctx.shadowBlur = 10;
+    ctx.fillRect(isRight ? 0 : -7, -13, 7, 4);
 
-    // Weapon Swing Animation
+    // 4. Arms & Weapon / Tool Swing
+    ctx.fillStyle = '#059669';
+    ctx.fillRect(isRight ? 2 : -6, -4, 4, 8);
+
     if (player.isSwinging) {
       ctx.save();
-      ctx.rotate(player.facing === 'right' ? player.swingAngle : -player.swingAngle);
-      ctx.fillStyle = '#ec4899';
-      ctx.shadowColor = '#ec4899';
-      ctx.shadowBlur = 15;
-      ctx.fillRect(0, -3, 22, 5);
+      ctx.rotate(isRight ? player.swingAngle : -player.swingAngle);
+      
+      const activeSlot = HOTBAR_SLOTS[selectedHotbarIndex];
+      if (activeSlot.id === 'sword') {
+        ctx.fillStyle = '#ec4899';
+        ctx.shadowColor = '#ec4899';
+        ctx.shadowBlur = 16;
+        ctx.fillRect(0, -3, 24, 6);
+      } else {
+        ctx.fillStyle = '#06b6d4';
+        ctx.shadowColor = '#06b6d4';
+        ctx.shadowBlur = 14;
+        ctx.fillRect(0, -3, 18, 5);
+        ctx.fillRect(14, -8, 5, 15); // Pickaxe Head
+      }
       ctx.restore();
     }
 
