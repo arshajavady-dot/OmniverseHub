@@ -141,8 +141,8 @@ const audio = new TankAudio();
 
 // --- 2. GAME STATE & ENTITIES ---
 const TILE_SIZE = 30;
-const COLS = 21; // 21 * 30 = 630px
-const ROWS = 14; // 14 * 30 = 420px
+const COLS = 21; // 630px
+const ROWS = 14; // 420px
 
 let currentStage = 1;
 let score = 0;
@@ -151,14 +151,15 @@ let gameState = 'PLAYING';
 let playerTank = {
   x: 100,
   y: 350,
-  w: 24,
-  h: 24,
+  w: 26,
+  h: 26,
   angle: 0,
   turretAngle: 0,
   speed: 2.4,
   hp: 100,
   maxHp: 100,
-  reloadTimer: 0
+  reloadTimer: 0,
+  treadOffset: 0
 };
 
 let map = [];
@@ -190,12 +191,13 @@ function spawnEnemies(count) {
     enemyTanks.push({
       x: 100 + i * 120,
       y: 60 + (i % 2) * 50,
-      w: 24,
-      h: 24,
+      w: 26,
+      h: 26,
       angle: Math.PI / 2,
       speed: 1.2 + Math.random() * 0.8,
       hp: 30,
       reloadTimer: 0,
+      treadOffset: 0,
       color: Math.random() > 0.5 ? '#ec4899' : '#a855f7'
     });
   }
@@ -275,12 +277,15 @@ function fireShell(tank, isPlayer) {
 
   const angle = isPlayer ? tank.turretAngle : tank.angle;
   shells.push({
-    x: tank.x + Math.cos(angle) * 16,
-    y: tank.y + Math.sin(angle) * 16,
-    vx: Math.cos(angle) * 7,
-    vy: Math.sin(angle) * 7,
+    x: tank.x + Math.cos(angle) * 18,
+    y: tank.y + Math.sin(angle) * 18,
+    vx: Math.cos(angle) * 7.5,
+    vy: Math.sin(angle) * 7.5,
     isPlayer
   });
+
+  // Muzzle Flash Sparks
+  addSparks(tank.x + Math.cos(angle) * 18, tank.y + Math.sin(angle) * 18, isPlayer ? '#06b6d4' : '#ec4899', 8);
 }
 
 function addSparks(x, y, color, count = 15) {
@@ -313,6 +318,7 @@ function update() {
 
   if (dx !== 0 || dy !== 0) {
     playerTank.angle = Math.atan2(dy, dx);
+    playerTank.treadOffset = (playerTank.treadOffset + 0.4) % 6;
     const newX = playerTank.x + dx * playerTank.speed;
     const newY = playerTank.y + dy * playerTank.speed;
     if (!checkWallTile(newX, playerTank.y, playerTank.w)) playerTank.x = newX;
@@ -334,6 +340,7 @@ function update() {
       if (Math.random() < 0.01) e.angle = Math.random() * Math.PI * 2;
     }
 
+    e.treadOffset = (e.treadOffset + 0.3) % 6;
     const ex = e.x + Math.cos(e.angle) * e.speed;
     const ey = e.y + Math.sin(e.angle) * e.speed;
     if (!checkWallTile(ex, e.y, e.w)) e.x = ex;
@@ -346,7 +353,6 @@ function update() {
     s.x += s.vx;
     s.y += s.vy;
 
-    // Check Wall Collisions
     const col = Math.floor(s.x / TILE_SIZE);
     const row = Math.floor(s.y / TILE_SIZE);
 
@@ -426,7 +432,89 @@ function checkWallTile(x, y, size) {
   return map[row] && map[row][col] > 0;
 }
 
-// --- 4. RENDER LOOP ---
+// --- 4. DETAILED CYBER TANK RENDERER ---
+function drawDetailedTank(x, y, bodyAngle, turretAngle, mainColor, accentColor, treadOffset = 0) {
+  ctx.save();
+  ctx.translate(x, y);
+
+  // 1. Armored Tread Tracks (Left & Right)
+  ctx.save();
+  ctx.rotate(bodyAngle);
+
+  // Left & Right Track Bases
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(-14, -15, 6, 30);
+  ctx.fillRect(8, -15, 6, 30);
+
+  // Track Notch Stripes
+  ctx.fillStyle = accentColor;
+  for (let offset = -12; offset <= 12; offset += 6) {
+    const py = offset + (treadOffset % 6);
+    if (py >= -14 && py <= 12) {
+      ctx.fillRect(-14, py, 6, 2);
+      ctx.fillRect(8, py, 6, 2);
+    }
+  }
+
+  // 2. Main Armored Chassis Hull
+  ctx.fillStyle = '#1e293b';
+  ctx.shadowColor = mainColor;
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.moveTo(-10, -12);
+  ctx.lineTo(10, -12);
+  ctx.lineTo(12, 10);
+  ctx.lineTo(-12, 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Front Armor Plate Lines
+  ctx.fillStyle = mainColor;
+  ctx.fillRect(-8, -11, 16, 4);
+
+  // Rear Engine Vents
+  ctx.fillStyle = '#030712';
+  ctx.fillRect(-7, 7, 5, 4);
+  ctx.fillRect(2, 7, 5, 4);
+  ctx.restore();
+
+  // 3. Rotating 3D Turret & Cannon
+  ctx.save();
+  ctx.rotate(turretAngle);
+
+  // Heavy Dual-Barrel Cannon
+  ctx.fillStyle = mainColor;
+  ctx.shadowColor = mainColor;
+  ctx.shadowBlur = 12;
+  ctx.fillRect(4, -4, 18, 3);
+  ctx.fillRect(4, 1, 18, 3);
+
+  // Muzzle Brake Notch
+  ctx.fillStyle = accentColor;
+  ctx.fillRect(20, -5, 3, 10);
+
+  // Central Armored Turret Dome
+  ctx.fillStyle = '#0f172a';
+  ctx.beginPath();
+  ctx.arc(0, 0, 9, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = mainColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Glowing Commander Sensor Eye
+  ctx.fillStyle = accentColor;
+  ctx.shadowColor = accentColor;
+  ctx.shadowBlur = 10;
+  ctx.beginPath();
+  ctx.arc(2, 0, 3.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+  ctx.restore();
+}
+
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -454,21 +542,9 @@ function draw() {
     }
   }
 
-  // Draw Enemy Tanks
+  // Draw Enemy Cyber Tanks
   enemyTanks.forEach(e => {
-    ctx.save();
-    ctx.translate(e.x, e.y);
-    ctx.rotate(e.angle);
-
-    ctx.fillStyle = e.color;
-    ctx.shadowColor = e.color;
-    ctx.shadowBlur = 10;
-    ctx.fillRect(-e.w / 2, -e.h / 2, e.w, e.h);
-
-    // Barrel
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, -3, 14, 6);
-    ctx.restore();
+    drawDetailedTank(e.x, e.y, e.angle, e.angle, e.color, '#f472b6', e.treadOffset);
   });
 
   // Draw Shells
@@ -492,30 +568,9 @@ function draw() {
     ctx.restore();
   });
 
-  // Draw Player Tank
+  // Draw Player Detailed Tank
   if (gameState === 'PLAYING') {
-    ctx.save();
-    ctx.translate(playerTank.x, playerTank.y);
-
-    // Base Chassis
-    ctx.save();
-    ctx.rotate(playerTank.angle);
-    ctx.fillStyle = '#10b981';
-    ctx.shadowColor = '#10b981';
-    ctx.shadowBlur = 14;
-    ctx.fillRect(-playerTank.w / 2, -playerTank.h / 2, playerTank.w, playerTank.h);
-    ctx.restore();
-
-    // Turret Barrel
-    ctx.save();
-    ctx.rotate(playerTank.turretAngle);
-    ctx.fillStyle = '#06b6d4';
-    ctx.shadowColor = '#06b6d4';
-    ctx.shadowBlur = 12;
-    ctx.fillRect(0, -3, 16, 6);
-    ctx.restore();
-
-    ctx.restore();
+    drawDetailedTank(playerTank.x, playerTank.y, playerTank.angle, playerTank.turretAngle, '#10b981', '#06b6d4', playerTank.treadOffset);
   }
 }
 
