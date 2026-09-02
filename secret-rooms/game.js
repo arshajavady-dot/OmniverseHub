@@ -10,8 +10,8 @@ class CompyAudioEngine {
     this.isPlayingBGM = false;
     this.bgmTimer = null;
     this.step = 0;
-    this.tempo = 40;
-    this.bassline = [55.00, 55.00, 65.41, 55.00, 49.00, 55.00, 65.41, 58.27];
+    this.tempo = 18; // Ultra-Slow Dark Ambient Horror Drone (18 BPM)
+    this.bassline = [36.71, 36.71, 41.20, 34.65, 30.87, 36.71, 43.65, 38.89];
     this.initOnGesture();
   }
 
@@ -73,12 +73,13 @@ class CompyAudioEngine {
       const gain = this.ctx.createGain();
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(bFreq, now);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      osc.frequency.exponentialRampToValueAtTime(bFreq * 0.85, now + 1.2);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
       osc.connect(gain);
       gain.connect(this.masterGain || this.ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.38);
+      osc.stop(now + 1.3);
     } catch(e) {}
   }
 
