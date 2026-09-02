@@ -467,6 +467,39 @@ const PROJECTS = [
     featured: true
   },
   {
+    id: 'cyber-life',
+    title: 'Cyber Life',
+    icon: '🌲',
+    path: '../cyber-life/index.html',
+    category: 'Other',
+    badge: '2D Sandbox',
+    description: 'Terraria-inspired 2D retro cyber sandbox! Mine neon ores, fell laser trees, craft shelters & plasma swords, and fight cyber slimes under a day/night sky.',
+    tags: ['terraria', 'sandbox', 'mining', 'crafting', 'survival', 'building', '2d'],
+    featured: true
+  },
+  {
+    id: 'cyber-chess',
+    title: 'Cyber Chess',
+    icon: '♟️',
+    path: '../cyber-chess/index.html',
+    category: 'Other',
+    badge: 'Tactical Matrix',
+    description: 'Cyberpunk 2D tactical chess! Glowing neon pieces, valid move matrix, Mainframe AI opponent, chiptune soundtrack & particle captures.',
+    tags: ['chess', 'tactical', 'board', 'ai', 'strategy', 'cyber'],
+    featured: true
+  },
+  {
+    id: 'cyber-golf',
+    title: 'Cyber Golf',
+    icon: '⛳',
+    path: '../cyber-golf/index.html',
+    category: 'Other',
+    badge: 'Neon Links',
+    description: 'Chiptune synthwave mini-golf arcade! Aim plasma ball trajectories, bounce off neon cushions, teleport through portal warps & hole-in-one.',
+    tags: ['golf', 'minigolf', 'physics', 'arcade', 'sports', 'neon'],
+    featured: true
+  },
+  {
     id: 'secret-rooms',
     title: 'Secret Rooms',
     icon: '👁️‍🗨️',

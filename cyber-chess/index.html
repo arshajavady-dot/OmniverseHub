@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Chess: Tactical Matrix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: #030712;
+      color: #e2e8f0;
+      overflow: hidden;
+      user-select: none;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    canvas {
+      box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), 0 0 70px rgba(168, 85, 247, 0.15);
+      border: 2px solid rgba(56, 189, 248, 0.4);
+      background-color: #030712;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-2 bg-[#020617]">
+  <div class="flex flex-col items-center max-w-xl w-full">
+    
+    <!-- Top Header HUD -->
+    <div class="flex items-center justify-between w-full max-w-[500px] bg-slate-900/90 border border-cyan-500/30 rounded-t-xl px-4 py-2 backdrop-blur-md">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">♟️</span>
+        <div>
+          <h1 class="font-orbitron font-bold text-sm tracking-wider bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">CYBER CHESS</h1>
+          <p class="text-[10px] text-cyan-400/70">TACTICAL NEON MATRIX</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 text-xs font-orbitron">
+        <span id="turn-indicator" class="px-3 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded-lg text-cyan-300 font-bold">WHITE'S TURN</span>
+      </div>
+    </div>
+
+    <!-- Main Canvas Viewport -->
+    <div class="relative w-full max-w-[500px]">
+      <canvas id="gameCanvas" width="500" height="500" class="w-full h-auto border-b-0 cursor-pointer"></canvas>
+
+      <!-- Start / Game Over Overlay -->
+      <div id="start-overlay" class="absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
+        <div class="text-6xl mb-2 animate-bounce">♟️👑♞</div>
+        <h2 class="font-orbitron font-black text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-2">CYBER CHESS</h2>
+        <p class="text-xs text-slate-300 max-w-xs mb-4">Cyberpunk 2D Tactical Chess! Play against the AI mainframe or 2-Player local mode with glowing move matrix & chiptune audio.</p>
+
+        <div class="flex gap-3 mb-5">
+          <button id="btn-vs-ai" class="font-orbitron font-bold px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-400 text-slate-950 rounded-lg shadow-lg text-xs">
+            🤖 VS MAINFRAME AI
+          </button>
+          <button id="btn-2p" class="font-orbitron font-bold px-6 py-2.5 bg-slate-800 hover:bg-slate-700 border border-purple-500/40 text-purple-300 rounded-lg text-xs">
+            👥 2-PLAYER LOCAL
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="flex items-center justify-between w-full max-w-[500px] bg-slate-900/90 border border-cyan-500/30 rounded-b-xl p-2.5 backdrop-blur-md text-xs font-mono">
+      <span class="text-slate-400">STATUS: <span id="game-status" class="text-emerald-400 font-bold">READY</span></span>
+      <button id="btn-reset" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded text-slate-300 font-orbitron text-[11px]">RESET BOARD</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
