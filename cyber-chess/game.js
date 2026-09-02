@@ -1,5 +1,5 @@
 ﻿/**
- * Cyber Chess: Tactical Matrix — High-Level Minimax Alpha-Beta AI Engine (Depth 4 + Quiescence & PST)
+ * Cyber Chess: Tactical Matrix — 10x Smarter Cyberpunk Chess Engine
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -88,17 +88,17 @@ class ChessAudio {
 
 const audio = new ChessAudio();
 
-// --- 2. CHESS BOARD & UNICODE PIECES ---
+// --- 2. CHESS BOARD & PIECE UNICODE ---
 const UNICODE_PIECES = {
   wP: '♙', wR: '♖', wN: '♘', wB: '♗', wQ: '♕', wK: '♔',
   bP: '♟', bR: '♜', bN: '♞', bB: '♝', bQ: '♛', bK: '♚'
 };
 
 let board = [];
-let turn = 'w';
+let turn = 'w'; // 'w' or 'b'
 let vsAi = true;
-let selectedSquare = null;
-let validMoves = [];
+let selectedSquare = null; // { r, c }
+let validMoves = []; // array of { r, c }
 let particles = [];
 let gameState = 'PLAYING';
 
@@ -125,8 +125,8 @@ function initBoard() {
 function updateHUD() {
   turnIndicator.textContent = turn === 'w' ? "WHITE'S TURN" : "BLACK'S TURN";
   turnIndicator.className = turn === 'w' ? "px-3 py-1 bg-cyan-500/20 border border-cyan-500/50 rounded-lg text-cyan-300 font-bold" : "px-3 py-1 bg-pink-500/20 border border-pink-500/50 rounded-lg text-pink-300 font-bold";
-  gameStatus.textContent = vsAi ? "VS MAINFRAME AI (DEPTH 4)" : "2-PLAYER MODE";
-  if (btnModeToggle) btnModeToggle.textContent = vsAi ? "🤖 VS AI" : "👥 2-PLAYER";
+  gameStatus.textContent = vsAi ? "MAINFRAME AI v10.0 (DEPTH 4)" : "2-PLAYER MODE";
+  if (btnModeToggle) btnModeToggle.textContent = vsAi ? "🤖 VS AI (v10)" : "👥 2-PLAYER";
 }
 
 btnVsAi.addEventListener('click', () => {
@@ -227,15 +227,15 @@ function getLegalMoves(r, c, targetBoard = board) {
   return moves;
 }
 
-// --- 4. HIGH-LEVEL CHESS AI ENGINE (MINIMAX + ALPHA-BETA + QUIESCENCE + PST) ---
+// --- 4. HIGH-LEVEL CHESS AI ENGINE (MINIMAX DEPTH 4 + ALPHA-BETA + QUIESCENCE + PST) ---
 const PIECE_VALUES = { P: 100, N: 320, B: 330, R: 500, Q: 900, K: 20000 };
 
 const PAWN_PST = [
   [ 0,  0,  0,  0,  0,  0,  0,  0],
   [50, 50, 50, 50, 50, 50, 50, 50],
-  [10, 10, 20, 30, 30, 20, 10, 10],
-  [ 5,  5, 10, 25, 25, 10,  5,  5],
-  [ 0,  0,  0, 20, 20,  0,  0,  0],
+  [10, 10, 20, 35, 35, 20, 10, 10],
+  [ 5,  5, 10, 28, 28, 10,  5,  5],
+  [ 0,  0,  0, 22, 22,  0,  0,  0],
   [ 5, -5,-10,  0,  0,-10, -5,  5],
   [ 5, 10, 10,-20,-20, 10, 10,  5],
   [ 0,  0,  0,  0,  0,  0,  0,  0]
@@ -245,8 +245,8 @@ const KNIGHT_PST = [
   [-50,-40,-30,-30,-30,-30,-40,-50],
   [-40,-20,  0,  0,  0,  0,-20,-40],
   [-30,  0, 10, 15, 15, 10,  0,-30],
-  [-30,  5, 15, 20, 20, 15,  5,-30],
-  [-30,  0, 15, 20, 20, 15,  0,-30],
+  [-30,  5, 15, 25, 25, 15,  5,-30],
+  [-30,  0, 15, 25, 25, 15,  0,-30],
   [-30,  5, 10, 15, 15, 10,  5,-30],
   [-40,-20,  0,  5,  5,  0,-20,-40],
   [-50,-40,-30,-30,-30,-30,-40,-50]
@@ -256,8 +256,8 @@ const BISHOP_PST = [
   [-20,-10,-10,-10,-10,-10,-10,-20],
   [-10,  0,  0,  0,  0,  0,  0,-10],
   [-10,  0,  5, 10, 10,  5,  0,-10],
-  [-10,  5,  5, 10, 10,  5,  5,-10],
-  [-10,  0, 10, 10, 10, 10,  0,-10],
+  [-10,  5,  5, 12, 12,  5,  5,-10],
+  [-10,  0, 10, 12, 12, 10,  0,-10],
   [-10, 10, 10, 10, 10, 10, 10,-10],
   [-10,  5,  0,  0,  0,  0,  5,-10],
   [-20,-10,-10,-10,-10,-10,-10,-20]
@@ -285,8 +285,22 @@ const QUEEN_PST = [
   [-20,-10,-10, -5, -5,-10,-10,-20]
 ];
 
+const KING_PST = [
+  [-30,-40,-40,-50,-50,-40,-40,-30],
+  [-30,-40,-40,-50,-50,-40,-40,-30],
+  [-30,-40,-40,-50,-50,-40,-40,-30],
+  [-30,-40,-40,-50,-50,-40,-40,-30],
+  [-20,-30,-30,-40,-40,-30,-30,-20],
+  [-10,-20,-20,-20,-20,-20,-20,-10],
+  [ 20, 20,  0,  0,  0,  0, 20, 20],
+  [ 20, 30, 10,  0,  0, 10, 30, 20]
+];
+
 function evaluateBoard(b) {
   let score = 0;
+  let blackMovesCount = 0;
+  let whiteMovesCount = 0;
+
   for (let r = 0; r < 8; r++) {
     for (let c = 0; c < 8; c++) {
       const piece = b[r] ? b[r][c] : null;
@@ -303,11 +317,21 @@ function evaluateBoard(b) {
       else if (type === 'B') pst = BISHOP_PST[pRow][c];
       else if (type === 'R') pst = ROOK_PST[pRow][c];
       else if (type === 'Q') pst = QUEEN_PST[pRow][c];
+      else if (type === 'K') pst = KING_PST[pRow][c];
 
       const totalVal = val + pst;
-      score += (color === 'b' ? totalVal : -totalVal);
+      if (color === 'b') {
+        score += totalVal;
+        blackMovesCount += getLegalMoves(r, c, b).length;
+      } else {
+        score -= totalVal;
+        whiteMovesCount += getLegalMoves(r, c, b).length;
+      }
     }
   }
+
+  // Mobility Bonus
+  score += (blackMovesCount - whiteMovesCount) * 3;
   return score;
 }
 
@@ -321,6 +345,7 @@ function getAllMovesForColor(b, color) {
           const target = b[m.r][m.c];
           let scoreHint = 0;
           if (target) {
+            // MVV-LVA (Most Valuable Victim - Least Valuable Attacker)
             scoreHint = (PIECE_VALUES[target[1]] || 0) * 10 - (PIECE_VALUES[b[r][c][1]] || 0);
           }
           allMoves.push({ fromR: r, fromC: c, toR: m.r, toC: m.c, scoreHint });
@@ -332,7 +357,7 @@ function getAllMovesForColor(b, color) {
   return allMoves;
 }
 
-// Quiescence Search to evaluate tactical captures
+// Quiescence Search for tactical capture chains
 function quiescence(b, alpha, beta, isMaximizing) {
   const standPat = evaluateBoard(b);
   if (isMaximizing) {
@@ -419,13 +444,14 @@ function makeAiMove() {
   let bestMove = null;
   let bestScore = -Infinity;
 
+  // Minimax Search Depth 4 with Alpha-Beta Pruning
   for (const m of moves) {
     const savedTo = board[m.toR][m.toC];
     const savedFrom = board[m.fromR][m.fromC];
     board[m.toR][m.toC] = savedFrom;
     board[m.fromR][m.fromC] = null;
 
-    const score = minimax(board, 3, -Infinity, Infinity, false);
+    const score = minimax(board, 4, -Infinity, Infinity, false);
 
     board[m.fromR][m.fromC] = savedFrom;
     board[m.toR][m.toC] = savedTo;
@@ -457,7 +483,11 @@ canvas.addEventListener('click', (e) => {
       validMoves = [];
 
       if (vsAi && turn === 'b' && gameState === 'PLAYING') {
-        setTimeout(makeAiMove, 250);
+        gameStatus.textContent = "🤖 MAINFRAME THINKING...";
+        setTimeout(() => {
+          makeAiMove();
+          if (gameState === 'PLAYING') updateHUD();
+        }, 150);
       }
       return;
     }
@@ -477,7 +507,12 @@ function makeMove(fromR, fromC, toR, toC) {
   const piece = board[fromR][fromC];
   const target = board[toR][toC];
 
-  board[toR][toC] = piece;
+  // Pawn Promotion to Queen on reaching end rank
+  if (piece[1] === 'P' && (toR === 0 || toR === 7)) {
+    board[toR][toC] = piece[0] + 'Q';
+  } else {
+    board[toR][toC] = piece;
+  }
   board[fromR][fromC] = null;
 
   if (target) {
@@ -585,5 +620,6 @@ function gameLoop() {
 
 function update() {}
 
+// Auto-initialize board immediately on load!
 initBoard();
 requestAnimationFrame(gameLoop);
