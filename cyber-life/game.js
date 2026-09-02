@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Cyber Life: 2D Sandbox Survival — Terraria Knockoff Engine & Chiptune Audio
  */
 
@@ -128,7 +128,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -146,7 +146,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.12, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.09);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.1);
     } catch(e) {}
@@ -164,7 +164,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.15, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.13);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.14);
     } catch(e) {}
@@ -182,7 +182,7 @@ class CyberLifeAudio {
       gain.gain.setValueAtTime(0.25, actx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, actx.currentTime + 0.16);
       osc.connect(gain);
-      gain.connect(this.ctx.destination);
+      gain.connect(actx.destination);
       osc.start();
       osc.stop(actx.currentTime + 0.18);
     } catch(e) {}
@@ -319,6 +319,8 @@ let player = {
   hp: 100,
   maxHp: 100,
   onGround: false,
+  coyoteTimer: 0,
+  jumpBufferTimer: 0,
   facing: 'right',
   swingAngle: 0,
   isSwinging: false,
@@ -339,6 +341,8 @@ function resetPlayer() {
   player.vy = 0;
   player.hp = 100;
   player.hurtTimer = 0;
+  player.coyoteTimer = 0;
+  player.jumpBufferTimer = 0;
   updateHpUI();
 }
 
@@ -366,6 +370,10 @@ function spawnSlime() {
 // --- 5. INPUT LISTENERS ---
 const keys = { left: false, right: false, up: false };
 
+function triggerJumpRequest() {
+  player.jumpBufferTimer = 8; // Buffer jump request for 8 frames
+}
+
 window.addEventListener('keydown', (e) => {
   if (gameState !== 'PLAYING') return;
 
@@ -373,10 +381,8 @@ window.addEventListener('keydown', (e) => {
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = true;
   if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp') {
     if (e.key === ' ' || e.code === 'Space') e.preventDefault();
-    if (player.onGround) {
-      player.vy = -6.8;
-      player.onGround = false;
-    }
+    keys.up = true;
+    triggerJumpRequest();
   }
 
   const num = parseInt(e.key, 10);
@@ -389,6 +395,7 @@ window.addEventListener('keydown', (e) => {
 window.addEventListener('keyup', (e) => {
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') keys.left = false;
   if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') keys.right = false;
+  if (e.key === 'w' || e.key === 'W' || e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp') keys.up = false;
 });
 
 // On-screen buttons
@@ -403,11 +410,11 @@ bindHoldBtn(btnMoveLeft, 'left');
 bindHoldBtn(btnMoveRight, 'right');
 btnJump.addEventListener('pointerdown', (e) => {
   e.preventDefault();
-  if (player.onGround) {
-    player.vy = -6.8;
-    player.onGround = false;
-  }
+  triggerJumpRequest();
 });
+
+// Ensure canvas receives focus on click
+window.addEventListener('click', () => { window.focus(); });
 
 // Mouse Action (Mine / Attack / Place)
 window.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -528,7 +535,7 @@ function update() {
     spawnSlime();
   }
 
-  // Player Movement & Walking Frame Animation
+  // Player Horizontal Movement
   if (keys.left) {
     player.vx = -3.2;
     player.facing = 'left';
@@ -540,6 +547,25 @@ function update() {
   } else {
     player.vx *= 0.65;
     player.walkFrame = 0;
+  }
+
+  // Grounded & Coyote Time Timers
+  if (player.onGround) {
+    player.coyoteTimer = 6; // 6 frames coyote buffer after stepping off ledge
+  } else if (player.coyoteTimer > 0) {
+    player.coyoteTimer--;
+  }
+
+  if (player.jumpBufferTimer > 0) {
+    player.jumpBufferTimer--;
+  }
+
+  // Jump Trigger Check (Grounded or Coyote Time + Jump Buffer)
+  if (player.jumpBufferTimer > 0 && (player.onGround || player.coyoteTimer > 0)) {
+    player.vy = -6.8;
+    player.onGround = false;
+    player.coyoteTimer = 0;
+    player.jumpBufferTimer = 0;
   }
 
   // Gravity
@@ -622,7 +648,7 @@ function update() {
   }
 }
 
-// Precise Tile Collision (Zero Teleportation)
+// Precise Tile Collision
 function isSolidTile(c, r) {
   if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return false;
   const tile = world[r][c];
@@ -803,26 +829,25 @@ function draw() {
     ctx.save();
     ctx.translate(player.x, player.y);
 
-    // Red Flash on Damage
     if (player.hurtTimer > 0 && Math.floor(player.hurtTimer / 4) % 2 === 0) {
       ctx.globalAlpha = 0.5;
     }
 
     const isRight = player.facing === 'right';
 
-    // 1. Legs (Animated walking cycle)
+    // 1. Legs
     const legOffset = Math.sin(player.walkFrame) * 4;
     ctx.fillStyle = '#1e293b';
     ctx.fillRect(-5, 4, 4, 9 + legOffset);
     ctx.fillRect(1, 4, 4, 9 - legOffset);
 
-    // 2. Armored Body / Chestplate
+    // 2. Armored Body
     ctx.fillStyle = '#10b981';
     ctx.shadowColor = '#10b981';
     ctx.shadowBlur = 8;
     ctx.fillRect(-6, -6, 12, 11);
 
-    // 3. Cyber Helmet with Glowing Neon Visor
+    // 3. Cyber Helmet with Visor
     ctx.fillStyle = '#0f172a';
     ctx.fillRect(-7, -15, 14, 9);
     ctx.fillStyle = '#06b6d4';
@@ -849,7 +874,7 @@ function draw() {
         ctx.shadowColor = '#06b6d4';
         ctx.shadowBlur = 14;
         ctx.fillRect(0, -3, 18, 5);
-        ctx.fillRect(14, -8, 5, 15); // Pickaxe Head
+        ctx.fillRect(14, -8, 5, 15);
       }
       ctx.restore();
     }
