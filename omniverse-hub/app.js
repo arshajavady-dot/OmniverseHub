@@ -522,6 +522,28 @@ const PROJECTS = [
     featured: true
   },
   {
+    id: 'cyber-battleship',
+    title: 'Cyber Battleship',
+    icon: '🚢',
+    path: '../cyber-battleship/index.html',
+    category: 'Puzzle & Strategy',
+    badge: 'Fleet Command',
+    description: 'Cyberpunk 2D battleship strategy! Command stealth warships on dual 10x10 radar grids, fire plasma strikes & sink enemy mainframe navy.',
+    tags: ['battleship', 'strategy', 'grid', 'tactical', 'naval', 'radar'],
+    featured: true
+  },
+  {
+    id: 'cyber-pipe',
+    title: 'Cyber Pipe',
+    icon: '⚡',
+    path: '../cyber-pipe/index.html',
+    category: 'Puzzle & Strategy',
+    badge: 'Energy Grid Hack',
+    description: 'Retro circuit network pipe puzzle! Rotate glowing neon plasma conduit tiles to route high-voltage energy from Source to Mainframe Terminal.',
+    tags: ['puzzle', 'pipe', 'circuit', 'network', 'connect', 'logic'],
+    featured: true
+  },
+  {
     id: 'secret-rooms',
     title: 'Secret Rooms',
     icon: '👁️‍🗨️',
