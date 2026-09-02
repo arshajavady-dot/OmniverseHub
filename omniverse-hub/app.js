@@ -482,7 +482,7 @@ const PROJECTS = [
     title: 'Cyber Chess',
     icon: '♟️',
     path: '../cyber-chess/index.html',
-    category: 'Strategy & Puzzle',
+    category: 'Puzzle & Strategy',
     badge: 'Tactical Matrix',
     description: 'Cyberpunk 2D tactical chess! Glowing neon pieces, valid move matrix, Mainframe AI opponent, chiptune soundtrack & particle captures.',
     tags: ['chess', 'tactical', 'board', 'ai', 'strategy', 'cyber'],
