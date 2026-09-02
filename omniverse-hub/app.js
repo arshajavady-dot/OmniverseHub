@@ -500,6 +500,28 @@ const PROJECTS = [
     featured: true
   },
   {
+    id: 'cyber-racer',
+    title: 'Cyber Racer',
+    icon: '🏎️',
+    path: '../cyber-racer/index.html',
+    category: 'Arcade & Action',
+    badge: 'Outrun Synthwave',
+    description: 'Retro 3D synthwave highway racer! Dodge rival hover-cars, collect energy cores, boost speeds & blast synthwave tunes on the neon grid.',
+    tags: ['racer', 'driving', 'outrun', 'synthwave', 'arcade', 'speed'],
+    featured: true
+  },
+  {
+    id: 'cyber-tank',
+    title: 'Cyber Tank',
+    icon: '🛡️',
+    path: '../cyber-tank/index.html',
+    category: 'Arcade & Action',
+    badge: 'Neo-Tokyo Combat',
+    description: 'Retro top-down Battle City tank combat! Command a neon hover-tank, blast destructible brick walls, destroy enemy tanks & defend the core.',
+    tags: ['tank', 'action', 'combat', 'arcade', 'battle', 'topdown'],
+    featured: true
+  },
+  {
     id: 'secret-rooms',
     title: 'Secret Rooms',
     icon: '👁️‍🗨️',

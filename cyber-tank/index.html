@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Tank: Neo-Tokyo Combat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background-color: #030712;
+      color: #e2e8f0;
+      overflow: hidden;
+      user-select: none;
+    }
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    canvas {
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.25), 0 0 70px rgba(6, 182, 212, 0.15);
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      background-color: #050714;
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-2 bg-[#020617]">
+  <div class="flex flex-col items-center max-w-2xl w-full">
+    
+    <!-- Top Header HUD -->
+    <div class="flex items-center justify-between w-full max-w-[650px] bg-slate-900/90 border border-emerald-500/30 rounded-t-xl px-4 py-2 backdrop-blur-md">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">🛡️</span>
+        <div>
+          <h1 class="font-orbitron font-bold text-sm tracking-wider bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">CYBER TANK</h1>
+          <p class="text-[10px] text-emerald-400/70">NEO-TOKYO TANK COMBAT</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-5 text-xs font-orbitron">
+        <div class="text-right">
+          <p class="text-[10px] text-slate-400">STAGE</p>
+          <p id="hud-stage" class="font-bold text-emerald-400">1 / 5</p>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] text-slate-400">ENEMIES</p>
+          <p id="hud-enemies" class="font-bold text-cyan-300">5</p>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] text-slate-400">SCORE</p>
+          <p id="hud-score" class="font-bold text-yellow-400">0</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Canvas Viewport -->
+    <div class="relative w-full max-w-[650px]">
+      <canvas id="gameCanvas" width="650" height="450" class="w-full h-auto border-b-0 cursor-crosshair"></canvas>
+
+      <!-- Game Over / Victory Overlay (Hidden by Default) -->
+      <div id="start-overlay" class="hidden absolute inset-0 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20">
+        <div class="text-6xl mb-2 animate-bounce">🛡️💥🤖</div>
+        <h2 id="overlay-title" class="font-orbitron font-black text-3xl tracking-wider text-emerald-400 mb-2">MISSION COMPLETED!</h2>
+        <p id="overlay-desc" class="text-xs text-slate-300 max-w-xs mb-4">Score: <span id="final-score" class="text-cyan-400 font-bold font-orbitron">0</span></p>
+
+        <button id="btn-start" class="font-orbitron font-bold px-8 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 text-slate-950 rounded-lg shadow-lg text-sm">
+          DEPLOY TANK
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom Status Bar & Action Controls -->
+    <div class="flex flex-col w-full max-w-[650px] bg-slate-900/90 border border-emerald-500/30 rounded-b-xl p-2 gap-2 backdrop-blur-md">
+      <div class="flex items-center justify-between gap-2 text-xs font-orbitron">
+        <button id="btn-left" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded text-emerald-300 font-bold text-center">
+          ◀ LEFT (A)
+        </button>
+        <button id="btn-up" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded text-emerald-300 font-bold text-center">
+          ▲ FORWARD (W)
+        </button>
+        <button id="btn-down" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded text-emerald-300 font-bold text-center">
+          ▼ REVERSE (S)
+        </button>
+        <button id="btn-right" class="flex-1 py-2 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 rounded text-emerald-300 font-bold text-center">
+          RIGHT (D) ▶
+        </button>
+        <button id="btn-fire" class="flex-1 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 border border-cyan-500/40 rounded text-cyan-300 font-bold text-center">
+          💥 FIRE (SPACE / CLICK)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
