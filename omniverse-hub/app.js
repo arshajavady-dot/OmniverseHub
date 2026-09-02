@@ -1139,8 +1139,8 @@ function renderAppCards() {
     card.innerHTML = `
       <div class="space-y-4">
         <div class="flex items-start justify-between gap-3">
-          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 border border-emerald-500/30 flex items-center justify-center text-3xl shadow-lg shadow-emerald-500/10 group-hover:scale-110 transition-transform">
-            ${app.icon}
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-900 border border-emerald-500/30 flex items-center justify-center shadow-lg shadow-emerald-500/10 group-hover:scale-110 transition-transform">
+            ${renderAppVectorModel(app.id, app.icon)}
           </div>
           <span class="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider ${isSecretCard ? 'bg-red-500/20 text-red-300 border border-red-500/40' : 'gamblr-badge-emerald'} rounded-full">
             ${app.badge}
@@ -1361,6 +1361,30 @@ function showQuest2UnlockModal() {
   });
 }
 
+// --- 9.4 VECTOR MODEL RENDERER ---
+function renderAppVectorModel(appId, fallbackEmoji) {
+  const models = {
+    'cyber-pac': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><circle cx="20" cy="20" r="15" fill="#eab308" filter="drop-shadow(0 0 6px #facc15)"/><path d="M 20 20 L 35 10 A 15 15 0 0 1 35 30 Z" fill="#090d16"/><circle cx="21" cy="11" r="2.5" fill="#090d16"/></svg>`,
+    'cyber-kong': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="6" y="8" width="28" height="24" rx="6" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/><rect x="10" y="14" width="7" height="5" rx="1" fill="#ef4444" filter="drop-shadow(0 0 4px #f87171)"/><rect x="23" y="14" width="7" height="5" rx="1" fill="#ef4444" filter="drop-shadow(0 0 4px #f87171)"/><path d="M 12 24 L 28 24 M 14 27 L 26 27" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>`,
+    'cyber-hopper': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="8" y="10" width="24" height="20" rx="7" fill="#059669" stroke="#34d399" stroke-width="2.5"/><circle cx="14" cy="14" r="4" fill="#090d16" stroke="#34d399" stroke-width="1.5"/><circle cx="26" cy="14" r="4" fill="#090d16" stroke="#34d399" stroke-width="1.5"/><circle cx="14" cy="14" r="1.5" fill="#34d399"/><circle cx="26" cy="14" r="1.5" fill="#34d399"/><path d="M 14 24 Q 20 28 26 24" fill="none" stroke="#34d399" stroke-width="2.5" stroke-linecap="round"/></svg>`,
+    'space-invaders-game': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="12" y="6" width="16" height="4" fill="#ec4899"/><rect x="8" y="10" width="24" height="4" fill="#ec4899"/><rect x="4" y="14" width="32" height="8" fill="#ec4899"/><rect x="8" y="16" width="4" height="4" fill="#090d16"/><rect x="28" y="16" width="4" height="4" fill="#090d16"/><rect x="4" y="22" width="8" height="6" fill="#ec4899"/><rect x="28" y="22" width="8" height="6" fill="#ec4899"/><rect x="12" y="22" width="4" height="4" fill="#ec4899"/><rect x="24" y="22" width="4" height="4" fill="#ec4899"/></svg>`,
+    'cyber-pinball': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><polygon points="22,4 10,22 18,22 14,36 30,16 20,16" fill="#f59e0b" filter="drop-shadow(0 0 8px #fbbf24)"/></svg>`,
+    'neon-asteroids': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><polygon points="20,6 32,14 36,26 28,34 14,34 4,24 8,12" fill="#1e1b4b" stroke="#a855f7" stroke-width="2.5" filter="drop-shadow(0 0 6px #c084fc)"/><circle cx="16" cy="18" r="2.5" fill="#a855f7"/><circle cx="26" cy="24" r="3.5" fill="#a855f7"/></svg>`,
+    'cyber-galaga': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><polygon points="20,4 25,18 36,24 28,32 20,28 12,32 4,24 15,18" fill="#0284c7" stroke="#38bdf8" stroke-width="2" filter="drop-shadow(0 0 6px #38bdf8)"/><rect x="18" y="12" width="4" height="10" fill="#e0f2fe"/></svg>`,
+    'cyber-runner': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><path d="M 6 26 L 14 14 L 28 14 L 34 22 L 28 26 Z" fill="#06b6d4" stroke="#22d3ee" stroke-width="2" filter="drop-shadow(0 0 6px #06b6d4)"/><circle cx="12" cy="26" r="4" fill="#090d16" stroke="#22d3ee" stroke-width="2"/><circle cx="28" cy="26" r="4" fill="#090d16" stroke="#22d3ee" stroke-width="2"/></svg>`,
+    'neon-pong': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="6" y="12" width="6" height="16" rx="2" fill="#38bdf8" filter="drop-shadow(0 0 6px #38bdf8)"/><rect x="28" y="12" width="6" height="16" rx="2" fill="#ec4899" filter="drop-shadow(0 0 6px #ec4899)"/><circle cx="20" cy="20" r="3.5" fill="#facc15" filter="drop-shadow(0 0 6px #facc15)"/></svg>`,
+    'cyber-life': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><polygon points="8,10 26,28 22,32 4,14" fill="#92400e"/><path d="M 22,8 L 34,16 L 30,20 L 18,12 Z" fill="#10b981" filter="drop-shadow(0 0 6px #34d399)"/><path d="M 20,4 Q 36,4 36,20" fill="none" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/></svg>`,
+    'cyber-chess': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><path d="M 12 34 L 28 34 L 26 30 L 14 30 Z" fill="#38bdf8"/><path d="M 14 30 L 14 20 L 11 15 L 29 15 L 26 20 L 26 30 Z" fill="#0284c7" stroke="#38bdf8" stroke-width="2"/><path d="M 11 15 L 8 10 L 14 12 L 20 6 L 26 12 L 32 10 L 29 15 Z" fill="#38bdf8" filter="drop-shadow(0 0 6px #38bdf8)"/></svg>`,
+    'cyber-golf': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="10" y="8" width="3" height="26" fill="#94a3b8"/><polygon points="13,8 32,14 13,20" fill="#eab308" filter="drop-shadow(0 0 6px #facc15)"/><ellipse cx="26" cy="32" rx="8" ry="3" fill="#090d16" stroke="#10b981" stroke-width="1.5"/><circle cx="22" cy="31" r="3" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff)"/></svg>`,
+    'secret-rooms': `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="4" y="6" width="32" height="24" rx="4" fill="#032b15" stroke="#22c55e" stroke-width="2.5" filter="drop-shadow(0 0 8px #22c55e)"/><circle cx="20" cy="18" r="6" fill="#10b981"/><circle cx="20" cy="18" r="2.5" fill="#011409"/></svg>`
+  };
+
+  if (models[appId]) return models[appId];
+
+  // Default Cyber Model SVG
+  return `<svg viewBox="0 0 40 40" class="w-8 h-8 pointer-events-none"><rect x="6" y="6" width="28" height="28" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2" filter="drop-shadow(0 0 6px #38bdf8)"/><circle cx="20" cy="20" r="7" fill="#38bdf8"/></svg>`;
+}
+
 // --- 9.5 AVATAR GRAPHIC RENDERER ---
 function renderAvatarGraphic(avatarVal) {
   if (avatarVal === '🤖💀' || avatarVal === 'avatar-compy' || avatarVal === 'compy-design') {
@@ -1569,8 +1593,8 @@ function renderDesktopIcons() {
     const iconBtn = document.createElement('div');
     iconBtn.className = 'desktop-icon-btn group';
     iconBtn.innerHTML = `
-      <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-700/80 flex items-center justify-center text-2xl shadow-lg group-hover:scale-110 transition-transform">
-        ${app.icon}
+      <div class="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-700/80 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+        ${renderAppVectorModel(app.id, app.icon)}
       </div>
       <span class="text-[11px] font-bold text-slate-200 text-center truncate w-full mt-1.5 group-hover:text-indigo-300">
         ${app.title}
@@ -1584,7 +1608,7 @@ function renderDesktopIcons() {
     const startItem = document.createElement('button');
     startItem.className = 'w-full flex items-center gap-3 p-2 rounded-xl hover:bg-slate-800/80 text-left text-xs font-semibold text-slate-200 transition-all';
     startItem.innerHTML = `
-      <span class="text-xl">${app.icon}</span>
+      <div class="w-7 h-7 flex items-center justify-center">${renderAppVectorModel(app.id, app.icon)}</div>
       <div class="truncate">
         <p class="text-white">${app.title}</p>
         <p class="text-[10px] text-slate-400 font-mono">${app.category}</p>
